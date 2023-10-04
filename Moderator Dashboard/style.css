@@ -62,11 +62,6 @@ button:focus {
 outline: none;
 }
 
-button:focus:not(:focus-visible) {
-/* Remove the focus indicator on mouse-focus for browsers
- that do support :focus-visible */
-}
-
 button:focus-visible {
 /* Draw a very noticeable focus style for
  keyboard-focus on browsers that do support
