@@ -69,3 +69,15 @@ button:focus-visible {
 outline: 2px solid #443ffc;
 outline-offset: 3px;
 }
+
+.scrolling-wrapper-flexbox {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+}
+    .card {
+      flex: 0 0 auto;
+      width: 25rem;
+    }
+ 
+  
