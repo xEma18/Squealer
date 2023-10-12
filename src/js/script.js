@@ -3,11 +3,11 @@
 // Script temporaneo che serve per andare avanti cliccando il pulsante. Questo codice verrà poi
 // rimpiazzato completamente da react.
 
-if (document.location.href == "http://127.0.0.1:5500/index.html") {
+if (document.location.href == "C:/Users/manue/Desktop/Squealer/index.html") {
   const signUpBtn = document.querySelector("#btn-registrati");
 
   signUpBtn.addEventListener("click", () => {
-    document.location.href = "sign_up.html";
+    document.location.href = "C:/Users/manue/Desktop/Squealer/sign_up.html";
   });
 }
 
