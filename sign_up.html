@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./src/style/style.css" />
+    <script src="./src/js/script.js" defer></script>
+    <link rel="icon" href="./src/media/icon_condor.png" />
+    <title>Sign Up</title>
+  </head>
+  <body>
+    <div class="step">
+      <span class="x-step"><a href="/index.html">x</a></span
+      >Passo 1 di 4
+    </div>
+    <form id="signup-form">
+      <div class="title">Crea il tuo account</div>
+      <input type="text" id="name" placeholder="Nome" />
+      <input type="text" id="cognome" placeholder="Cognome" />
+      <div class="form-text">Data di nascita</div>
+      <div class="birth-container">
+        <input type="text" id="b-day" placeholder="gg" />
+        <input type="text" id="b-month" placeholder="mm" />
+        <input type="text" id="b-year" placeholder="aaaa" />
+      </div>
+      <div class="form-text">Hai diritto ad essere PRO?</div>
+      <div class="pro-box">
+        <input type="checkbox" id="pro-check" />Richiedi l'abilitazione PRO
+      </div>
+      <div class="pro-note">
+        <span>Nota:</span> prima di poter usufruire delle funzionalità PRO, un
+        moderatore dovrà valutare la tua richiesta.
+      </div>
+      <div class="btn btn-avanti" id="btn-signup-1">Avanti</div>
+    </form>
+  </body>
+</html>

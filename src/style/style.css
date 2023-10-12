@@ -1,0 +1,262 @@
+/* COLOR PALETTE
+- Metallic Bronze: #5B3C1D
+- Tumbleweed: #DBB77C 
+- Edward: #A3B3B3
+- Oslo Grey: #949797
+*/
+
+/* IMPORTS */
+@import url("https://fonts.googleapis.com/css2?family=Mukta:wght@200;300;400;500;800&display=swap");
+
+* {
+  box-sizing: inherit;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #f7f7f7;
+  min-height: 100vh;
+  font-family: Mukta, Arial, sans-serif;
+  overflow: hidden;
+}
+
+a {
+  text-decoration: none;
+  color: #000;
+}
+
+a:active {
+  color: #000;
+}
+
+.container {
+  padding: 2.5rem 2rem 0 2rem;
+}
+
+#condor-icon {
+  height: 6rem;
+  margin-top: 0.5rem;
+  /* margin-left: 2rem; */
+}
+
+.title {
+  /* padding: 1rem 2rem; */
+
+  margin: 1rem 0;
+
+  font-size: 4rem;
+  font-weight: bold;
+  line-height: 100%;
+  color: #dbb77c;
+}
+
+.subtitle {
+  /* padding: 1rem 2rem; */
+
+  margin: 1rem 0;
+
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+
+.btm-title {
+  /* padding: 1rem 2rem 0rem 2rem; */
+
+  margin-top: 1rem;
+
+  font-weight: 500;
+  font-size: 1.6rem;
+}
+
+.btns-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+  height: 13vh;
+
+  /* padding: 1rem 2rem;
+  margin-bottom: 1.5rem; */
+
+  margin: 1rem 0 1.5rem 0;
+}
+
+.btn {
+  border-radius: 9999px;
+
+  width: 100%;
+
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #f7f7f7;
+  background-color: #895b2c;
+
+  padding: 0.4rem 0rem;
+  margin-bottom: 1rem;
+
+  transition: 0.1s linear;
+}
+
+.btn:active {
+  background-color: #62411f;
+  color: #e1e1e1;
+}
+
+#btn-registrati {
+}
+
+#btn-accedi {
+}
+
+#btn-pro-zone {
+  color: #895b2c;
+  background-color: #f7f7f7;
+  border: 1px solid #895b2c;
+}
+
+#btn-pro-zone:active {
+}
+
+.divider {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* padding: 0.4rem 2rem; */
+
+  margin: 0.4rem 0;
+
+  color: #222;
+}
+
+.divider-text {
+  margin: 0 0.6rem;
+}
+
+.divider-line {
+  width: 100%;
+  border-bottom: 1px solid #949797;
+}
+
+/* Sign Up form */
+.step {
+  padding: 1.5rem 2rem;
+
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+.x-step {
+  margin-right: 1rem;
+
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+#signup-form {
+  padding: 1rem 2rem;
+}
+
+#signup-form .title {
+  padding: 0;
+
+  font-size: 3rem;
+  /* color: #dbb77c; */
+}
+
+#signup-form .t-small {
+  font-size: 2rem;
+  line-height: 120%;
+}
+
+#signup-form input[type="text"],
+#signup-form input[type="email"],
+#signup-form input[type="password"] {
+  margin-top: 1.5rem;
+  width: 100%;
+
+  padding: 1rem;
+
+  border: 1px solid #949797;
+  border-radius: 5px;
+
+  font-size: 1.3rem;
+  background-color: #f7f7f7;
+}
+
+#signup-form .form-text {
+  margin-top: 2rem;
+
+  font-weight: 500;
+  font-size: 1.4rem;
+}
+
+#signup-form .birth-container {
+  display: flex;
+  justify-content: space-around;
+  align-self: center;
+
+  margin-bottom: 3rem;
+}
+
+#signup-form .birth-container input[type="text"] {
+  margin-top: 1rem;
+}
+
+#signup-form .birth-container #b-day {
+  flex: 1;
+}
+
+#signup-form .birth-container #b-month {
+  flex: 1;
+  margin-left: 1rem;
+}
+
+#signup-form .birth-container #b-year {
+  flex: 2;
+  margin-left: 1rem;
+}
+
+#signup-form .pro-box {
+  font-size: 1.3rem;
+
+  padding-top: 1rem;
+}
+
+#signup-form .pro-box #pro-check {
+  margin-right: 1rem;
+}
+
+#signup-form .pro-note {
+  font-size: 0.8rem;
+  font-weight: 200;
+  margin-top: 0.5rem;
+}
+
+#signup-form .pro-note span {
+  font-weight: 400;
+}
+
+#signup-form .btn {
+  margin-top: 4rem;
+}
+
+#signup-form #btn-signup-2 {
+  margin-top: 21rem;
+}
+
+#signup-form ul.pw-requisites {
+  list-style-position: inside;
+
+  margin-top: 0.9rem;
+
+  font-size: 0.9rem;
+  font-weight: 200;
+  color: #949797;
+}
