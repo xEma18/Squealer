@@ -1,34 +1,17 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import './App.css';
-import condorIcon from './assets/icon_condor.png'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import InitialPage from './InitialPageComponent.jsx';
+import SignUpPage1 from './SignUpPage1.jsx';
 
-const initialPage = () => {
-    return (
-            <div class="container">
-              <img
-                id="condor-icon"
-                src={condorIcon}
-                alt="Condor Icon"
-              />
-              <div class="title">Storming news</div>
-              <div class="subtitle">Join us today.</div>
-              <div class="btns-container">
-                <div class="btn" id="btn-registrati">Registrati</div>
-                <div class="btn" id="btn-accedi">Accedi</div>
-              </div>
-              <div class="divider">
-                <div class="divider-line"></div>
-                <div class="divider-text">oppure</div>
-                <div class="divider-line"></div>
-              </div>
-              <div class="btm-title">Sei un PRO?</div>
-              <div class="btns-container">
-                <div class="btn" id="btn-pro-zone">Area PRO</div>
-              </div>
-            </div>
-    );
+
+const App = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<InitialPage />} />
+        <Route path="/SignUpPage1" element={<SignUpPage1 />} />
+      </Routes>
+    </Router>
+  );
   };
   
-  export default initialPage;
+  export default App;
