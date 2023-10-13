@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './InitialPageComponent.css';
+import './style.css';
 import condorIcon from './assets/icon_condor.png'
 
 const InitialPageComponent = () => {

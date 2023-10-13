@@ -147,14 +147,12 @@ a:active {
 /* Sign Up form */
 .step {
   padding: 1.5rem 2rem;
-
   font-size: 1.3rem;
   font-weight: 800;
 }
 
 .x-step {
   margin-right: 1rem;
-
   font-weight: 500;
   text-transform: uppercase;
 }
