@@ -3,10 +3,10 @@
 // Script temporaneo che serve per andare avanti cliccando il pulsante. Questo codice verrà poi
 // rimpiazzato completamente da react.
 
-if (
-  document.location.href == "http://127.0.0.1:5500/index.html" ||
-  document.location.href == "http://127.0.0.1:5500/"
-) {
+const pathEma = `http://127.0.0.1:5500/Front-end%20Ema`;
+const pathManuel = `C:/Users/manue/Desktop/Squealer`;
+
+if (document.location.href == `${pathEma}/index.html`) {
   const signUpBtn = document.querySelector("#btn-registrati");
 
   signUpBtn.addEventListener("click", () => {
@@ -14,7 +14,7 @@ if (
   });
 }
 
-if (document.location.href == "http://127.0.0.1:5500/sign_up.html") {
+if (document.location.href == `${pathEma}/sign_up.html`) {
   const avantiBtn = document.querySelector("#btn-signup-1");
 
   avantiBtn.addEventListener("click", () => {
@@ -22,7 +22,7 @@ if (document.location.href == "http://127.0.0.1:5500/sign_up.html") {
   });
 }
 
-if (document.location.href == "http://127.0.0.1:5500/sign_up_2.html") {
+if (document.location.href == `${pathEma}/sign_up_2.html`) {
   const avantiBtn = document.querySelector("#btn-signup-2");
 
   avantiBtn.addEventListener("click", () => {
@@ -30,7 +30,7 @@ if (document.location.href == "http://127.0.0.1:5500/sign_up_2.html") {
   });
 }
 
-if (document.location.href == "http://127.0.0.1:5500/sign_up_3.html") {
+if (document.location.href == `${pathEma}/sign_up_3.html`) {
   const avantiBtn = document.querySelector("#btn-signup-3");
 
   avantiBtn.addEventListener("click", () => {
@@ -38,7 +38,7 @@ if (document.location.href == "http://127.0.0.1:5500/sign_up_3.html") {
   });
 }
 
-if (document.location.href == "http://127.0.0.1:5500/sign_up_4.html") {
+if (document.location.href == `${pathEma}/sign_up_4.html`) {
   const avantiBtn = document.querySelector("#btn-signup-4");
 
   // Questa parte di codice serve per aggiornare il counter delle parole. Se vuoi puoi riutilizzarla.
@@ -60,6 +60,6 @@ if (document.location.href == "http://127.0.0.1:5500/sign_up_4.html") {
   // Finisce qui
 
   avantiBtn.addEventListener("click", () => {
-    document.location.href = "/";
+    document.location.href = "index.html";
   });
 }
