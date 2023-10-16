@@ -4,6 +4,7 @@ import InitialPage from './InitialPageComponent.jsx';
 import SignUp1 from './SignUp1.jsx';
 import SignUp2 from './SignUp2.jsx';
 import SignUp3 from './SignUp3.jsx';
+import SignUp4 from './SignUp4.jsx';
 
 
 
@@ -19,6 +20,8 @@ const App = () => {
     proCheck: false,
     email: '',
     password:'',
+    image:'',
+    description:'',
   });
 
    // Funzione per aggiornare i dati della registrazione (mantiene i dati già scritti e scrive in nuovi dati che passo come parametro)
@@ -33,6 +36,7 @@ const App = () => {
         <Route path="/SignUpPage1" element={<SignUp1 updateRegistrationData={updateRegistrationData} />} />
         <Route path="/SignUp2" element={<SignUp2 updateRegistrationData={updateRegistrationData} />} />
         <Route path="/SignUp3" element={<SignUp3 updateRegistrationData={updateRegistrationData} />} />
+        <Route path= "/SignUp4" element={<SignUp4 updateRegistrationData={updateRegistrationData} registrationData={registrationData}  />} />
         {/*<Route path="/Submit" element={<SignUpPage1 registrationData={registrationData} />} /> */}
 
       </Routes>

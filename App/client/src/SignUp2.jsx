@@ -7,7 +7,7 @@ import { Link, useNavigate} from 'react-router-dom';
 const SignUp2 = ({ updateRegistrationData }) => {
   const navigate = useNavigate();
   const [email, setEmail]=useState('');
-  const [password, setPassword]=('');
+  const [password, setPassword]=useState('');
 
   const handleNext=async ()=>{
     updateRegistrationData({

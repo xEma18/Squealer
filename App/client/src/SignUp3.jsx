@@ -2,7 +2,19 @@ import React, { useState } from 'react';
 import './style.css';
 import { Link, useNavigate} from 'react-router-dom';
  
-const SignUp3=()=>{
+const SignUp3=({updateRegistrationData})=>{
+    const navigate = useNavigate();
+    const [image, setImage]=useState('');
+
+    const handleNext=async ()=>{
+        updateRegistrationData({
+          image,
+        });
+        navigate('/SignUp4');
+      }
+
+
+
     return(
         <>  
             <div className="step">
@@ -12,7 +24,7 @@ const SignUp3=()=>{
             <form id="signup-form">
             <div className="title t-small">Scegli un immagine profilo</div>
             <div className="subtitle">Hai un'immagine che ti rappresenta? Caricala.</div>
-            <div className="btn btn-avanti" id="btn-signup-2">Avanti</div>
+            <div className="btn btn-avanti" id="btn-signup-2" onClick={handleNext}>Avanti</div>
             </form>
         </>
     );

@@ -10,8 +10,9 @@ app.use(express.json()) //allows to convert in json format files I transfer from
 
 mongoose.connect("mongodb://127.0.0.1:27017/Squealer", { useNewUrlParser: true, useUnifiedTopology: true });
 
-app.post('/signin', async (req, res) => {
+app.post('/signup', async (req, res) => {
     try {
+      
       const newUser = new UserModel(req.body);
       await newUser.save();
       res.status(201).json(newUser);

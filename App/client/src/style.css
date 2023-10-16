@@ -6,7 +6,7 @@
 */
 
 /* IMPORTS */
-@import url("https://fonts.googleapis.com/css2?family=Mukta:wght@200;300;400;500;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Mukta:wght@200;300;400;500;600;800&display=swap");
 
 * {
   box-sizing: inherit;
@@ -34,10 +34,6 @@ a:active {
   color: #000;
 }
 
-
-
-
-
 .container {
   padding: 2.5rem 2rem 0 2rem;
 }
@@ -61,7 +57,7 @@ a:active {
 
 .subtitle {
   /* padding: 1rem 2rem; */
-  color:#000;
+
   margin: 1rem 0;
 
   font-weight: bold;
@@ -72,7 +68,7 @@ a:active {
   /* padding: 1rem 2rem 0rem 2rem; */
 
   margin-top: 1rem;
-  color:black;
+
   font-weight: 500;
   font-size: 1.6rem;
 }
@@ -151,20 +147,14 @@ a:active {
 /* Sign Up form */
 .step {
   padding: 1.5rem 2rem;
-
   font-size: 1.3rem;
   font-weight: 800;
-}
-
-.black{
-  color:black;
 }
 
 .x-step {
   margin-right: 1rem;
   font-weight: 500;
   text-transform: uppercase;
-  color:black;
 }
 
 #signup-form {
@@ -181,6 +171,10 @@ a:active {
 #signup-form .t-small {
   font-size: 2rem;
   line-height: 120%;
+}
+
+#signup-form .s-small {
+  font-weight: 600;
 }
 
 #signup-form input[type="text"],
@@ -252,11 +246,19 @@ a:active {
 }
 
 #signup-form .btn {
-  margin-top: 4rem;
+  margin-top: 3rem;
 }
 
 #signup-form #btn-signup-2 {
-  margin-top: 21rem;
+  margin-top: 20.5rem;
+}
+
+#signup-form #btn-signup-3 {
+  margin-top: 17rem;
+}
+
+#signup-form #btn-signup-4 {
+  margin-top: 22rem;
 }
 
 #signup-form ul.pw-requisites {
@@ -267,4 +269,31 @@ a:active {
   font-size: 0.9rem;
   font-weight: 200;
   color: #949797;
+}
+
+#signup-form i {
+  display: block;
+  text-align: center;
+  margin-top: 5rem;
+}
+
+#signup-form textarea#description-box {
+  background-color: #f7f7f7;
+  width: 100%;
+  border-radius: 5px;
+  padding: 2rem 0.8rem 0.8rem 0.8rem;
+}
+
+#signup-form .t-area-container {
+  position: relative;
+}
+
+#signup-form .t-area-container .word-counter {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  margin: 0.5rem 0.8rem 0 0;
+
+  font-size: 0.8rem;
 }
