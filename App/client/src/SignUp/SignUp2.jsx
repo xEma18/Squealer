@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './style.css';
+import '../style.css';
 import { Link, useNavigate} from 'react-router-dom';
 
 
@@ -8,11 +8,13 @@ const SignUp2 = ({ updateRegistrationData }) => {
   const navigate = useNavigate();
   const [email, setEmail]=useState('');
   const [password, setPassword]=useState('');
+  const [username, setUsername]=useState('');
 
   const handleNext=async ()=>{
     updateRegistrationData({
       email,
       password,
+      username,
     });
     navigate('/SignUp3');
   }
@@ -26,6 +28,7 @@ const SignUp2 = ({ updateRegistrationData }) => {
       </div>
       <form id="signup-form">
         <div className="title t-small">Credenziali</div>
+        <input type="text" id="username" placeholder="Username" onChange={(e)=>setUsername(e.target.value)} value={username} />
         <input type="email" id="email" placeholder="Email" onChange={(e)=>setEmail(e.target.value)} value={email} />
         <input type="password" id="password" placeholder="Password" onChange={(e)=>setPassword(e.target.value)} value={password} />
         <ul className="pw-requisites">

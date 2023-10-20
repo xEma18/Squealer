@@ -18,7 +18,7 @@ const InitialPageComponent = () => {
                 <Link to="/SignUpPage1" className="btn" id="btn-registrati">
                   Registrati
                 </Link>
-                <div className="btn" id="btn-accedi">Accedi</div>
+                <Link to ="/Login" className="btn" id="btn-accedi">Accedi</Link>
               </div>
               <div className="divider">
                 <div className="divider-line"></div>
