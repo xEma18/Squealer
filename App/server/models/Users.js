@@ -15,8 +15,15 @@ const UserSchema=new mongoose.Schema({
 })
 
 UserSchema.statics.findByCredentials=async function(username, password){
-    const user=await this.findOne({username})
-}
+    const user=await this.findOne({username});
+    if(user){ //controlla che user non sia null
+        if(user.password===password){
+            return user
+        }else{
+            return null
+        }
+    }
+};
 
 
 

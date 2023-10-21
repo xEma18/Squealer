@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import '../style.css';
 import { Link, useNavigate} from 'react-router-dom';
+import axios from 'axios';
 
 
 
@@ -10,17 +11,14 @@ const Login = ({}) => {
   const [password, setPassword]=useState('');
 
   const handleLogin=async ()=>{
-    const response=await fetch('/login',{
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({username, password}),
-    });
-    const data=await response.json();
-    console.log(data);
-    if(data.status===200){
-      navigate('/');
+    const response=await axios.post('http://localhost:3001/login', {username, password}) 
+    if(response.status===200){//response.status indica che la richiesta è andata a buon fine (a prescindere dal contenuto della risposta)
+      if(response.data){//qui controllo che la risposta contenga effettivamente un utente (se non c'è, vuol dire che le credenziali sono sbagliate)
+        navigate('/');
+      }
+      else{
+        alert('Credenziali errate');
+      }
     }
   }
   
