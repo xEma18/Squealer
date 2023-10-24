@@ -8,8 +8,17 @@ import axios from 'axios';
 const SignUp4 = ({ updateRegistrationData, registrationData }) => {
     const navigate = useNavigate();
     const [description, setDescription]=useState('');
+    const [warning, setWarning]=useState('');
 
-
+    const handleChange = (e) => {
+      const newText = e.target.value;
+      if (newText.length > 150) {
+      setWarning("Numero massimo di caratteri raggiunto.")
+      } else {
+      setDescription(newText);
+      setWarning('');
+      }
+      };
 
     const handleTermina=async ()=>{
     const localRegistrationData = {
@@ -38,8 +47,9 @@ const SignUp4 = ({ updateRegistrationData, registrationData }) => {
       <div className="title t-small">Descrivi te stesso</div>
       <div className="subtitle s-small">Cosa ti rende speciale?</div>
       <div className="t-area-container">
-        <span className="word-counter">0/150</span>
-        <textarea id="description-box" cols="30" rows="10" onChange={(e)=>setDescription(e.target.value)} value={description}></textarea>
+        <span className="word-counter">{description.length}/150</span>
+        <textarea id="description-box" cols="30" rows="10" onChange={(e)=>handleChange(e)} value={description}></textarea>
+        <div className="subtitle s-small">{warning}</div> 
       </div>
       <div className="btn btn-avanti" id="btn-signup-4" onClick={handleTermina}>Termina</div>
     </form>

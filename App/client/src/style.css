@@ -246,19 +246,41 @@ a:active {
 }
 
 #signup-form .btn {
-  margin-top: 3rem;
+  position: absolute;
+  bottom: 0;
+  width: 85%;
+  left: 50%; /* centra il bottone orizzontalmente */
+  transform: translateX(-50%); /*sposta il bottone a sinistra del 50% della sua larghezza*/
+  text-align: center;
 }
 
 #signup-form #btn-signup-2 {
-  margin-top: 20.5rem;
+  position: absolute;
+  bottom: 0;
+  width: 85%;
+  left: 50%; /* centra il bottone orizzontalmente */
+  transform: translateX(-50%); /*sposta il bottone a sinistra del 50% della sua larghezza*/
+  text-align: center;
 }
 
 #signup-form #btn-signup-3 {
-  margin-top: 17rem;
+  position: absolute;
+  bottom: 0;
+  width: 85%;
+  left: 50%; /* centra il bottone orizzontalmente */
+  transform: translateX(-50%); /*sposta il bottone a sinistra del 50% della sua larghezza*/
+  text-align: center;
 }
 
 #signup-form #btn-signup-4 {
-  margin-top: 22rem;
+  
+  position: absolute;
+  bottom: 0;
+  width: 85%;
+  left: 50%; /* centra il bottone orizzontalmente */
+  transform: translateX(-50%); /*sposta il bottone a sinistra del 50% della sua larghezza*/
+  text-align: center;
+
 }
 
 #signup-form ul.pw-requisites {
