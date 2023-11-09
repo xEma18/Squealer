@@ -22,6 +22,21 @@ app.post('/signup', async (req, res) => {
     }
 });
 
+app.post('/login', async (req, res) => {
+  try {
+    const user = await UserModel.findByCredentials(req.body.username, req.body.password);
+    if (user !== null) {
+      res.status(200).json(user);
+    } else {
+      res.status(401).json({ error: 'Credenziali non valide' }); // Cambiato lo status a 401 per indicare un errore di autenticazione
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore durante il login' });
+  }
+});
+
+
 app.listen(3001, ()=>{
     console.log("Server is running")
 })

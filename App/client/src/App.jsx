@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import InitialPage from './InitialPageComponent.jsx';
-import SignUp1 from './SignUp1.jsx';
-import SignUp2 from './SignUp2.jsx';
-import SignUp3 from './SignUp3.jsx';
-import SignUp4 from './SignUp4.jsx';
-
+import SignUp1 from './SignUp/SignUp1.jsx';
+import SignUp2 from './SignUp/SignUp2.jsx';
+import SignUp3 from './SignUp/SignUp3.jsx';
+import SignUp4 from './SignUp/SignUp4.jsx';
+import Login from './Login/Login.jsx'
 
 
 const App = () => {
@@ -18,6 +18,7 @@ const App = () => {
     month: '',
     year: '',
     proCheck: false,
+    username:'',
     email: '',
     password:'',
     image:'',
@@ -37,7 +38,7 @@ const App = () => {
         <Route path="/SignUp2" element={<SignUp2 updateRegistrationData={updateRegistrationData} />} />
         <Route path="/SignUp3" element={<SignUp3 updateRegistrationData={updateRegistrationData} />} />
         <Route path= "/SignUp4" element={<SignUp4 updateRegistrationData={updateRegistrationData} registrationData={registrationData}  />} />
-        {/*<Route path="/Submit" element={<SignUpPage1 registrationData={registrationData} />} /> */}
+        <Route path= "/LogIn" element={<Login />} />
 
       </Routes>
     </Router>
