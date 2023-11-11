@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "../../../../../../-Università Bologna-/2022:2023/Tecnologie_Web/Progetto/Squealer/App"
+		},
+		{
+			"path": "../../../../../../-Università Bologna-/2022:2023/Tecnologie_Web/Progetto/Squealer/Front-end Ema"
+		},
+		{
+			"path": "../../../../../../-Università Bologna-/2022:2023/Tecnologie_Web/Progetto/Squealer/Moderator Dashboard"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "Moderator Dashboard"
+	}
+}

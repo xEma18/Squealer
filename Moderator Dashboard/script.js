@@ -3,25 +3,75 @@ function cambiaPagina(url) {
     window.location.href = url;
 }
 
+/* Gestione filtraggio risultati */
+
+document.getElementById("apply-filter").addEventListener("click", function () {
+    // Ottiengo i valori dai campi di filtro
+    const nomeFiltro = document.getElementById("name-filter").value;
+    const tipoFiltro = document.getElementById("type-filter").value;
+    const popolaritaFiltro = document.getElementById("popolarita-filter").value;
+
+    // Eseguo la funzione di filtro
+    filtraUtenti(nomeFiltro, tipoFiltro, popolaritaFiltro);
+});
+
+
+function filtraUtenti(nome, tipo, popolarita) {
+    const cards = document.querySelectorAll(".card"); // Seleziona tutte le carte degli utenti
+
+    cards.forEach(card => {
+        const nomeUtente = card.querySelector(".card-title").innerText;
+        //Prendo l'elemento Tipo utente: tipoutente creo un array del tipo ["Tipo utente","tipoutente"] con [1] prendo il tipoutente e grazie a .trim() rimuovo lo spazio bianco iniziale
+        const tipoUtente = card.querySelector('h6:nth-child(3)').innerText.split(":")[1].trim();
+        const popolaritaUtente = card.querySelector('h6:nth-child(4)').innerText.split(":")[1].trim();
+
+        // Controllo se l'utente soddisfa i criteri di filtro
+        const nomeMatch = nome === "" || nomeUtente.toLowerCase().includes(nome.toLowerCase());
+        const tipoMatch = tipo === "Tutti" || tipoUtente === tipo;
+        const popolaritaMatch = popolarita === "Qualsiasi" || popolaritaUtente === popolarita;
+
+        // Nascondo o mostro la carta in base ai criteri di filtro
+        if (nomeMatch && tipoMatch && popolaritaMatch) {
+            card.style.display = "block"; // Mostra la carta
+        } else {
+            card.style.display = "none"; // Nascondi la carta
+        }
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*Gestione modifica e salvataggio parametri utente*/
 
 // Prendo il box che contiene i bottoni
 const parentElement = document.getElementById("BtnBox");
 
-// Ottieni il riferimento al pulsante "Modifica" e ai campi dati
-/*
-const modificaBtn = document.getElementById("modificaBtn");
-const tipoUtenteField = document.querySelector("h6:nth-child(3)");
-const popolaritaField = document.querySelector("h6:nth-child(4)");
-const caratteriGiornalieriField = document.querySelector("h6:nth-child(5)");
-const caratteriSettimanaliField = document.querySelector("h6:nth-child(6)");
-const caratteriMensiliField = document.querySelector("h6:nth-child(7)");
-*/
+// Array di utenti
+var arrayUtenti = [];
+
+// Funzione per ottenere il numero della card dalla sua id
+function getCardNumber(cardId) {
+    // L'id della card è nella forma "card-X", quindi possiamo estrarre il numero dalla fine dell'id
+    const cardNumber = cardId.split('-')[1];
+    return parseInt(cardNumber);
+}
 
 
 
 // Aggiungi un gestore di eventi al pulsante "Modifica"
-function ModifyButton(cardId) {
+function ModifyButton(cardId,cardNumber) {
+    console.log(arrayUtenti)
     // Capisco che card è stata selezionata
     const card = document.getElementById(cardId);
 
@@ -29,9 +79,9 @@ function ModifyButton(cardId) {
     const modificaBtn = card.querySelector("#modificaBtn");
     const tipoUtenteField = card.querySelector('h6:nth-child(3)');
     const popolaritaField = card.querySelector('h6:nth-child(4)');
-    const caratteriGiornalieriField = document.querySelector("h6:nth-child(5)");
-    const caratteriSettimanaliField = document.querySelector("h6:nth-child(6)");
-    const caratteriMensiliField = document.querySelector("h6:nth-child(7)");
+    const caratteriGiornalieriField = card.querySelector("h6:nth-child(5)");
+    const caratteriSettimanaliField = card.querySelector("h6:nth-child(6)");
+    const caratteriMensiliField = card.querySelector("h6:nth-child(7)");
 
     // Rendi invisibile il pulsante modifica
     modificaBtn.style.display = "none";
@@ -49,21 +99,81 @@ function ModifyButton(cardId) {
         <option value="Media">Media</option>
         <option value="Bassa">Bassa</option>
     </select>`;
+    caratteriGiornalieriField.innerHTML = `<span class="fw-bold">Caratteri Giornalieri:</span> <input type="number" id="caratteriGiornalieriInput">`
+    caratteriSettimanaliField.innerHTML = `<span class="fw-bold">Caratteri Settimanali:</span> <input type="number" id="caratteriSettimanaliInput">`;
+    caratteriMensiliField.innerHTML = `<span class="fw-bold">Caratteri Mensili:</span> <input type="number" id="caratteriMensiliInput">`;
 
-    const utenteModificato = {
-        tipoUtente: tipoUtenteField.textContent,
-        popolarita: popolaritaField.textContent,
-        caratteriGiornalieri: parseInt(caratteriGiornalieriField.textContent),
-        caratteriSettimanali: parseInt(caratteriSettimanaliField.textContent),
-        caratteriMensili: parseInt(caratteriMensiliField.textContent)
-    };
+    let utenteModificato = arrayUtenti[cardNumber - 1];
+    if (!utenteModificato) {
+        // Se l'utente non è presente, crea un nuovo oggetto utente
+        utenteModificato = {
+            tipoUtente: tipoUtenteField.value,
+            popolarita: popolaritaField.value,
+            caratteriGiornalieri: parseInt(caratteriGiornalieriField.textContent),
+            caratteriSettimanali: parseInt(caratteriSettimanaliField.textContent),
+            caratteriMensili: parseInt(caratteriMensiliField.textContent)
+        };
+        arrayUtenti[cardNumber - 1] = utenteModificato;
 
-    caratteriGiornalieriField.innerHTML = `<span class="fw-bold">Caratteri Giornalieri:</span> <input type="number" id="caratteriGiornalieriInput" value="${utenteModificato.caratteriGiornalieri}">`;
-    caratteriSettimanaliField.innerHTML = `<span class="fw-bold">Caratteri Settimanali:</span> <input type="number" id="caratteriSettimanaliInput" value="${utenteModificato.caratteriSettimanali}">`;
-    caratteriMensiliField.innerHTML = `<span class="fw-bold">Caratteri Mensili:</span> <input type="number" id="caratteriMensiliInput" value="${utenteModificato.caratteriMensili}">`;
+    }
+    else {
+    // Aggiorno i valori dei campi
+    if((arrayUtenti[cardNumber-1].tipoUtente) == "VIP"){
+        tipoUtenteField.innerHTML = `<span class="fw-bold">Tipo utente:</span>
+        <select id="tipoUtenteInput">
+        <option value="VIP" selected="selected">VIP</option>
+        <option value="Normale">Normale</option>
+        <option value="Premium">Premium</option>
+        </select>`;
+        } 
+        else if((arrayUtenti[cardNumber-1].tipoUtente) == "Normale"){
+            tipoUtenteField.innerHTML = `<span class="fw-bold">Tipo utente:</span>
+            <select id="tipoUtenteInput">
+            <option value="VIP">VIP</option>
+            <option value="Normale" selected="selected">Normale</option>
+            <option value="Premium">Premium</option>
+            </select>`;
+        }
+            else {
+                tipoUtenteField.innerHTML = `<span class="fw-bold">Tipo utente:</span>
+                <select id="tipoUtenteInput">
+                <option value="VIP">VIP</option>
+                <option value="Normale">Normale</option>
+                <option value="Premium" selected="selected">Premium</option>
+                </select>`;
+            }
+    if((arrayUtenti[cardNumber-1].popolarita) == "Alta"){
+    popolaritaField.innerHTML =  `<span class="fw-bold">Popolarità:</span>
+    <select id="popolaritaInput">
+        <option value="Alta" selected="selected">Alta</option>
+        <option value="Media">Media</option>
+        <option value="Bassa">Bassa</option>
+    </select>`; 
+    } 
+    else if((arrayUtenti[cardNumber-1].popolarita) == "Media"){
+        popolaritaField.innerHTML =  `<span class="fw-bold">Popolarità:</span>
+        <select id="popolaritaInput">
+            <option value="Alta">Alta</option>
+            <option value="Media" selected="selected">Media</option>
+            <option value="Bassa">Bassa</option>
+        </select>`; 
+    }
+        else {
+            popolaritaField.innerHTML =  `<span class="fw-bold">Popolarità:</span>
+        <select id="popolaritaInput">
+            <option value="Alta">Alta</option>
+            <option value="Media"</option>
+            <option value="Bassa" selected="selected">Bassa</option>
+        </select>`; 
+        }
+    caratteriGiornalieriField.innerHTML = `<span class="fw-bold">Caratteri Giornalieri:</span> <input type="number" id="caratteriGiornalieriInput" value="${arrayUtenti[cardNumber-1].caratteriGiornalieri}">`;
+    caratteriSettimanaliField.innerHTML = `<span class="fw-bold">Caratteri Settimanali:</span> <input type="number" id="caratteriSettimanaliInput" value="${arrayUtenti[cardNumber-1].caratteriSettimanali}">`;
+    caratteriMensiliField.innerHTML = `<span class="fw-bold">Caratteri Mensili:</span> <input type="number" id="caratteriMensiliInput" value="${arrayUtenti[cardNumber-1].caratteriMensili}">`;
+    }
 
+    console.log(arrayUtenti)
     // Aggiungi il pulsante "Salva Modifiche"
-    const cardBody = document.querySelector(".card-body");
+    const cardBody = card.querySelector(".card-body");
     const saveChangesBtn = document.createElement("button");
     saveChangesBtn.classList.add("btn");
     saveChangesBtn.classList.add("btn-primary");
@@ -73,11 +183,11 @@ function ModifyButton(cardId) {
     // Gestisci il salvataggio delle modifiche
     saveChangesBtn.addEventListener("click", function () {
         // Ottieni i nuovi valori dai campi di input
-        const nuovoTipoUtente = document.getElementById("tipoUtenteInput").value;
-        const nuovaPopolarita = document.getElementById("popolaritaInput").value;
-        const nuoviCaratteriGiornalieri = document.getElementById("caratteriGiornalieriInput").value;
-        const nuoviCaratteriSettimanali = document.getElementById("caratteriSettimanaliInput").value;
-        const nuoviCaratteriMensili = document.getElementById("caratteriMensiliInput").value;
+        const nuovoTipoUtente = card.querySelector("#tipoUtenteInput").value;
+        const nuovaPopolarita = card.querySelector("#popolaritaInput").value;
+        const nuoviCaratteriGiornalieri = card.querySelector("#caratteriGiornalieriInput").value;
+        const nuoviCaratteriSettimanali = card.querySelector("#caratteriSettimanaliInput").value;
+        const nuoviCaratteriMensili = card.querySelector("#caratteriMensiliInput").value;
 
         // Aggiorna l'oggetto utenteModificato con i nuovi valori
         utenteModificato.tipoUtente = nuovoTipoUtente;
@@ -85,6 +195,7 @@ function ModifyButton(cardId) {
         utenteModificato.caratteriGiornalieri = parseInt(nuoviCaratteriGiornalieri);
         utenteModificato.caratteriSettimanali = parseInt(nuoviCaratteriSettimanali);
         utenteModificato.caratteriMensili = parseInt(nuoviCaratteriMensili);
+
 
         // Aggiorna i campi con i nuovi valori
         tipoUtenteField.innerHTML = `<span class="fw-bold">Tipo utente:</span> ${nuovoTipoUtente}`;
@@ -98,23 +209,23 @@ function ModifyButton(cardId) {
 
         // Mostra nuovamente il pulsante "Modifica"
         modificaBtn.style.display = "inline-block";
+        console.log(arrayUtenti)
     });
 };
 
 
+
 parentElement.addEventListener("click", function(event) {
     if (event.target.id == "modificaBtn") {
-        console.log(event)
         // Verifica se l'elemento di destinazione del clic è un pulsante con l'id "modificaBtn"
         const card = event.target.closest(".card"); // Trova la card padre dell'elemento cliccato
 
         if (card) {
-            console.log(card)
             // Ottieni l'id univoco assegnato direttamente alla card
             const cardId = card.id;
-            console.log(cardId)
+            const cardNumber = getCardNumber(cardId);
             // Chiama la funzione di modifica specifica per la card corrispondente
-            ModifyButton(cardId);
+            ModifyButton(cardId,cardNumber);
         }
     }
 });
