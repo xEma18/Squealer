@@ -229,3 +229,58 @@ parentElement.addEventListener("click", function(event) {
         }
     }
 });
+
+
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const response = await fetch('http://localhost:3001/users');
+        const users = await response.json();
+        
+        // Aggiorna le card con i dati degli utenti
+        updateCards(users);
+    } catch (error) {
+        console.error('Errore durante il recupero degli utenti:', error);
+    }
+});
+
+
+function updateCards(users) {
+    const cards = document.querySelectorAll('.card');
+
+    cards.forEach((card, index) => {
+        const cardBody = card.querySelector('.card-body');
+        const nameElement = cardBody.querySelector('.card-title');
+        const statusElement=cardBody.querySelector('.status');
+        const tipoUtenteElement = cardBody.querySelector('.tipoUtente');
+        const popolaritaElement=cardBody.querySelector('.popolarita')
+        const caratteriGiornalieriElement=cardBody.querySelector('.caratteriGiornalieri');
+        const caratteriSettimanaliElement=cardBody.querySelector('.caratteriSettimanali');
+        const caratteriMensiliElement=cardBody.querySelector('.caratteriMensili');
+
+        // Mi assicuro che l'indice sia valido nell' array di utenti
+        if (index < users.length) {
+            const user = users[index];
+            
+            // Aggiorno gli elementi della card con i dati dell'utente corrente
+            nameElement.textContent = `${user.name} ${user.lastname}`;
+
+            statusElement.textContent=`${user.status}`;
+            if (user.status === "Attivo") {
+                statusElement.style.color = "green";
+            } else {
+                statusElement.style.color = "rgb(128, 0, 0)";
+            }
+
+            tipoUtenteElement.textContent = ` ${user.tipoUtente}`;
+
+            popolaritaElement.textContent=` ${user.popolarità}`;
+
+            caratteriGiornalieriElement.textContent=` ${user.caratteriGiornalieri}`;
+            caratteriSettimanaliElement.textContent=` ${user.caratteriSettimanali}`;
+            caratteriMensiliElement.textContent=` ${user.caratteriMensili}`;
+
+            
+        }
+    });
+}
+

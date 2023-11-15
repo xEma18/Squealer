@@ -12,6 +12,11 @@ const UserSchema=new mongoose.Schema({
     password:String,
     image:String,
     description:String,
+    tipoUtente:String,
+    popolarità:String,
+    caratteriGiornalieri:Number,
+    caratteriSettimanali:Number,
+    caratteriMensili:Number,
 })
 
 UserSchema.statics.findByCredentials=async function(username, password){
