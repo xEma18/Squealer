@@ -30,6 +30,18 @@ UserSchema.statics.findByCredentials=async function(username, password){
     }
 };
 
+UserSchema.statics.findByNameAndLastname=async function(name, lastname){
+    const user=await this.findOne({name});
+    if(user){
+        if(user.lastname===lastname){
+            return user
+        }
+        else {
+            return null
+        }
+    }
+};
+
 
 
 
