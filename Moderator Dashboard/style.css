@@ -80,4 +80,10 @@ outline-offset: 3px;
       width: 25rem;
     }
  
-  
+.selected {
+    color: rgb(0, 255, 64); /* Puoi personalizzare il colore selezionato */
+}
+
+.reaction{
+    cursor:pointer;
+}

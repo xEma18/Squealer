@@ -196,7 +196,6 @@ function ModifyButton(cardId,cardNumber) {
         utenteModificato.caratteriSettimanali = parseInt(nuoviCaratteriSettimanali);
         utenteModificato.caratteriMensili = parseInt(nuoviCaratteriMensili);
 
-
         // Aggiorna i campi con i nuovi valori
         tipoUtenteField.innerHTML = `<span class="fw-bold">Tipo utente:</span> ${nuovoTipoUtente}`;
         popolaritaField.innerHTML = `<span class="fw-bold">Popolarità:</span> ${nuovaPopolarita}`;
