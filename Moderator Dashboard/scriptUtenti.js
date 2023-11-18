@@ -77,6 +77,12 @@ function ModifyButton(cardId,cardNumber) {
 
     // Prendo tutti i campi della card
     const modificaBtn = card.querySelector("#modificaBtn");
+
+    const nomeECognomeElemento=card.querySelector(".nomeECognome")
+    const nomeECognomeTesto=nomeECognomeElemento.textContent || nomeECognomeElemento.innerText;
+    const [nome, cognome] = nomeECognomeTesto.split(' ');
+
+
     const tipoUtenteField = card.querySelector('h6:nth-child(3)');
     const popolaritaField = card.querySelector('h6:nth-child(4)');
     const caratteriGiornalieriField = card.querySelector("h6:nth-child(5)");
@@ -107,6 +113,7 @@ function ModifyButton(cardId,cardNumber) {
     if (!utenteModificato) {
         // Se l'utente non è presente, crea un nuovo oggetto utente
         utenteModificato = {
+            //capire come mettere il campo nome
             tipoUtente: tipoUtenteField.value,
             popolarita: popolaritaField.value,
             caratteriGiornalieri: parseInt(caratteriGiornalieriField.textContent),
@@ -169,6 +176,8 @@ function ModifyButton(cardId,cardNumber) {
     caratteriGiornalieriField.innerHTML = `<span class="fw-bold">Caratteri Giornalieri:</span> <input type="number" id="caratteriGiornalieriInput" value="${arrayUtenti[cardNumber-1].caratteriGiornalieri}">`;
     caratteriSettimanaliField.innerHTML = `<span class="fw-bold">Caratteri Settimanali:</span> <input type="number" id="caratteriSettimanaliInput" value="${arrayUtenti[cardNumber-1].caratteriSettimanali}">`;
     caratteriMensiliField.innerHTML = `<span class="fw-bold">Caratteri Mensili:</span> <input type="number" id="caratteriMensiliInput" value="${arrayUtenti[cardNumber-1].caratteriMensili}">`;
+
+
     }
 
     console.log(arrayUtenti)
@@ -181,7 +190,7 @@ function ModifyButton(cardId,cardNumber) {
     cardBody.appendChild(saveChangesBtn);
 
     // Gestisci il salvataggio delle modifiche
-    saveChangesBtn.addEventListener("click", function () {
+    saveChangesBtn.addEventListener("click", async function () {
         // Ottieni i nuovi valori dai campi di input
         const nuovoTipoUtente = card.querySelector("#tipoUtenteInput").value;
         const nuovaPopolarita = card.querySelector("#popolaritaInput").value;
@@ -195,6 +204,39 @@ function ModifyButton(cardId,cardNumber) {
         utenteModificato.caratteriGiornalieri = parseInt(nuoviCaratteriGiornalieri);
         utenteModificato.caratteriSettimanali = parseInt(nuoviCaratteriSettimanali);
         utenteModificato.caratteriMensili = parseInt(nuoviCaratteriMensili);
+        
+        // Chiamata POST all'API per aggiornare i valori nel database
+        try {
+            const response = await fetch('http://localhost:3001/editUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    //mi servono nome e cognome per trovare e modificare l'user corretto nel database
+                    nome: nome,  
+                    cognome:cognome,
+                    popolarita: utenteModificato.popolarita,
+                    tipoUtente: utenteModificato.tipoUtente,
+                    caratteriGiornalieri: utenteModificato.caratteriGiornalieri,
+                    caratteriSettimanali: utenteModificato.caratteriSettimanali,
+                    caratteriMensili: utenteModificato.caratteriMensili,
+                }),
+            });
+    
+            if (!response.ok) {
+                throw new Error('Errore durante la chiamata POST all\'API');
+            }
+    
+            console.log('Dati aggiornati con successo nel database');
+        } catch (error) {
+            console.error('Errore durante la chiamata POST all\'API:', error);
+        }
+
+
+
+
+
 
         // Aggiorna i campi con i nuovi valori
         tipoUtenteField.innerHTML = `<span class="fw-bold">Tipo utente:</span> ${nuovoTipoUtente}`;
@@ -228,3 +270,58 @@ parentElement.addEventListener("click", function(event) {
         }
     }
 });
+
+
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const response = await fetch('http://localhost:3001/users');
+        const users = await response.json();
+        
+        // Aggiorna le card con i dati degli utenti
+        updateCards(users);
+    } catch (error) {
+        console.error('Errore durante il recupero degli utenti:', error);
+    }
+});
+
+
+function updateCards(users) {
+    const cards = document.querySelectorAll('.card');
+
+    cards.forEach((card, index) => {
+        const cardBody = card.querySelector('.card-body');
+        const nameElement = cardBody.querySelector('.card-title');
+        const statusElement=cardBody.querySelector('.status');
+        const tipoUtenteElement = cardBody.querySelector('.tipoUtente');
+        const popolaritaElement=cardBody.querySelector('.popolarita')
+        const caratteriGiornalieriElement=cardBody.querySelector('.caratteriGiornalieri');
+        const caratteriSettimanaliElement=cardBody.querySelector('.caratteriSettimanali');
+        const caratteriMensiliElement=cardBody.querySelector('.caratteriMensili');
+
+        // Mi assicuro che l'indice sia valido nell' array di utenti
+        if (index < users.length) {
+            const user = users[index];
+            
+            // Aggiorno gli elementi della card con i dati dell'utente corrente
+            nameElement.textContent = `${user.name} ${user.lastname}`;
+
+            statusElement.textContent=`${user.status}`;
+            if (user.status === "Attivo") {
+                statusElement.style.color = "green";
+            } else {
+                statusElement.style.color = "rgb(128, 0, 0)";
+            }
+
+            tipoUtenteElement.textContent = ` ${user.tipoUtente}`;
+
+            popolaritaElement.textContent=` ${user.popolarità}`;
+
+            caratteriGiornalieriElement.textContent=` ${user.caratteriGiornalieri}`;
+            caratteriSettimanaliElement.textContent=` ${user.caratteriSettimanali}`;
+            caratteriMensiliElement.textContent=` ${user.caratteriMensili}`;
+
+            
+        }
+    });
+}
+

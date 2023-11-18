@@ -23,6 +23,11 @@ const App = () => {
     password:'',
     image:'',
     description:'',
+    tipoUtente:'',
+    popolarità:'',
+    caratteriGiornalieri:'',
+    caratteriSettimanali:'',
+    caratteriMensili:'',
   });
 
    // Funzione per aggiornare i dati della registrazione (mantiene i dati già scritti e scrive in nuovi dati che passo come parametro)

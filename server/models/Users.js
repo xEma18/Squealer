@@ -12,6 +12,11 @@ const UserSchema=new mongoose.Schema({
     password:String,
     image:String,
     description:String,
+    tipoUtente:String,
+    popolarità:String,
+    caratteriGiornalieri:Number,
+    caratteriSettimanali:Number,
+    caratteriMensili:Number,
 })
 
 UserSchema.statics.findByCredentials=async function(username, password){
@@ -20,6 +25,18 @@ UserSchema.statics.findByCredentials=async function(username, password){
         if(user.password===password){
             return user
         }else{
+            return null
+        }
+    }
+};
+
+UserSchema.statics.findByNameAndLastname=async function(name, lastname){
+    const user=await this.findOne({name});
+    if(user){
+        if(user.lastname===lastname){
+            return user
+        }
+        else {
             return null
         }
     }
