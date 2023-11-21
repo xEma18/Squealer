@@ -1,17 +1,17 @@
 const mongoose=require('mongoose')
 
 const UserSchema=new mongoose.Schema({
+    username:String,
     name:String,
     lastname:String,
     day:Number,
     month:Number,
     year:Number,
-    proCheck:Boolean,
-    username:String,
     email:String,
     password:String,
     image:String,
     description:String,
+    statoAccount:String,
     tipoUtente:String,
     popolarità:String,
     caratteriGiornalieri:Number,
