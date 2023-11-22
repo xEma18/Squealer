@@ -194,7 +194,6 @@ a:active {
 
 #signup-form .form-text {
   margin-top: 2rem;
-
   font-weight: 500;
   font-size: 1.4rem;
 }
@@ -227,8 +226,22 @@ a:active {
 
 #signup-form .pro-box {
   font-size: 1.3rem;
+}
 
-  padding-top: 1rem;
+#signup-form .pro-box label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+
+#signup-form .pro-box select {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid #949797;
+  border-radius: 5px;
+  background-color: #f7f7f7;
+  font-size: 1.3rem;
+  color: #000;
 }
 
 #signup-form .pro-box #pro-check {

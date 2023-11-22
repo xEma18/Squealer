@@ -1,9 +1,5 @@
 import React, { useState } from 'react';
 import '../style.css';
-
-
-
-
 import { Link, useNavigate } from 'react-router-dom';
 
 const SignUp1 = ({ updateRegistrationData }) => {
@@ -15,7 +11,7 @@ const SignUp1 = ({ updateRegistrationData }) => {
   const [day, setDay]=useState('');
   const [month, setMonth]=useState('');
   const [year, setYear]=useState('');
-  const [proCheck, setProCheck]=useState(false);
+  const [tipoUtente, setTipoUtente]=useState('');
 
   const handleNext=async ()=>{
     //aggiorno i dati nello stato registrationData
@@ -25,7 +21,7 @@ const SignUp1 = ({ updateRegistrationData }) => {
       day,
       month,
       year,
-      proCheck,
+      tipoUtente,
     });
 
     //navigo alla componente SignUp2
@@ -46,12 +42,17 @@ const SignUp1 = ({ updateRegistrationData }) => {
           <input type="text" id="b-month" placeholder="mm" onChange={(e)=>setMonth(e.target.value)} value={month} />
           <input type="text" id="b-year" placeholder="aaaa" onChange={(e)=>setYear(e.target.value)} value={year} />
         </div>
-        <div className="form-text">Hai diritto ad essere PRO?</div>
         <div className="pro-box">
-          <input type="checkbox" id="pro-check" checked={proCheck} onChange={(e)=>setProCheck(e.target.checked)}  />Richiedi l'abilitazione PRO
+          <label htmlFor="accountType" className="form-text">Tipologia account</label>
+          <select id="accountType" onChange={(e) => setTipoUtente(e.target.value)} value={tipoUtente}>
+            <option value="" disabled>Seleziona un'opzione</option>
+            <option value="Standard">Standard</option>
+            <option value="VIP">VIP</option>
+            <option value="Premium">Premium</option>
+          </select>
         </div>
         <div className="pro-note">
-          <span>Nota:</span> prima di poter usufruire delle funzionalità PRO, un
+          <span>Nota:</span> prima di poter usufruire delle funzionalità VIP o Premium, un
           moderatore dovrà valutare la tua richiesta.
         </div>
         <div className="btn btn-avanti" id="btn-signup-1" onClick={handleNext}>Avanti</div>

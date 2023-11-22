@@ -304,8 +304,8 @@ function updateCards(users) {
             // Aggiorno gli elementi della card con i dati dell'utente corrente
             nameElement.textContent = `${user.name} ${user.lastname}`;
 
-            statusElement.textContent=`${user.status}`;
-            if (user.status === "Attivo") {
+            statusElement.textContent=`${user.statoAccount}`;
+            if (user.statoAccount === "Attivo") {
                 statusElement.style.color = "green";
             } else {
                 statusElement.style.color = "rgb(128, 0, 0)";

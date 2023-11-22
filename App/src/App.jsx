@@ -12,22 +12,22 @@ const App = () => {
 
    // Stati per memorizzare i dati della registrazione raccolti in SignUp1, SignUp2, SignUp3
   const [registrationData, setRegistrationData] = useState({
+    username:'',
     name: '',
     lastname: '',
     day: '',
     month: '',
     year: '',
-    proCheck: false,
-    username:'',
     email: '',
     password:'',
     image:'',
     description:'',
+    statoAccount:'Attivo',
     tipoUtente:'',
-    popolarità:'',
-    caratteriGiornalieri:'',
-    caratteriSettimanali:'',
-    caratteriMensili:'',
+    popolarità:'Bassa',
+    caratteriGiornalieri:'100',
+    caratteriSettimanali:'5',
+    caratteriMensili:'5',
   });
 
    // Funzione per aggiornare i dati della registrazione (mantiene i dati già scritti e scrive in nuovi dati che passo come parametro)
