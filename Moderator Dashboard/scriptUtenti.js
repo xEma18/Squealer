@@ -180,7 +180,6 @@ function ModifyButton(cardId,cardNumber) {
 
     }
 
-    console.log(arrayUtenti)
     // Aggiungi il pulsante "Salva Modifiche"
     const cardBody = card.querySelector(".card-body");
     const saveChangesBtn = document.createElement("button");
@@ -207,12 +206,12 @@ function ModifyButton(cardId,cardNumber) {
         
         // Chiamata POST all'API per aggiornare i valori nel database
         try {
-            const response = await fetch('http://localhost:3001/editUser', {
+            const response = await fetch('http://localhost:3001/editUser', { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
+                body: JSON.stringify({ //Da definire l'username 
                     //mi servono nome e cognome per trovare e modificare l'user corretto nel database
                     nome: nome,  
                     cognome:cognome,

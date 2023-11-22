@@ -1,16 +1,20 @@
 // Function to handle emoticon selection
 function selectEmoticon(emoticonId) {
-    if(document.querySelector(emoticonId).classList){
-        emoticonId.classList.remove('selected');
-    }
+    // Get the clicked emoticon
+    var clickedEmoticon = document.getElementById(emoticonId);
+
+    // Check if the clicked emoticon is already selected
+    var isAlreadySelected = clickedEmoticon.classList.contains('selected');
+
     // Deselect all emoticons
     document.querySelectorAll('.material-icons').forEach(function (icon) {
-        icon.classList.remove('selected');
+        icon.classList.remove('selected', 'verygood', 'good', 'bad', 'verybad');
     });
 
-    // Select the clicked emoticon
-    var selectedEmoticon = document.getElementById(emoticonId);
-    selectedEmoticon.classList.add('selected');
+    // If the clicked emoticon was not already selected, select it
+    if (!isAlreadySelected) {
+        clickedEmoticon.classList.add('selected');
+    }
 }
 
 // Attach click event listeners to each emoticon
