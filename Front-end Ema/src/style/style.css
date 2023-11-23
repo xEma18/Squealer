@@ -108,19 +108,10 @@ a:active {
   color: #e1e1e1;
 }
 
-#btn-registrati {
-}
-
-#btn-accedi {
-}
-
 #btn-pro-zone {
   color: #895b2c;
   background-color: #f7f7f7;
   border: 1px solid #895b2c;
-}
-
-#btn-pro-zone:active {
 }
 
 .divider {
