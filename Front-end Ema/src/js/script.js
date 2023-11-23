@@ -8,9 +8,14 @@ const pathManuel = `C:/Users/manue/Desktop/Squealer`;
 
 if (document.location.href == `${pathEma}/index.html`) {
   const signUpBtn = document.querySelector("#btn-registrati");
+  const signInBtn = document.querySelector("#btn-accedi");
 
   signUpBtn.addEventListener("click", () => {
     document.location.href = "sign_up.html";
+  });
+
+  signInBtn.addEventListener("click", () => {
+    document.location.href = "sign_in.html";
   });
 }
 

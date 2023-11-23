@@ -157,29 +157,29 @@ a:active {
   text-transform: uppercase;
 }
 
-#signup-form {
+.sign-form {
   padding: 1rem 2rem;
 }
 
-#signup-form .title {
+.sign-form .title {
   padding: 0;
 
   font-size: 3rem;
   /* color: #dbb77c; */
 }
 
-#signup-form .t-small {
+.sign-form .t-small {
   font-size: 2rem;
   line-height: 120%;
 }
 
-#signup-form .s-small {
+.sign-form .s-small {
   font-weight: 600;
 }
 
-#signup-form input[type="text"],
-#signup-form input[type="email"],
-#signup-form input[type="password"] {
+.sign-form input[type="text"],
+.sign-form input[type="email"],
+.sign-form input[type="password"] {
   margin-top: 1.5rem;
   width: 100%;
 
@@ -192,14 +192,14 @@ a:active {
   background-color: #f7f7f7;
 }
 
-#signup-form .form-text {
+.sign-form .form-text {
   margin-top: 2rem;
 
   font-weight: 500;
   font-size: 1.4rem;
 }
 
-#signup-form .birth-container {
+.sign-form .birth-container {
   display: flex;
   justify-content: space-around;
   align-self: center;
@@ -207,45 +207,45 @@ a:active {
   margin-bottom: 3rem;
 }
 
-#signup-form .birth-container input[type="text"] {
+.sign-form .birth-container input[type="text"] {
   margin-top: 1rem;
 }
 
-#signup-form .birth-container #b-day {
+.sign-form .birth-container #b-day {
   flex: 1;
 }
 
-#signup-form .birth-container #b-month {
+.sign-form .birth-container #b-month {
   flex: 1;
   margin-left: 1rem;
 }
 
-#signup-form .birth-container #b-year {
+.sign-form .birth-container #b-year {
   flex: 2;
   margin-left: 1rem;
 }
 
-#signup-form .pro-box {
+.sign-form .pro-box {
   font-size: 1.3rem;
 
   padding-top: 1rem;
 }
 
-#signup-form .pro-box #pro-check {
+.sign-form .pro-box #pro-check {
   margin-right: 1rem;
 }
 
-#signup-form .pro-note {
+.sign-form .pro-note {
   font-size: 0.8rem;
   font-weight: 200;
   margin-top: 0.5rem;
 }
 
-#signup-form .pro-note span {
+.sign-form .pro-note span {
   font-weight: 400;
 }
 
-#signup-form .btn {
+.sign-form .btn {
   margin-top: 3rem;
 }
 
@@ -261,7 +261,7 @@ a:active {
   margin-top: 22rem;
 }
 
-#signup-form ul.pw-requisites {
+.sign-form ul.pw-requisites {
   list-style-position: inside;
 
   margin-top: 0.9rem;
@@ -271,24 +271,24 @@ a:active {
   color: #949797;
 }
 
-#signup-form i {
+.sign-form i {
   display: block;
   text-align: center;
   margin-top: 5rem;
 }
 
-#signup-form textarea#description-box {
+.sign-form textarea#description-box {
   background-color: #f7f7f7;
   width: 100%;
   border-radius: 5px;
   padding: 2rem 0.8rem 0.8rem 0.8rem;
 }
 
-#signup-form .t-area-container {
+.sign-form .t-area-container {
   position: relative;
 }
 
-#signup-form .t-area-container .word-counter {
+.sign-form .t-area-container .word-counter {
   position: absolute;
   top: 0;
   right: 0;
