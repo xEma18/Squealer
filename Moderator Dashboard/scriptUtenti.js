@@ -3,6 +3,19 @@ function cambiaPagina(url) {
     window.location.href = url;
 }
 
+/*Fetch degli utenti*/ 
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const response = await fetch('http://localhost:3001/users');
+        const users = await response.json();
+        
+        // Aggiorna le card con i dati degli utenti
+        updateCards(users);
+    } catch (error) {
+        console.error('Errore durante il recupero degli utenti:', error);
+    }
+});
+
 /* Gestione filtraggio risultati */
 
 document.getElementById("apply-filter").addEventListener("click", function () {
@@ -14,8 +27,6 @@ document.getElementById("apply-filter").addEventListener("click", function () {
     // Eseguo la funzione di filtro
     filtraUtenti(nomeFiltro, tipoFiltro, popolaritaFiltro);
 });
-
-
 function filtraUtenti(nome, tipo, popolarita) {
     const cards = document.querySelectorAll(".card"); // Seleziona tutte le carte degli utenti
 
@@ -40,18 +51,6 @@ function filtraUtenti(nome, tipo, popolarita) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 /*Gestione modifica e salvataggio parametri utente*/
 
 // Prendo il box che contiene i bottoni
@@ -67,8 +66,6 @@ function getCardNumber(cardId) {
     return parseInt(cardNumber);
 }
 
-
-
 // Aggiungi un gestore di eventi al pulsante "Modifica"
 function ModifyButton(cardId,cardNumber) {
     console.log(arrayUtenti)
@@ -81,7 +78,6 @@ function ModifyButton(cardId,cardNumber) {
     const nomeECognomeElemento=card.querySelector(".nomeECognome")
     const nomeECognomeTesto=nomeECognomeElemento.textContent || nomeECognomeElemento.innerText;
     const [nome, cognome] = nomeECognomeTesto.split(' ');
-
 
     const tipoUtenteField = card.querySelector('h6:nth-child(3)');
     const popolaritaField = card.querySelector('h6:nth-child(4)');
@@ -176,8 +172,6 @@ function ModifyButton(cardId,cardNumber) {
     caratteriGiornalieriField.innerHTML = `<span class="fw-bold">Caratteri Giornalieri:</span> <input type="number" id="caratteriGiornalieriInput" value="${arrayUtenti[cardNumber-1].caratteriGiornalieri}">`;
     caratteriSettimanaliField.innerHTML = `<span class="fw-bold">Caratteri Settimanali:</span> <input type="number" id="caratteriSettimanaliInput" value="${arrayUtenti[cardNumber-1].caratteriSettimanali}">`;
     caratteriMensiliField.innerHTML = `<span class="fw-bold">Caratteri Mensili:</span> <input type="number" id="caratteriMensiliInput" value="${arrayUtenti[cardNumber-1].caratteriMensili}">`;
-
-
     }
 
     // Aggiungi il pulsante "Salva Modifiche"
@@ -232,11 +226,6 @@ function ModifyButton(cardId,cardNumber) {
             console.error('Errore durante la chiamata POST all\'API:', error);
         }
 
-
-
-
-
-
         // Aggiorna i campi con i nuovi valori
         tipoUtenteField.innerHTML = `<span class="fw-bold">Tipo utente:</span> ${nuovoTipoUtente}`;
         popolaritaField.innerHTML = `<span class="fw-bold">Popolarità:</span> ${nuovaPopolarita}`;
@@ -253,8 +242,6 @@ function ModifyButton(cardId,cardNumber) {
     });
 };
 
-
-
 parentElement.addEventListener("click", function(event) {
     if (event.target.id == "modificaBtn") {
         // Verifica se l'elemento di destinazione del clic è un pulsante con l'id "modificaBtn"
@@ -270,57 +257,43 @@ parentElement.addEventListener("click", function(event) {
     }
 });
 
-
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        const response = await fetch('http://localhost:3001/users');
-        const users = await response.json();
-        
-        // Aggiorna le card con i dati degli utenti
-        updateCards(users);
-    } catch (error) {
-        console.error('Errore durante il recupero degli utenti:', error);
-    }
-});
-
-
 function updateCards(users) {
-    const cards = document.querySelectorAll('.card');
+    // Prendo l'elemento con le card
+    const container = document.querySelector('#wrapper');
 
-    cards.forEach((card, index) => {
-        const cardBody = card.querySelector('.card-body');
-        const nameElement = cardBody.querySelector('.card-title');
-        const statusElement=cardBody.querySelector('.status');
-        const tipoUtenteElement = cardBody.querySelector('.tipoUtente');
-        const popolaritaElement=cardBody.querySelector('.popolarita')
-        const caratteriGiornalieriElement=cardBody.querySelector('.caratteriGiornalieri');
-        const caratteriSettimanaliElement=cardBody.querySelector('.caratteriSettimanali');
-        const caratteriMensiliElement=cardBody.querySelector('.caratteriMensili');
-
-        // Mi assicuro che l'indice sia valido nell' array di utenti
-        if (index < users.length) {
-            const user = users[index];
-            
-            // Aggiorno gli elementi della card con i dati dell'utente corrente
-            nameElement.textContent = `${user.name} ${user.lastname}`;
-
-            statusElement.textContent=`${user.statoAccount}`;
-            if (user.statoAccount === "Attivo") {
-                statusElement.style.color = "green";
-            } else {
-                statusElement.style.color = "rgb(128, 0, 0)";
-            }
-
-            tipoUtenteElement.textContent = ` ${user.tipoUtente}`;
-
-            popolaritaElement.textContent=` ${user.popolarità}`;
-
-            caratteriGiornalieriElement.textContent=` ${user.caratteriGiornalieri}`;
-            caratteriSettimanaliElement.textContent=` ${user.caratteriSettimanali}`;
-            caratteriMensiliElement.textContent=` ${user.caratteriMensili}`;
-
-            
-        }
-    });
+    // Resetto il wrapper da eventuali card rimaster
+    container.innerHTML = "";
+    // Itero sugli utenti creando una card per utente
+    for(let i=0; i<users.length; i++){
+        if (users[i].status === "Attivo") {
+            container.innerHTML +=`
+            <div class="card ms-1" id="card-${i}">
+                <div class="card-body">
+                    <h4 class="nomeECognome card-title fw-bold exr">${users[i].name} ${users[i].lastname}
+                    <h5 class="card-subtitle mb-3 badge bg-success">${users[i].status}</h5>
+                    <h6><span class="fw-bold">Tipo utente:</span><span class="tipoUtente"> ${users[i].tipoUtente}</span></h6>
+                    <h6><span class="fw-bold">Popolarità:</span><span class="popolarita"> ${users[i].popolarità}</span></h6>
+                    <h6><span class="fw-bold">Caratteri Giornalieri:</span><span class="caratteriGiornalieri"> ${users[i].caratteriGiornalieri}</span></h6>
+                    <h6><span class="fw-bold">Caratteri Settimanali:</span><span class="caratteriSettimanali"> ${users[i].caratteriSettimanali}</span></h6>
+                    <h6><span class="fw-bold">Caratteri Mensili:</span><span class="caratteriMensili"> ${users[i].caratteriMensili}</span></h6>
+                    <button class="btn btn-primary" id="modificaBtn">Modifica</button>
+                </div>
+            </div>`
+        } else if(users[i].status === "Bloccato"){
+            container.innerHTML +=`
+            <div class="card ms-1" id="card-${i}">
+                <div class="card-body">
+                    <h4 class="nomeECognome card-title fw-bold exr">${users[i].name} ${users[i].lastname}
+                    <h5 class="card-subtitle mb-3 badge bg-danger">${users[i].status}</h5>
+                    <h6><span class="fw-bold">Tipo utente:</span><span class="tipoUtente"> ${users[i].tipoUtente}</span></h6>
+                    <h6><span class="fw-bold">Popolarità:</span><span class="popolarita"> ${users[i].popolarità}</span></h6>
+                    <h6><span class="fw-bold">Caratteri Giornalieri:</span><span class="caratteriGiornalieri"> ${users[i].caratteriGiornalieri}</span></h6>
+                    <h6><span class="fw-bold">Caratteri Settimanali:</span><span class="caratteriSettimanali"> ${users[i].caratteriSettimanali}</span></h6>
+                    <h6><span class="fw-bold">Caratteri Mensili:</span><span class="caratteriMensili"> ${users[i].caratteriMensili}</span></h6>
+                    <button class="btn btn-primary" id="modificaBtn">Modifica</button>
+                </div>
+            </div>`
+        } 
+    }
 }
 

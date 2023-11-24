@@ -51,88 +51,35 @@
                   <option value="Media">Media</option>
                   <option value="Alta">Alta</option>
               </select>    
-              <button class="mt-4" id="apply-filter">Applica</button>
-            </div>
+              <button type="button" class="ms-2 mb-2 btn btn-outline-success" id="apply-filter">Applica</button>
+            </div>   
           </div>
         </div>
     </section>
+    
 
 <!-- Utenti -->
     <section id="users">
         <!--Container con le card degli utenti-->
         <div class="container mt-5" id="BtnBox">
           <h1>Utenti</h1>
-          <div class="scrolling-wrapper-flexbox d-flex">
-            <!-- Card 1 -->
-            <div class="card ms-3" id="card-1">
-              <div class="card-body">
-                  <h4 class="nomeECognome card-title fw-bold exr"></h4>
-                  <h6 class="status card-subtitle mb-2"></h6>
-                  <h6><span class="fw-bold">Tipo utente:</span><span class="tipoUtente"></span></h6>
-                  <h6><span class="fw-bold">Popolarità:</span><span class="popolarita"></span></h6>
-                  <h6><span class="fw-bold">Caratteri Giornalieri:</span><span class="caratteriGiornalieri"></span></h6>
-                  <h6><span class="fw-bold">Caratteri Settimanali:</span><span class="caratteriSettimanali"></span></h6>
-                  <h6><span class="fw-bold">Caratteri Mensili:</span><span class="caratteriMensili"></span></h6>
-                  <button class="btn btn-primary" id="modificaBtn">Modifica</button>
-              </div>
-            </div>
-            <!-- Card 2 -->
-            <div class="card ms-3" id="card-2">
-              <div class="card-body">
-                <h4 class="nomeECognome card-title fw-bold exr"></h4>
-                <h6 class="status card-subtitle mb-2"></h6>
-                <h6><span class="fw-bold">Tipo utente:</span><span class="tipoUtente"></span></h6>
-                <h6><span class="fw-bold">Popolarità:</span><span class="popolarita"></span></h6>
-                <h6><span class="fw-bold">Caratteri Giornalieri:</span><span class="caratteriGiornalieri"></span></h6>
-                <h6><span class="fw-bold">Caratteri Settimanali:</span><span class="caratteriSettimanali"></span></h6>
-                <h6><span class="fw-bold">Caratteri Mensili:</span><span class="caratteriMensili"></span></h6>
-                <button class="btn btn-primary" id="modificaBtn">Modifica</button>
-              </div>
-            </div>
-            <!-- Card 3 -->
-            <div class="card ms-3" id="card-3">
-              <div class="card-body">
-                <h4 class="nomeECognome card-title fw-bold exr"></h4>
-                <h6 class="status card-subtitle mb-2"></h6>
-                <h6><span class="fw-bold">Tipo utente:</span><span class="tipoUtente"></span></h6>
-                <h6><span class="fw-bold">Popolarità:</span><span class="popolarita"></span></h6>
-                <h6><span class="fw-bold">Caratteri Giornalieri:</span><span class="caratteriGiornalieri"></span></h6>
-                <h6><span class="fw-bold">Caratteri Settimanali:</span><span class="caratteriSettimanali"></span></h6>
-                <h6><span class="fw-bold">Caratteri Mensili:</span><span class="caratteriMensili"></span></h6>
-                <button class="btn btn-primary" id="modificaBtn">Modifica</button>
-              </div>
-            </div>
-            <!-- Card 4 -->
-            <div class="card ms-3" id="card-4">
-              <div class="card-body">
-                <h4 class="nomeECognome card-title fw-bold exr"></h4>
-                <h6 class="status card-subtitle mb-2"></h6>
-                <h6><span class="fw-bold">Tipo utente:</span><span class="tipoUtente"></span></h6>
-                <h6><span class="fw-bold">Popolarità:</span><span class="popolarita"></span></h6>
-                <h6><span class="fw-bold">Caratteri Giornalieri:</span><span class="caratteriGiornalieri"></span></h6>
-                <h6><span class="fw-bold">Caratteri Settimanali:</span><span class="caratteriSettimanali"></span></h6>
-                <h6><span class="fw-bold">Caratteri Mensili:</span><span class="caratteriMensili"></span></h6>
-                <button class="btn btn-primary" id="modificaBtn">Modifica</button>
-              </div>
-            </div>
-            <!-- Card 5 -->
-            <div class="card ms-3" id="card-5">
-              <div class="card-body">
-                <h4 class="nomeECognome card-title fw-bold exr"></h4>
-                <h6 class="status card-subtitle mb-2"></h6>
-                <h6><span class="fw-bold">Tipo utente:</span><span class="tipoUtente"></span></h6>
-                <h6><span class="fw-bold">Popolarità:</span><span class="popolarita"></span></h6>
-                <h6><span class="fw-bold">Caratteri Giornalieri:</span><span class="caratteriGiornalieri"></span></h6>
-                <h6><span class="fw-bold">Caratteri Settimanali:</span><span class="caratteriSettimanali"></span></h6>
-                <h6><span class="fw-bold">Caratteri Mensili:</span><span class="caratteriMensili"></span></h6>
-                <button class="btn btn-primary" id="modificaBtn">Modifica</button>
-              </div>
-            </div>
+          <div class="scrolling-wrapper-flexbox d-flex" id="wrapper">
           </div>
         </div>
-</section>
+    </section>
+    <div class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Dropdown button
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <span class="dropdown-item badge badge-pill badge-secondary">eeeee</span>
+        <span class="dropdown-item">Another action</span>
+        <span class="dropdown-item">Something else here</span>
+      </div>
+    </div>
     <!--Including Bootstrap-->
 <script type="text/javascript" src="scriptUtenti.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-</body>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script></body>
 </html>
