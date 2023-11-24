@@ -75,6 +75,7 @@ function ModifyButton(cardId,cardNumber) {
     // Prendo tutti i campi della card
     const modificaBtn = card.querySelector("#modificaBtn");
 
+    const statusUtente = card.querySelector('#status');
     const nomeECognomeElemento=card.querySelector(".nomeECognome")
     const nomeECognomeTesto=nomeECognomeElemento.textContent || nomeECognomeElemento.innerText;
     const [nome, cognome] = nomeECognomeTesto.split(' ');
@@ -89,6 +90,7 @@ function ModifyButton(cardId,cardNumber) {
     modificaBtn.style.display = "none";
 
     // Abilita la modifica dei campi
+
     tipoUtenteField.innerHTML = `<span class="fw-bold">Tipo utente:</span>
     <select id="tipoUtenteInput">
         <option value="VIP">VIP</option>
@@ -104,12 +106,13 @@ function ModifyButton(cardId,cardNumber) {
     caratteriGiornalieriField.innerHTML = `<span class="fw-bold">Caratteri Giornalieri:</span> <input type="number" id="caratteriGiornalieriInput">`
     caratteriSettimanaliField.innerHTML = `<span class="fw-bold">Caratteri Settimanali:</span> <input type="number" id="caratteriSettimanaliInput">`;
     caratteriMensiliField.innerHTML = `<span class="fw-bold">Caratteri Mensili:</span> <input type="number" id="caratteriMensiliInput">`;
-
+    
     let utenteModificato = arrayUtenti[cardNumber - 1];
     if (!utenteModificato) {
         // Se l'utente non è presente, crea un nuovo oggetto utente
         utenteModificato = {
             //capire come mettere il campo nome
+            status: statusUtente.textContent,
             tipoUtente: tipoUtenteField.value,
             popolarita: popolaritaField.value,
             caratteriGiornalieri: parseInt(caratteriGiornalieriField.textContent),
@@ -121,6 +124,7 @@ function ModifyButton(cardId,cardNumber) {
     }
     else {
     // Aggiorno i valori dei campi
+    statusUtente.innerHTML = '<h5 class="card-subtitle mb-3 badge bg-success" id="status">${utenteModificato[cardNumber].status}</h5>'
     if((arrayUtenti[cardNumber-1].tipoUtente) == "VIP"){
         tipoUtenteField.innerHTML = `<span class="fw-bold">Tipo utente:</span>
         <select id="tipoUtenteInput">
@@ -173,7 +177,10 @@ function ModifyButton(cardId,cardNumber) {
     caratteriSettimanaliField.innerHTML = `<span class="fw-bold">Caratteri Settimanali:</span> <input type="number" id="caratteriSettimanaliInput" value="${arrayUtenti[cardNumber-1].caratteriSettimanali}">`;
     caratteriMensiliField.innerHTML = `<span class="fw-bold">Caratteri Mensili:</span> <input type="number" id="caratteriMensiliInput" value="${arrayUtenti[cardNumber-1].caratteriMensili}">`;
     }
-
+    statusUtente.textContent = "Sblocca";
+    statusUtente.addEventListener("click", async function () {
+        utenteModificato.status = "Attivo";
+    })
     // Aggiungi il pulsante "Salva Modifiche"
     const cardBody = card.querySelector(".card-body");
     const saveChangesBtn = document.createElement("button");
@@ -185,6 +192,7 @@ function ModifyButton(cardId,cardNumber) {
     // Gestisci il salvataggio delle modifiche
     saveChangesBtn.addEventListener("click", async function () {
         // Ottieni i nuovi valori dai campi di input
+        const nuovoStatus = card.querySelector("#status").value;
         const nuovoTipoUtente = card.querySelector("#tipoUtenteInput").value;
         const nuovaPopolarita = card.querySelector("#popolaritaInput").value;
         const nuoviCaratteriGiornalieri = card.querySelector("#caratteriGiornalieriInput").value;
@@ -192,6 +200,7 @@ function ModifyButton(cardId,cardNumber) {
         const nuoviCaratteriMensili = card.querySelector("#caratteriMensiliInput").value;
 
         // Aggiorna l'oggetto utenteModificato con i nuovi valori
+        utenteModificato.status = nuovoStatus;
         utenteModificato.tipoUtente = nuovoTipoUtente;
         utenteModificato.popolarita = nuovaPopolarita;
         utenteModificato.caratteriGiornalieri = parseInt(nuoviCaratteriGiornalieri);
@@ -207,6 +216,7 @@ function ModifyButton(cardId,cardNumber) {
                 },
                 body: JSON.stringify({ //Da definire l'username 
                     //mi servono nome e cognome per trovare e modificare l'user corretto nel database
+                    status: utenteModificato.status,
                     nome: nome,  
                     cognome:cognome,
                     popolarita: utenteModificato.popolarita,
@@ -227,6 +237,7 @@ function ModifyButton(cardId,cardNumber) {
         }
 
         // Aggiorna i campi con i nuovi valori
+        statusUtente.innerHTML =  `<h5 class="card-subtitle mb-3 badge bg-success" id="status">${nuovoStatus}</h5>`
         tipoUtenteField.innerHTML = `<span class="fw-bold">Tipo utente:</span> ${nuovoTipoUtente}`;
         popolaritaField.innerHTML = `<span class="fw-bold">Popolarità:</span> ${nuovaPopolarita}`;
         caratteriGiornalieriField.innerHTML = `<span class="fw-bold">Caratteri Giornalieri:</span> ${nuoviCaratteriGiornalieri}`;
@@ -270,7 +281,7 @@ function updateCards(users) {
             <div class="card ms-1" id="card-${i}">
                 <div class="card-body">
                     <h4 class="nomeECognome card-title fw-bold exr">${users[i].name} ${users[i].lastname}
-                    <h5 class="card-subtitle mb-3 badge bg-success">${users[i].status}</h5>
+                    <h5 class="card-subtitle mb-3 badge bg-success" id="status">${users[i].status}</h5>
                     <h6><span class="fw-bold">Tipo utente:</span><span class="tipoUtente"> ${users[i].tipoUtente}</span></h6>
                     <h6><span class="fw-bold">Popolarità:</span><span class="popolarita"> ${users[i].popolarità}</span></h6>
                     <h6><span class="fw-bold">Caratteri Giornalieri:</span><span class="caratteriGiornalieri"> ${users[i].caratteriGiornalieri}</span></h6>
@@ -284,7 +295,7 @@ function updateCards(users) {
             <div class="card ms-1" id="card-${i}">
                 <div class="card-body">
                     <h4 class="nomeECognome card-title fw-bold exr">${users[i].name} ${users[i].lastname}
-                    <h5 class="card-subtitle mb-3 badge bg-danger">${users[i].status}</h5>
+                    <h5 class="card-subtitle mb-3 badge bg-danger" id="status">${users[i].status}</h5>
                     <h6><span class="fw-bold">Tipo utente:</span><span class="tipoUtente"> ${users[i].tipoUtente}</span></h6>
                     <h6><span class="fw-bold">Popolarità:</span><span class="popolarita"> ${users[i].popolarità}</span></h6>
                     <h6><span class="fw-bold">Caratteri Giornalieri:</span><span class="caratteriGiornalieri"> ${users[i].caratteriGiornalieri}</span></h6>
