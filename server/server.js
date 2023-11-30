@@ -23,8 +23,6 @@ app.post('/signup', async (req, res) => {
     }
 });
 
-
-
 //API per verificare ch ele credenziali inserite siano corrette in fase di login
 app.post('/login', async (req, res) => {
   try {
@@ -40,7 +38,6 @@ app.post('/login', async (req, res) => {
   }
 });
 
-
 // API per ottenere la lista degli utenti
 app.get('/users', async (req, res) => {
   try {
@@ -52,23 +49,20 @@ app.get('/users', async (req, res) => {
   }
 });
 
-
 //API per modificare i campi (tipo account, popolarità, caratteri...) di uno specifico utente (di cui ho nome e cognome)
 app.post('/editUser', async (req, res)=>{
   try{
     const user = await UserModel.findByNameAndLastname(req.body.nome, req.body.cognome);
-
         if (user !== null) {
             // Aggiorna i campi dell'utente con i nuovi valori
             user.tipoUtente = req.body.tipoUtente;
-            user.popolarità = req.body.popolarita;
+            user.popolarita = req.body.popolarita;
             user.caratteriGiornalieri = req.body.caratteriGiornalieri;
             user.caratteriSettimanali = req.body.caratteriSettimanali;
             user.caratteriMensili = req.body.caratteriMensili;
-
+            user.status = req.body.status;   
             // Salva le modifiche nel database
             await user.save();
-
             // Invia una risposta di successo
             res.status(200).json({ message: 'Dati utente aggiornati con successo nel database' });
         } else {
@@ -81,14 +75,6 @@ app.post('/editUser', async (req, res)=>{
         res.status(500).json({ message: 'Errore durante l\'aggiornamento dell\'utente nel database' });
     }
 });
-
-
-
-
-
-
-
-
 
 app.listen(3001, ()=>{
     console.log("Server is running")

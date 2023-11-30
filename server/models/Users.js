@@ -1,22 +1,23 @@
 const mongoose=require('mongoose')
 
 const UserSchema=new mongoose.Schema({
-    username:String,
     name:String,
     lastname:String,
     day:Number,
     month:Number,
     year:Number,
+    proCheck:Boolean,
+    username:String,
     email:String,
     password:String,
     image:String,
     description:String,
-    statoAccount:String,
     tipoUtente:String,
-    popolarità:String,
+    popolarita:String,
     caratteriGiornalieri:Number,
     caratteriSettimanali:Number,
     caratteriMensili:Number,
+    status:String,
 })
 
 UserSchema.statics.findByCredentials=async function(username, password){
@@ -30,21 +31,23 @@ UserSchema.statics.findByCredentials=async function(username, password){
     }
 };
 
-UserSchema.statics.findByNameAndLastname=async function(name, lastname){
-    const user=await this.findOne({name});
-    if(user){
-        if(user.lastname===lastname){
-            return user
+UserSchema.statics.findByNameAndLastname = async function(name, lastname) {
+    try {
+      const user = await this.findOne({ name: new RegExp('^' + name + '$', 'i') }); //Espressione regolare per togliere case sensitive
+      if (user) {
+        if (user.lastname === lastname) {
+          return user;
+        } else {
+          return null;
         }
-        else {
-            return null
-        }
+      } else {
+        return null; // Utente non trovato
+      }
+    } catch (error) {
+      console.error('Errore durante la ricerca dell\'utente:', error);
+      throw error; // Puoi scegliere se gestire l'errore qui o lanciarlo per gestirlo altrove
     }
-};
-
-
-
-
+  };
 
 const UserModel=mongoose.model("users", UserSchema, "users") //"users"=collection's name; "userSchema"=schema's name; the third parameter (the name of the collection again is needed because otherwise MongoDB automatically adds the plural "s", I suppose because of the collections of objects)
 module.exports=UserModel

@@ -24,7 +24,7 @@ const App = () => {
     description:'',
     statoAccount:'Attivo',
     tipoUtente:'',
-    popolarità:'Bassa',
+    popolarita:'Bassa',
     caratteriGiornalieri:'100',
     caratteriSettimanali:'5',
     caratteriMensili:'5',

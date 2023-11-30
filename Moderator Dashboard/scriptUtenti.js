@@ -3,19 +3,6 @@ function cambiaPagina(url) {
     window.location.href = url;
 }
 
-/*Fetch degli utenti*/ 
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        const response = await fetch('http://localhost:3001/users');
-        const users = await response.json();
-        
-        // Aggiorna le card con i dati degli utenti
-        updateCards(users);
-    } catch (error) {
-        console.error('Errore durante il recupero degli utenti:', error);
-    }
-});
-
 /* Gestione filtraggio risultati */
 
 document.getElementById("apply-filter").addEventListener("click", function () {
@@ -50,14 +37,81 @@ function filtraUtenti(nome, tipo, popolarita) {
     });
 }
 
+let users; 
+
+/*Fetch degli utenti*/ 
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const response = await fetch('http://localhost:3001/users');
+        users = await response.json();
+        
+        // Aggiorna le card con i dati degli utenti
+        updateCards(users);
+    } catch (error) {
+        console.error('Errore durante il recupero degli utenti:', error);
+    }
+});
+
+function updateCards(users) {
+    // Prendo l'elemento con le card
+    const container = document.querySelector('#wrapper');
+    // Resetto il wrapper da eventuali card rimaster
+    container.innerHTML = "";
+    // Itero sugli utenti creando una card per utente
+    for(let i=0; i<users.length; i++){
+        if (users[i].status === "Attivo") {
+            container.innerHTML +=`
+            <div class="card ms-1" id="card-${i}">
+                <div class="card-body">
+                    <h4 class="nomeECognome card-title fw-bold exr">${users[i].name} ${users[i].lastname}</h4>
+                    <h5 class="card-subtitle mb-3" id="status">${users[i].status}</h5>
+                    <h6><span class="fw-bold">Tipo utente:</span><span class="tipoUtente"> ${users[i].tipoUtente}</span></h6>
+                    <h6><span class="fw-bold">Popolarità:</span><span class="popolarita"> ${users[i].popolarita}</span></h6>
+                    <h6><span class="fw-bold">Caratteri Giornalieri:</span><span class="caratteriGiornalieri"> ${users[i].caratteriGiornalieri}</span></h6>
+                    <h6><span class="fw-bold">Caratteri Settimanali:</span><span class="caratteriSettimanali"> ${users[i].caratteriSettimanali}</span></h6>
+                    <h6><span class="fw-bold">Caratteri Mensili:</span><span class="caratteriMensili"> ${users[i].caratteriMensili}</span></h6>
+                    <button class="btn btn-primary" id="modificaBtn">Modifica</button>
+                </div>
+            </div>`
+        } else if(users[i].status === "Bloccato"){
+            container.innerHTML +=`
+            <div class="card ms-1" id="card-${i}">
+                <div class="card-body">
+                    <h4 class="nomeECognome card-title fw-bold exr">${users[i].name} ${users[i].lastname}</h4>
+                    <h5 class="card-subtitle mb-3" id="status">${users[i].status}</h5>
+                    <h6><span class="fw-bold">Tipo utente:</span><span class="tipoUtente"> ${users[i].tipoUtente}</span></h6>
+                    <h6><span class="fw-bold">Popolarità:</span><span class="popolarita"> ${users[i].popolarita}</span></h6>
+                    <h6><span class="fw-bold">Caratteri Giornalieri:</span><span class="caratteriGiornalieri"> ${users[i].caratteriGiornalieri}</span></h6>
+                    <h6><span class="fw-bold">Caratteri Settimanali:</span><span class="caratteriSettimanali"> ${users[i].caratteriSettimanali}</span></h6>
+                    <h6><span class="fw-bold">Caratteri Mensili:</span><span class="caratteriMensili"> ${users[i].caratteriMensili}</span></h6>
+                    <button class="btn btn-primary" id="modificaBtn">Modifica</button>
+                </div>
+            </div>`
+            
+        } 
+    }
+}
+
 
 /*Gestione modifica e salvataggio parametri utente*/
 
 // Prendo il box che contiene i bottoni
 const parentElement = document.getElementById("BtnBox");
 
-// Array di utenti
-var arrayUtenti = [];
+parentElement.addEventListener("click", function(event) {
+    if (event.target.id == "modificaBtn") {
+        // Verifica se l'elemento di destinazione del clic è un pulsante con l'id "modificaBtn"
+        const card = event.target.closest(".card"); // Trova la card padre dell'elemento cliccato
+
+        if (card) {
+            // Ottieni l'id univoco assegnato direttamente alla card
+            const cardId = card.id;
+            const cardNumber = getCardNumber(cardId);
+            // Chiama la funzione di modifica specifica per la card corrispondente
+            ModifyButton(cardId,cardNumber);
+        }
+    }
+});
 
 // Funzione per ottenere il numero della card dalla sua id
 function getCardNumber(cardId) {
@@ -67,8 +121,24 @@ function getCardNumber(cardId) {
 }
 
 // Aggiungi un gestore di eventi al pulsante "Modifica"
-function ModifyButton(cardId,cardNumber) {
-    console.log(arrayUtenti)
+async function ModifyButton(cardId,cardNumber) {
+        try {
+            const response = await fetch('http://localhost:3001/users');
+            if (!response.ok) {
+                // ... (gestione degli errori)
+            } else {
+                const responseData = await response.json();
+
+                // Aggiorna la lista degli utenti dopo la modifica
+                const updatedUsersResponse = await fetch('http://localhost:3001/users');
+                users = await updatedUsersResponse.json();
+                updateCards(users);
+            }
+        } catch (error) {
+            console.error('Errore durante il recupero degli utenti:', error);
+        }
+
+    console.log(users[cardNumber]);
     // Capisco che card è stata selezionata
     const card = document.getElementById(cardId);
 
@@ -90,7 +160,14 @@ function ModifyButton(cardId,cardNumber) {
     modificaBtn.style.display = "none";
 
     // Abilita la modifica dei campi
-
+    statusUtente.addEventListener("click", async function () {
+    if (statusUtente.textContent === "Bloccato") {
+      statusUtente.textContent = "Attivo";
+    } else {
+      statusUtente.innerText = "Bloccato";
+    }
+  });
+  
     tipoUtenteField.innerHTML = `<span class="fw-bold">Tipo utente:</span>
     <select id="tipoUtenteInput">
         <option value="VIP">VIP</option>
@@ -105,27 +182,14 @@ function ModifyButton(cardId,cardNumber) {
     </select>`;
     caratteriGiornalieriField.innerHTML = `<span class="fw-bold">Caratteri Giornalieri:</span> <input type="number" id="caratteriGiornalieriInput">`
     caratteriSettimanaliField.innerHTML = `<span class="fw-bold">Caratteri Settimanali:</span> <input type="number" id="caratteriSettimanaliInput">`;
-    caratteriMensiliField.innerHTML = `<span class="fw-bold">Caratteri Mensili:</span> <input type="number" id="caratteriMensiliInput">`;
-    
-    let utenteModificato = arrayUtenti[cardNumber - 1];
-    if (!utenteModificato) {
-        // Se l'utente non è presente, crea un nuovo oggetto utente
-        utenteModificato = {
-            //capire come mettere il campo nome
-            status: statusUtente.textContent,
-            tipoUtente: tipoUtenteField.value,
-            popolarita: popolaritaField.value,
-            caratteriGiornalieri: parseInt(caratteriGiornalieriField.textContent),
-            caratteriSettimanali: parseInt(caratteriSettimanaliField.textContent),
-            caratteriMensili: parseInt(caratteriMensiliField.textContent)
-        };
-        arrayUtenti[cardNumber - 1] = utenteModificato;
+    caratteriMensiliField.innerHTML = `<span class="fw-bold">Caratteri Mensili:</span> <input type="number" id="caratteriMensiliInput">`;   
 
-    }
-    else {
     // Aggiorno i valori dei campi
-    statusUtente.innerHTML = '<h5 class="card-subtitle mb-3 badge bg-success" id="status">${utenteModificato[cardNumber].status}</h5>'
-    if((arrayUtenti[cardNumber-1].tipoUtente) == "VIP"){
+    //statusUtente.textContent = "";
+    statusUtente.innerHTML = `<h5 class="card-subtitle mb-3" id="status">${users[cardNumber-1].status}</h5>`
+    console.log(users[cardNumber]);
+
+    if((users[cardNumber-1].tipoUtente) == "VIP"){
         tipoUtenteField.innerHTML = `<span class="fw-bold">Tipo utente:</span>
         <select id="tipoUtenteInput">
         <option value="VIP" selected="selected">VIP</option>
@@ -133,7 +197,7 @@ function ModifyButton(cardId,cardNumber) {
         <option value="Premium">Premium</option>
         </select>`;
         } 
-        else if((arrayUtenti[cardNumber-1].tipoUtente) == "Normale"){
+        else if((users[cardNumber-1].tipoUtente) == "Normale"){
             tipoUtenteField.innerHTML = `<span class="fw-bold">Tipo utente:</span>
             <select id="tipoUtenteInput">
             <option value="VIP">VIP</option>
@@ -149,7 +213,8 @@ function ModifyButton(cardId,cardNumber) {
                 <option value="Premium" selected="selected">Premium</option>
                 </select>`;
             }
-    if((arrayUtenti[cardNumber-1].popolarita) == "Alta"){
+
+    if((users[cardNumber-1].popolarita) == "Alta"){
     popolaritaField.innerHTML =  `<span class="fw-bold">Popolarità:</span>
     <select id="popolaritaInput">
         <option value="Alta" selected="selected">Alta</option>
@@ -157,7 +222,7 @@ function ModifyButton(cardId,cardNumber) {
         <option value="Bassa">Bassa</option>
     </select>`; 
     } 
-    else if((arrayUtenti[cardNumber-1].popolarita) == "Media"){
+    else if((users[cardNumber-1].popolarita) == "Media"){
         popolaritaField.innerHTML =  `<span class="fw-bold">Popolarità:</span>
         <select id="popolaritaInput">
             <option value="Alta">Alta</option>
@@ -173,14 +238,11 @@ function ModifyButton(cardId,cardNumber) {
             <option value="Bassa" selected="selected">Bassa</option>
         </select>`; 
         }
-    caratteriGiornalieriField.innerHTML = `<span class="fw-bold">Caratteri Giornalieri:</span> <input type="number" id="caratteriGiornalieriInput" value="${arrayUtenti[cardNumber-1].caratteriGiornalieri}">`;
-    caratteriSettimanaliField.innerHTML = `<span class="fw-bold">Caratteri Settimanali:</span> <input type="number" id="caratteriSettimanaliInput" value="${arrayUtenti[cardNumber-1].caratteriSettimanali}">`;
-    caratteriMensiliField.innerHTML = `<span class="fw-bold">Caratteri Mensili:</span> <input type="number" id="caratteriMensiliInput" value="${arrayUtenti[cardNumber-1].caratteriMensili}">`;
-    }
-    statusUtente.textContent = "Sblocca";
-    statusUtente.addEventListener("click", async function () {
-        utenteModificato.status = "Attivo";
-    })
+    caratteriGiornalieriField.innerHTML = `<span class="fw-bold">Caratteri Giornalieri:</span> <input type="number" id="caratteriGiornalieriInput" value="${users[cardNumber-1].caratteriGiornalieri}">`;
+    caratteriSettimanaliField.innerHTML = `<span class="fw-bold">Caratteri Settimanali:</span> <input type="number" id="caratteriSettimanaliInput" value="${users[cardNumber-1].caratteriSettimanali}">`;
+    caratteriMensiliField.innerHTML = `<span class="fw-bold">Caratteri Mensili:</span> <input type="number" id="caratteriMensiliInput" value="${users[cardNumber-1].caratteriMensili}">`;
+    
+
     // Aggiungi il pulsante "Salva Modifiche"
     const cardBody = card.querySelector(".card-body");
     const saveChangesBtn = document.createElement("button");
@@ -192,20 +254,12 @@ function ModifyButton(cardId,cardNumber) {
     // Gestisci il salvataggio delle modifiche
     saveChangesBtn.addEventListener("click", async function () {
         // Ottieni i nuovi valori dai campi di input
-        const nuovoStatus = card.querySelector("#status").value;
         const nuovoTipoUtente = card.querySelector("#tipoUtenteInput").value;
         const nuovaPopolarita = card.querySelector("#popolaritaInput").value;
         const nuoviCaratteriGiornalieri = card.querySelector("#caratteriGiornalieriInput").value;
         const nuoviCaratteriSettimanali = card.querySelector("#caratteriSettimanaliInput").value;
         const nuoviCaratteriMensili = card.querySelector("#caratteriMensiliInput").value;
-
-        // Aggiorna l'oggetto utenteModificato con i nuovi valori
-        utenteModificato.status = nuovoStatus;
-        utenteModificato.tipoUtente = nuovoTipoUtente;
-        utenteModificato.popolarita = nuovaPopolarita;
-        utenteModificato.caratteriGiornalieri = parseInt(nuoviCaratteriGiornalieri);
-        utenteModificato.caratteriSettimanali = parseInt(nuoviCaratteriSettimanali);
-        utenteModificato.caratteriMensili = parseInt(nuoviCaratteriMensili);
+        const nuovoStatus = card.querySelector("#status").textContent;
         
         // Chiamata POST all'API per aggiornare i valori nel database
         try {
@@ -216,28 +270,32 @@ function ModifyButton(cardId,cardNumber) {
                 },
                 body: JSON.stringify({ //Da definire l'username 
                     //mi servono nome e cognome per trovare e modificare l'user corretto nel database
-                    status: utenteModificato.status,
                     nome: nome,  
-                    cognome:cognome,
-                    popolarita: utenteModificato.popolarita,
-                    tipoUtente: utenteModificato.tipoUtente,
-                    caratteriGiornalieri: utenteModificato.caratteriGiornalieri,
-                    caratteriSettimanali: utenteModificato.caratteriSettimanali,
-                    caratteriMensili: utenteModificato.caratteriMensili,
+                    cognome: cognome,
+                    popolarita: nuovaPopolarita,
+                    tipoUtente: nuovoTipoUtente,
+                    caratteriGiornalieri: nuoviCaratteriGiornalieri,
+                    caratteriSettimanali: nuoviCaratteriSettimanali,
+                    caratteriMensili: nuoviCaratteriMensili,
+                    status: nuovoStatus,
                 }),
             });
-    
+            console.log(nuovaPopolarita);
             if (!response.ok) {
-                throw new Error('Errore durante la chiamata POST all\'API');
+                const errorData = await response.json();
+                console.error(`Errore durante la chiamata POST all'API: ${errorData.message}`);
             }
-    
-            console.log('Dati aggiornati con successo nel database');
-        } catch (error) {
+            else {
+                const responseData = await response.json();
+                console.log(responseData.message);
+            } 
+        }
+        catch (error) {
             console.error('Errore durante la chiamata POST all\'API:', error);
         }
-
+        console.log(users)
         // Aggiorna i campi con i nuovi valori
-        statusUtente.innerHTML =  `<h5 class="card-subtitle mb-3 badge bg-success" id="status">${nuovoStatus}</h5>`
+        statusUtente.innerHTML =  `<h5 class="card-subtitle mb-3" id="status">${nuovoStatus}</h5>`
         tipoUtenteField.innerHTML = `<span class="fw-bold">Tipo utente:</span> ${nuovoTipoUtente}`;
         popolaritaField.innerHTML = `<span class="fw-bold">Popolarità:</span> ${nuovaPopolarita}`;
         caratteriGiornalieriField.innerHTML = `<span class="fw-bold">Caratteri Giornalieri:</span> ${nuoviCaratteriGiornalieri}`;
@@ -249,62 +307,8 @@ function ModifyButton(cardId,cardNumber) {
 
         // Mostra nuovamente il pulsante "Modifica"
         modificaBtn.style.display = "inline-block";
-        console.log(arrayUtenti)
     });
 };
 
-parentElement.addEventListener("click", function(event) {
-    if (event.target.id == "modificaBtn") {
-        // Verifica se l'elemento di destinazione del clic è un pulsante con l'id "modificaBtn"
-        const card = event.target.closest(".card"); // Trova la card padre dell'elemento cliccato
 
-        if (card) {
-            // Ottieni l'id univoco assegnato direttamente alla card
-            const cardId = card.id;
-            const cardNumber = getCardNumber(cardId);
-            // Chiama la funzione di modifica specifica per la card corrispondente
-            ModifyButton(cardId,cardNumber);
-        }
-    }
-});
-
-function updateCards(users) {
-    // Prendo l'elemento con le card
-    const container = document.querySelector('#wrapper');
-
-    // Resetto il wrapper da eventuali card rimaster
-    container.innerHTML = "";
-    // Itero sugli utenti creando una card per utente
-    for(let i=0; i<users.length; i++){
-        if (users[i].status === "Attivo") {
-            container.innerHTML +=`
-            <div class="card ms-1" id="card-${i}">
-                <div class="card-body">
-                    <h4 class="nomeECognome card-title fw-bold exr">${users[i].name} ${users[i].lastname}
-                    <h5 class="card-subtitle mb-3 badge bg-success" id="status">${users[i].status}</h5>
-                    <h6><span class="fw-bold">Tipo utente:</span><span class="tipoUtente"> ${users[i].tipoUtente}</span></h6>
-                    <h6><span class="fw-bold">Popolarità:</span><span class="popolarita"> ${users[i].popolarità}</span></h6>
-                    <h6><span class="fw-bold">Caratteri Giornalieri:</span><span class="caratteriGiornalieri"> ${users[i].caratteriGiornalieri}</span></h6>
-                    <h6><span class="fw-bold">Caratteri Settimanali:</span><span class="caratteriSettimanali"> ${users[i].caratteriSettimanali}</span></h6>
-                    <h6><span class="fw-bold">Caratteri Mensili:</span><span class="caratteriMensili"> ${users[i].caratteriMensili}</span></h6>
-                    <button class="btn btn-primary" id="modificaBtn">Modifica</button>
-                </div>
-            </div>`
-        } else if(users[i].status === "Bloccato"){
-            container.innerHTML +=`
-            <div class="card ms-1" id="card-${i}">
-                <div class="card-body">
-                    <h4 class="nomeECognome card-title fw-bold exr">${users[i].name} ${users[i].lastname}
-                    <h5 class="card-subtitle mb-3 badge bg-danger" id="status">${users[i].status}</h5>
-                    <h6><span class="fw-bold">Tipo utente:</span><span class="tipoUtente"> ${users[i].tipoUtente}</span></h6>
-                    <h6><span class="fw-bold">Popolarità:</span><span class="popolarita"> ${users[i].popolarità}</span></h6>
-                    <h6><span class="fw-bold">Caratteri Giornalieri:</span><span class="caratteriGiornalieri"> ${users[i].caratteriGiornalieri}</span></h6>
-                    <h6><span class="fw-bold">Caratteri Settimanali:</span><span class="caratteriSettimanali"> ${users[i].caratteriSettimanali}</span></h6>
-                    <h6><span class="fw-bold">Caratteri Mensili:</span><span class="caratteriMensili"> ${users[i].caratteriMensili}</span></h6>
-                    <button class="btn btn-primary" id="modificaBtn">Modifica</button>
-                </div>
-            </div>`
-        } 
-    }
-}
 
