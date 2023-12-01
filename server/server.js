@@ -5,7 +5,10 @@ const UserModel= require('./models/Users')
 
 const app=express()
 app.use(cors()) //enable to use cors
-app.use(express.json()) //allows to convert in json format files I transfer from frontend to server
+ //allows to convert in json format files I transfer from frontend to server
+app.use(express.json({ limit: '20mb' })); // Imposta il limite a 10 MB
+app.use(express.urlencoded({ extended: true, limit: '20mb' })); // Imposta il limite a 10 MB
+
 
 
 mongoose.connect("mongodb://127.0.0.1:27017/Squealer", { useNewUrlParser: true, useUnifiedTopology: true });
