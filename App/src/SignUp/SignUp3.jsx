@@ -22,6 +22,13 @@ const SignUp3=({updateRegistrationData})=>{
       const file = e.target.files[0]; //prendo il primo file selezionato (siccome potrei selezionare più file)
   
       if (file) { //controlla che il file aggiunto non sia vuoto
+        // Controlla la dimensione del file (10 MB = 10 * 1024 * 1024 bytes)
+        const maxSize = 10 * 1024 * 1024; // 10 MB
+        if (file.size > maxSize) {
+          alert("L'immagine è troppo grande. Carica un'immagine più piccola (massimo 10 MB).");
+          return;
+        }
+    
         const base64Image = await convertToBase64(file);
         setImage(base64Image);
       }
