@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 function updateCards(users) {
     // Prendo l'elemento con le card
     const container = document.querySelector('#wrapper');
-    // Resetto il wrapper da eventuali card rimaster
+    // Resetto il wrapper da eventuali card rimaste
     container.innerHTML = "";
     // Itero sugli utenti creando una card per utente
     for(let i=0; i<users.length; i++){

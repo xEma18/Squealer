@@ -33,7 +33,7 @@ UserSchema.statics.findByCredentials=async function(username, password){
 
 UserSchema.statics.findByNameAndLastname = async function(name, lastname) {
     try {
-      const user = await this.findOne({ name: new RegExp('^' + name + '$', 'i') }); //Espressione regolare per togliere case sensitive
+      const user = await this.findOne({ name: new RegExp('^' + name + '$', 'i') }); //Espressione regolare per togliere case sensitive (findOne ritorna l'intero oggetto del databse quindi l'utente in sé)
       if (user) {
         if (user.lastname === lastname) {
           return user;
@@ -45,7 +45,19 @@ UserSchema.statics.findByNameAndLastname = async function(name, lastname) {
       }
     } catch (error) {
       console.error('Errore durante la ricerca dell\'utente:', error);
-      throw error; // Puoi scegliere se gestire l'errore qui o lanciarlo per gestirlo altrove
+      throw error; 
+    }
+  };
+
+  UserSchema.statics.findByUsername = async function(username) {
+    console.log(username);
+    try {
+      const user = await this.findOne({username: username });
+      console.log(user);
+      return user; // Restituisci l'utente trovato o null se non trovato
+    } catch (error) {
+      console.error('Errore durante la ricerca dell\'utente:', error);
+      throw error; 
     }
   };
 

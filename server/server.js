@@ -2,6 +2,7 @@ const express=require('express')
 const mongoose=require('mongoose')
 const cors=require('cors')
 const UserModel= require('./models/Users')
+const SquealModel= require('./models/Squeal')
 
 const app=express()
 app.use(cors()) //enable to use cors
@@ -49,6 +50,17 @@ app.get('/users', async (req, res) => {
   }
 });
 
+// API per ottenere la lista degli squeal
+app.get('/squeal', async (req, res) => {
+  try {
+      const squeal = await SquealModel.find();
+      res.status(200).json(squeal);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Errore durante il recupero degli squeal' });
+  }
+});
+
 //API per modificare i campi (tipo account, popolarità, caratteri...) di uno specifico utente (di cui ho nome e cognome)
 app.post('/editUser', async (req, res)=>{
   try{
@@ -73,6 +85,29 @@ app.post('/editUser', async (req, res)=>{
         console.error('Errore durante l\'aggiornamento dell\'utente nel database:', error);
         // Invia una risposta con errore generico
         res.status(500).json({ message: 'Errore durante l\'aggiornamento dell\'utente nel database' });
+    }
+});
+
+//API per modificare i campi di uno specifico squeal (di cui ho username del mittente)
+app.post('/editSqueal', async (req, res)=>{
+  try{
+    const username = await UserModel.findByUsername(req.body.destinatari);
+        if (username !== null) {
+            // Aggiorna i campi dell'utente con i nuovi valori
+            console.log(username.destinatari);
+            username.destinatari = req.body.destinatari;
+            // Salva le modifiche nel database
+            await username.save();
+            // Invia una risposta di successo
+            res.status(200).json({ message: 'Modifiche allo Squeal apportate con successo nel database' });
+        } else {
+            // Invia una risposta con errore se l'utente non è stato trovato
+            res.status(404).json({ message: 'Squeal non trovato nel database' });
+        }
+    } catch (error) {
+        console.error('Errore durante l\'aggiornamento dello squeal nel database:', error);
+        // Invia una risposta con errore generico
+        res.status(500).json({ message: 'Errore durante l\'aggiornamento dello squeal nel database' });
     }
 });
 
