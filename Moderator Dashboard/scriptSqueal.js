@@ -239,8 +239,10 @@ addButton.addEventListener('click', () => {
     });
 });
 console.log(arrayNuoviUtenti);
+
 saveChangesBtn.addEventListener('click',async () =>{
     cardBody.removeChild(saveChangesBtn);
+    destinatari.removeChild(addButton);
     modificaBtn.style.display = 'inline-block'
     // Chiamata POST all'API per aggiornare i valori nel database
     try {

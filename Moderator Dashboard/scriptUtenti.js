@@ -64,7 +64,7 @@ function updateCards(users) {
             container.innerHTML +=`
             <div class="card ms-1" id="card-${i}">
                 <div class="card-body">
-                    <h4 class="nomeECognome card-title fw-bold ">${users[i].name} ${users[i].lastname}</h4>
+                    <h4 class="nomeECognome card-title fw-bold ">${users[i].name} ${users[i].lastname} <span class="fw-light small">(@${users[i].username})<span></h4>
                     <h5 class="card-subtitle mb-3 text-success" id="status">${users[i].status}</h5>
                     <h6><span class="fw-bold">Tipo utente:</span><span class="tipoUtente"> ${users[i].tipoUtente}</span></h6>
                     <h6><span class="fw-bold">Popolarità:</span><span class="popolarita"> ${users[i].popolarita}</span></h6>
@@ -78,7 +78,7 @@ function updateCards(users) {
             container.innerHTML +=`
             <div class="card ms-1" id="card-${i}">
                 <div class="card-body">
-                    <h4 class="nomeECognome card-title fw-bold ">${users[i].name} ${users[i].lastname}</h4>
+                    <h4 class="nomeECognome card-title fw-bold ">${users[i].name} ${users[i].lastname} <span class="fw-light small">(@${users[i].username})<span></h4>
                     <h5 class="card-subtitle mb-3 text-danger" id="status">${users[i].status}</h5>
                     <h6><span class="fw-bold">Tipo utente:</span><span class="tipoUtente"> ${users[i].tipoUtente}</span></h6>
                     <h6><span class="fw-bold">Popolarità:</span><span class="popolarita"> ${users[i].popolarita}</span></h6>

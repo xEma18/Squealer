@@ -93,14 +93,15 @@ app.post('/editUser', async (req, res)=>{
 
 //API per modificare i campi di uno specifico squeal (di cui ho username del mittente)
 app.post('/editSqueal', async (req, res)=>{
+  console.log("body:"+req.body.destinatari);
   try{
-    const username = await UserModel.findByUsername(req.body.destinatari);
-        if (username !== null) {
+    const squeal = await SquealModel.findSquealByUsername(req.body.destinatari);
+        if (squeal !== null) {
             // Aggiorna i campi dell'utente con i nuovi valori
-            console.log(username.destinatari);
-            username.destinatari = req.body.destinatari;
+            console.log("destinatari"+squeal.destinatari);
+            squeal.destinatari.push(req.body.destinatari);
             // Salva le modifiche nel database
-            await username.save();
+            await squeal.save();
             // Invia una risposta di successo
             res.status(200).json({ message: 'Modifiche allo Squeal apportate con successo nel database' });
         } else {
