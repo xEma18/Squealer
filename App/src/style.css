@@ -332,3 +332,25 @@ a:active {
 
   font-size: 0.8rem;
 }
+
+/* Aggiungi questo stile per la label personalizzata */
+.btn-select-file {
+  border-radius: 9999px;
+  width: 100%; /* Imposta la larghezza al 100% per allineare con il pulsante "Avanti" */
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #f7f7f7;
+  background-color: #895b2c;
+  padding: 0.4rem 0rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  display: block; /* Rende la label un elemento blocco per occupare l'intera larghezza del contenitore */
+}
+
+/* Aggiungi questo stile per la label personalizzata quando è attiva (cliccata) */
+.btn-select-file:active {
+  background-color: #62411f;
+  color: #e1e1e1;
+}
+

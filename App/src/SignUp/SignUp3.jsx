@@ -43,21 +43,36 @@ const SignUp3=({updateRegistrationData})=>{
 
 
 
-    return(
+      return (
         <>  
-            <div className="step">
-               <span className="x-step"><Link to="/">x</Link></span>
-                Passo 3 di 4
-            </div>
-            <form id="signup-form">
-            <div className="title t-small">Scegli un immagine profilo</div>
+          <div className="step">
+            <span className="x-step"><Link to="/">x</Link></span>
+            Passo 3 di 4
+          </div>
+          <form id="signup-form">
+            <div className="title t-small">Scegli un'immagine profilo</div>
             <div className="subtitle">Hai un'immagine che ti rappresenta? Caricala.</div>
-            <input type="file" accept="image/*" onChange={handleImageChange}  />
+            
+            {/* Aggiungi la label personalizzata sopra il file input */}
+            <label htmlFor="fileInput" className=" btn-select-file">
+              Scegli un'immagine
+            </label>
+            <input
+              id="fileInput"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              style={{ display: 'none' }}
+            />
+            
             {/* Visualizzare l'immagine selezionata */}
             {image && <img src={image} alt="Immagine profilo" style={{ maxWidth: '100%', maxHeight: '200px' }} />}
+            
+            {/* Aggiungi il tasto "Avanti" sotto l'immagine */}
             <div className="btn btn-avanti" id="btn-signup-2" onClick={handleNext}>Avanti</div>
-            </form>
+          </form>
         </>
-    );
+      );
+      
 };
 export default SignUp3;
