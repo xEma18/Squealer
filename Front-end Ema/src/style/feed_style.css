@@ -1,0 +1,98 @@
+body {
+  overflow: scroll;
+}
+
+#condor-icon {
+  height: 2.5rem;
+  /* margin-top: 0.5rem; */
+  /* margin-left: 2rem; */
+}
+
+.container {
+  padding: 0.8rem 0;
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin-bottom: 1rem;
+  padding: 0 1rem;
+}
+
+.header #condor-icon {
+  margin: 0;
+}
+
+.feed {
+  /* padding: 0 1rem; */
+
+  border-top: 1px solid rgb(221, 220, 220);
+}
+
+.user-post {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  border-bottom: 1px solid rgb(221, 220, 220);
+
+  padding: 1rem;
+}
+
+.user-post .profile-pic {
+  flex: 1;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-post .profile-pic img {
+  height: 3rem;
+  width: 100%;
+  object-fit: cover;
+  /* border-radius: 50%; */
+  clip-path: circle();
+}
+
+.user-post .post-body {
+  flex: 5;
+}
+
+.user-post .post-username {
+  font-weight: bold;
+  /* color: #5b3c1d; */
+}
+
+.user-post .post-username h {
+  font-weight: normal;
+}
+
+.user-post .fa-feather {
+  color: #dbb77c;
+}
+
+.user-post .post-date {
+  color: #0000009b;
+}
+
+.user-post .post-content img {
+  display: block;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.user-post .post-reactions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-top: 0.8rem;
+}
+
+.user-post .post-reactions {
+  color: #5b3c1d;
+}
