@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './style.css';
 import condorIcon from './assets/icon_condor.png'
+import './style.css';
 
 const InitialPageComponent = () => {
     return (
@@ -25,9 +25,9 @@ const InitialPageComponent = () => {
                 <div className="divider-text">oppure</div>
                 <div className="divider-line"></div>
               </div>
-              <div className="btm-title">Sei un PRO?</div>
+              <div className="btm-title">Senza account?</div>
               <div className="btns-container">
-                <div className="btn" id="btn-pro-zone">Area PRO</div>
+                <Link to="/HostFeed" className="btn" id="btn-pro-zone">Accedi come ospite</Link>
               </div>
             </div>
     );
