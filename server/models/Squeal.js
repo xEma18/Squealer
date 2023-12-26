@@ -12,6 +12,8 @@ const SquealSchema = new mongoose.Schema({
         bad: String,
         verybad: String,
     },
+    impression: Number,
+    profilePic: Number,
 });
 
 

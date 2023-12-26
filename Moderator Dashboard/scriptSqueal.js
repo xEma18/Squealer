@@ -39,7 +39,7 @@ function updateSqueal(squeal) {
             <div class="card ms-1" id="card-${i}">
                 <div class="card-body">
                     <!-- Mittente -->
-                    <h4 class="card-title" id="mittente">${squeal[i].mittente}</h5>
+                    <h4 class="card-title" id="mittente">@${squeal[i].mittente}</h5>
                     <!-- Destinatari -->
                     <h6 class="fw-bold">Destinatari:</h6>
                     <h6 class="card-subtitle mb-2" id="destinatari">${squealConSpazi[i].destinatari}, </h6>                    
@@ -66,6 +66,7 @@ function updateSqueal(squeal) {
                         <span class="material-icons reaction" id="verybad">
                             sentiment_very_dissatisfied
                         </span>
+                        <span>Impression: ${squeal[i].impression}</span>
                       </div>
                       </div>
                     </div>
@@ -165,7 +166,7 @@ const addButton = document.createElement('button');
 addButton.type = 'button';
 addButton.classList.add('btn', 'add-button', 'fw-bold');
 
-addButton.innerText = '+';
+addButton.innerText = '-';
 destinatari.appendChild(addButton);
 const arrayNuoviUtenti = []; //Array dei nuovi destinatari
 
@@ -226,12 +227,12 @@ addButton.addEventListener('click', () => {
             console.error('Errore durante il recupero degli utenti:', error);
         }
     });
-
+    console.log(destinatari.textContent);
     chiudiFinestraButton.addEventListener('click', () => {
         // Chiudi la finestra di sovraimpressione
         for(let i = 0; i<arrayNuoviUtenti.length; i++){
-            console.log(arrayNuoviUtenti);
-            destinatari.textContent += `${arrayNuoviUtenti[i]}, `
+            console.log(destinatari.textContent);
+            destinatari.textContent += `${arrayNuoviUtenti[i]},`
         }
         destinatari.appendChild(addButton);
         document.body.removeChild(overlay);
