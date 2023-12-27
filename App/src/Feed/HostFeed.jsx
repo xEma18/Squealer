@@ -30,7 +30,7 @@ const HostFeed = () => {
             </div>
             <div className="post-body">
               <div className="post-namedate">
-                <span className="post-username"><h>@</h>Camzz</span>
+                <span className="post-username"><h>@</h>Camzz </span>
                 <i className="fa-solid fa-feather"></i>
                 <span className="post-date"> | Dec 13</span>
               </div>
@@ -45,19 +45,19 @@ const HostFeed = () => {
               <div className="post-reactions">
                 <div className="post-comments">
                   <i className="fa-regular fa-comment"></i>
-                  <span className="post-comments-number">69</span>
+                  <span className="post-comments-number"> 69</span>
                 </div>
                 <div className="post-likes">
                   <i className="fa-regular fa-thumbs-up"></i>
-                  <span className="post-likes-number">227</span>
+                  <span className="post-likes-number"> 227</span>
                 </div>
                 <div className="post-dislikes">
                   <i className="fa-regular fa-thumbs-down"></i>
-                  <span className="post-dislikes-number">38</span>
+                  <span className="post-dislikes-number"> 38</span>
                 </div>
                 <div className="post-impressions">
                   <i className="fa-regular fa-eye"></i>
-                  <span className="post-impressions-number">3.148</span>
+                  <span className="post-impressions-number"> 3.148</span>
                 </div>
               </div>
             </div>
@@ -73,7 +73,7 @@ const HostFeed = () => {
             </div>
             <div className="post-body">
               <div className="post-namedate">
-                <span className="post-username"><h>@</h>Emrata</span>
+                <span className="post-username"><h>@</h>Emrata </span>
                 {/*<!-- <i className="fa-solid fa-feather"></i> -->*/}
                 <span className="post-date"> | Dec 14</span>
               </div>
@@ -83,19 +83,19 @@ const HostFeed = () => {
               <div className="post-reactions">
                 <div className="post-comments">
                   <i className="fa-regular fa-comment"></i>
-                  <span className="post-comments-number">134</span>
+                  <span className="post-comments-number"> 134</span>
                 </div>
                 <div className="post-likes">
                   <i className="fa-regular fa-thumbs-up"></i>
-                  <span className="post-likes-number">2</span>
+                  <span className="post-likes-number"> 2</span>
                 </div>
                 <div className="post-dislikes">
                   <i className="fa-regular fa-thumbs-down"></i>
-                  <span className="post-dislikes-number">198</span>
+                  <span className="post-dislikes-number"> 198</span>
                 </div>
                 <div className="post-impressions">
                   <i className="fa-regular fa-eye"></i>
-                  <span className="post-impressions-number">254</span>
+                  <span className="post-impressions-number"> 254</span>
                 </div>
               </div>
             </div>
@@ -111,7 +111,7 @@ const HostFeed = () => {
             </div>
             <div className="post-body">
               <div className="post-namedate">
-                <span className="post-username"><h>@</h>DiGia</span>
+                <span className="post-username"><h>@</h>DiGia </span>
                 <i className="fa-solid fa-feather"></i>
                 <span className="post-date"> | Dec 15</span>
               </div>
@@ -125,19 +125,19 @@ const HostFeed = () => {
               <div className="post-reactions">
                 <div className="post-comments">
                   <i className="fa-regular fa-comment"></i>
-                  <span className="post-comments-number">13</span>
+                  <span className="post-comments-number"> 13</span>
                 </div>
                 <div className="post-likes">
                   <i className="fa-regular fa-thumbs-up"></i>
-                  <span className="post-likes-number">1.543</span>
+                  <span className="post-likes-number"> 1.543</span>
                 </div>
                 <div className="post-dislikes">
                   <i className="fa-regular fa-thumbs-down"></i>
-                  <span className="post-dislikes-number">12</span>
+                  <span className="post-dislikes-number"> 12</span>
                 </div>
                 <div className="post-impressions">
                   <i className="fa-regular fa-eye"></i>
-                  <span className="post-impressions-number">9.008</span>
+                  <span className="post-impressions-number"> 9.008</span>
                 </div>
               </div>
             </div>
