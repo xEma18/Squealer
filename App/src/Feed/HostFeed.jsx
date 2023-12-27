@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import './feed_style.css';
 import '../style.css';
 import condorIcon from '../assets/icon_condor.png'
-//import moment from 'moment';
+
 
 
 
@@ -44,9 +44,9 @@ const HostFeed = () => {
                   </div>
                     <div className="post-body">
                       <div className="post-namedate">
-                        <span className="post-username"><span>@</span>{squeal.mittente}</span>
+                        <span className="post-username"><span>@</span>{squeal.mittente} </span>
                       <i className="fa-solid fa-feather"></i>
-                      <span className="post-date">{squeal.data}</span>
+                      <span className="post-date"> {new Date(squeal.data).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
                       </div>
                       <div className="post-content">
                         {squeal.text}
