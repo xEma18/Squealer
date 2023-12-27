@@ -6,6 +6,7 @@ const SquealSchema = new mongoose.Schema({
     data: Date,
     text: String,
     year: Number,
+    commentsNum: Number,
     emoticonNum: {
         veygood: String,
         good: String,
@@ -13,7 +14,8 @@ const SquealSchema = new mongoose.Schema({
         verybad: String,
     },
     impression: Number,
-    profilePic: Number,
+    profilePic: String,
+    bodyImage: String,
 });
 
 

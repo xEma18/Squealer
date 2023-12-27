@@ -1,5 +1,6 @@
 #feedBody {
-  overflow: scroll;
+  
+  
 }
 
 #feedCondor-icon {
@@ -27,7 +28,8 @@
 
 .feed {
   /* padding: 0 1rem; */
-
+  max-height: 90vh; /* o un'altra altezza fissa o percentuale */
+  overflow-y: auto; /* mostra la scrollbar solo se necessario */
   border-top: 1px solid rgb(221, 220, 220);
 }
 
