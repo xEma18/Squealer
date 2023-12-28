@@ -354,3 +354,21 @@ a:active {
   color: #e1e1e1;
 }
 
+.input-wrapper {
+  position: relative;
+}
+
+.password-input {
+  width: 100%;
+  /* ... altri stili per l'input ... */
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px; /* o quanto necessario per allinearla con il design */
+  top: 65%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  width:10%
+  /* Stili aggiuntivi per rendere l'icona come desiderato */
+}
