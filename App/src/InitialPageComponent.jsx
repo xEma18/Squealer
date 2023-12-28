@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 import condorIcon from './assets/icon_condor.png'
 import './style.css';
 
 const InitialPageComponent = () => {
+  const navigate = useNavigate();
+
+  const handleGuestAccess = () => {
+    // Naviga al componente Feed passando lo stato di guest
+    navigate('/feed', { state: { username: "guest" } });
+  };
+  
     return (
             <div className="container">
               <img
@@ -27,7 +34,9 @@ const InitialPageComponent = () => {
               </div>
               <div className="btm-title">Senza account?</div>
               <div className="btns-container">
-                <Link to="/HostFeed" className="btn" id="btn-pro-zone">Accedi come ospite</Link>
+              <div onClick={handleGuestAccess} className="btn" id="btn-pro-zone">
+                    Accedi come ospite
+                </div>
               </div>
             </div>
     );
