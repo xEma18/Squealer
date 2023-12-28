@@ -42,7 +42,7 @@ function updateSqueal(squeal) {
                     <h4 class="card-title" id="mittente">@${squeal[i].mittente}</h5>
                     <!-- Destinatari -->
                     <h6 class="fw-bold">Destinatari:</h6>
-                    <h6 class="card-subtitle mb-2" id="destinatari">${squealConSpazi[i].destinatari}, </h6>                    
+                    <h6 class="card-subtitle mb-2" id="destinatari">${squealConSpazi[i].destinatari}... </h6>                    
                     <!-- Contenuto -->
                     <p id="text">${squeal[i].text}</p>
                     <!-- Pulsante Modifica -->
@@ -123,7 +123,7 @@ function selectEmoticon(emoticonId) {
 }
 
 // Aggiungi un gestore di eventi al pulsante "Modifica"
-async function ModifyButton(cardId,cardNumber) {
+async function ModifyButton(cardId,cardNumber,squealConSpazi) {
     try {
         const response = await fetch('http://localhost:3001/squeal');
         if (!response.ok) {
@@ -146,6 +146,7 @@ const card = document.getElementById(cardId);
 // Prendo tutti i campi della card
 const modificaBtn = card.querySelector("#modificaBtn")
 const destinatari = card.querySelector("#destinatari");
+console.log(destinatari);
 //Manca la data
  
 // Rendi invisibile il pulsante modifica
@@ -162,16 +163,23 @@ cardBody.appendChild(saveChangesBtn);
 /*Abilita la modifica dei campi*/
 
 // Aggiungi un pulsante "+" dinamicamente
+
 const addButton = document.createElement('button');
 addButton.type = 'button';
 addButton.classList.add('btn', 'add-button', 'fw-bold');
+addButton.innerText = '+';
 
-addButton.innerText = '-';
+//Array dei destinatari che si vogliono aggiungere
+const arrayNuoviUtenti = []; 
+
+//Array con gli utenti che verranno aggiunti al database
+const readytoAdd = [];
 destinatari.appendChild(addButton);
-const arrayNuoviUtenti = []; //Array dei nuovi destinatari
 
 // Aggiungi un gestore di eventi al pulsante +
 addButton.addEventListener('click', () => {
+    //Rimuovo il bottone + dal div destinatari
+    destinatari.removeChild(addButton);
     // Crea la finestra di sovraimpressione
     const overlay = document.createElement('div');
     overlay.classList.add('overlay');
@@ -180,14 +188,18 @@ addButton.addEventListener('click', () => {
     overlay.innerHTML = `
     <div class="popup">
         <div class="row-3">
+            <div class="fw-bold">Destinatari già presenti:</div>
+            <span>${destinatari.innerText}</span>
+        </div>
+        <div class="row mb-4">
+            <div class="fw-bold">Destinatari che vuoi aggiungere:</div>
+            <span id="destinatariAggiunti"></span>
+        </div>
+        <div class="row-3">
             <label for="nuovoDestinatario">Nuovo Destinatario:</label>
             <input type="text" id="nuovoDestinatario">
             <button id="aggiungiDestinatario">Aggiungi</button>
             <button id="chiudiFinestra">Chiudi</button>
-        </div>
-        <div class="row mt-4">
-            <div class="fw-bold">Destinatari che vuoi aggiungere:<br></break></div>
-            <div id="destinatariAggiunti"></div>
         </div>
     </div>
     `;
@@ -199,6 +211,7 @@ addButton.addEventListener('click', () => {
     const aggiungiDestinatarioButton = overlay.querySelector("#aggiungiDestinatario");
     const chiudiFinestraButton = overlay.querySelector("#chiudiFinestra");
     const destinatariAggiuntiDiv = overlay.querySelector("#destinatariAggiunti");
+    const destinatariAlreadyAddSpan = overlay.querySelector("destinatariAlreadyAdd");
 
     //Manca il controllo se l'utente esiste all'interno del database
     aggiungiDestinatarioButton.addEventListener('click', async () => {
@@ -227,16 +240,17 @@ addButton.addEventListener('click', () => {
             console.error('Errore durante il recupero degli utenti:', error);
         }
     });
-    console.log(destinatari.textContent);
+
     chiudiFinestraButton.addEventListener('click', () => {
         // Chiudi la finestra di sovraimpressione
         for(let i = 0; i<arrayNuoviUtenti.length; i++){
-            console.log(destinatari.textContent);
             destinatari.textContent += `${arrayNuoviUtenti[i]},`
+            readytoAdd[i] = arrayNuoviUtenti[i];
         }
+        // Azzera arrayNuoviUtenti per ulteriori modifiche
+        arrayNuoviUtenti.length = 0;
         destinatari.appendChild(addButton);
         document.body.removeChild(overlay);
-
     });
 });
 console.log(arrayNuoviUtenti);
@@ -253,7 +267,7 @@ saveChangesBtn.addEventListener('click',async () =>{
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ 
-                destinatari: arrayNuoviUtenti,
+                destinatari: readytoAdd,
             }),
         });
         if (!response.ok) {
