@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import './feed_style.css';
 import '../style.css';
 import condorIcon from '../assets/icon_condor.png'
@@ -7,13 +7,21 @@ import condorIcon from '../assets/icon_condor.png'
 
 
 
-const HostFeed = () => {
-    
+const Feed = () => {
+  const location=useLocation();
   const [squeals, setSqueals] = useState([]);
+  const username=location.state?.username;
+
 
   useEffect(() => {
-      // Effettua una richiesta GET al tuo server per ottenere i dati
-      fetch('http://localhost:3001/squeal')
+      // Effettua una richiesta GET al server per ottenere i gli squeals filtrati per username (ricevo solo gli squeals con "username" tra i destinatari)
+      fetch("http://localhost:3001/squealsToUser", {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify({username})
+        })
           .then(response => response.json())
           .then(data => setSqueals(data))
           .catch(error => console.error('Errore nel caricamento degli squeals:', error));
@@ -21,6 +29,7 @@ const HostFeed = () => {
 
 
     return (
+      //header
       <div id="feedBody">
           <div>
             <div className="feedContainer">
@@ -32,8 +41,7 @@ const HostFeed = () => {
                 />
               </div>
               <div className="feed">
-          {/* <!-- inizio post --> */}
-
+                
           {squeals.map(squeal => (
                 <div className="user-post" key={squeal._id}>
                   <div className="profile-pic">
@@ -44,7 +52,7 @@ const HostFeed = () => {
                   </div>
                     <div className="post-body">
                       <div className="post-namedate">
-                        <span className="post-username"><span>@</span>{squeal.mittente} </span>
+                        <span className="post-username">{squeal.mittente} </span>
                       <i className="fa-solid fa-feather"></i>
                       <span className="post-date"> {new Date(squeal.data).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
                       </div>
@@ -90,4 +98,4 @@ const HostFeed = () => {
     );
 };
 
-export default HostFeed;
+export default Feed;

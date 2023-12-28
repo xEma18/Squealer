@@ -33,5 +33,15 @@ SquealSchema.statics.findSquealByUsername = async function (username) {
     }
 };
 
+//Funzione che ritorna gli squeals che hanno come destinatario un utente specifico
+SquealSchema.statics.findSquealsToUser = async function (username) {
+    try {
+        const squeals = await this.find({ destinatari: username }).sort({ 'data': -1 }); //ordinati per data decrescente
+        return squeals;
+    } catch (error) {
+        console.error('Errore durante la ricerca degli squeals:', error);
+        throw error;
+    }
+};
 const SquealModel = mongoose.model("squeal", SquealSchema, "squeal");
 module.exports = SquealModel;

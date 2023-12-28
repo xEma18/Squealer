@@ -64,6 +64,17 @@ app.get('/squeal', async (req, res) => {
   }
 });
 
+//API per ottenere gli Squeals che hanno come destinatario un utente specifico
+app.post('/squealsToUser', async (req, res) => {
+  try {
+      const squeals = await SquealModel.findSquealsToUser(req.body.username);
+      res.status(200).json(squeals);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Errore durante il recupero degli squeals all\'utente' });
+  }
+});
+
 //API per modificare i campi (tipo account, popolarità, caratteri...) di uno specifico utente (di cui ho nome e cognome)
 app.post('/editUser', async (req, res)=>{
   try{

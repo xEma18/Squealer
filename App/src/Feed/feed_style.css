@@ -1,5 +1,6 @@
 #feedBody {
-  
+  max-height: 100vh; /*in react non esiste il body, quindi creo un div che chiamo "Body" e gli do altezza 100% come il body in html*/
+  overflow-y: auto; /* mostra la scrollbar solo se necessario */
   
 }
 
@@ -28,8 +29,7 @@
 
 .feed {
   /* padding: 0 1rem; */
-  max-height: 90vh; /* o un'altra altezza fissa o percentuale */
-  overflow-y: auto; /* mostra la scrollbar solo se necessario */
+  
   border-top: 1px solid rgb(221, 220, 220);
 }
 
