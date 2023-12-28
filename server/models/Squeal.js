@@ -22,6 +22,7 @@ const SquealSchema = new mongoose.Schema({
 
 // Aggiungi la funzione statica dopo la definizione del modello
 SquealSchema.statics.findSquealByUsername = async function (username) {
+    console.log(username);
     try {
         const squeal = await this.findOne({ mittente: username });
             console.log("squeal:", squeal);

@@ -144,8 +144,9 @@ async function ModifyButton(cardId,cardNumber,squealConSpazi) {
 const card = document.getElementById(cardId);
 
 // Prendo tutti i campi della card
-const modificaBtn = card.querySelector("#modificaBtn")
+const modificaBtn = card.querySelector("#modificaBtn");
 const destinatari = card.querySelector("#destinatari");
+const mittente = squeal[cardNumber].mittente;
 console.log(destinatari);
 //Manca la data
  
@@ -254,8 +255,10 @@ addButton.addEventListener('click', () => {
     });
 });
 console.log(arrayNuoviUtenti);
+console.log(mittente);
 
 saveChangesBtn.addEventListener('click',async () =>{
+    console.log(readytoAdd);
     cardBody.removeChild(saveChangesBtn);
     destinatari.removeChild(addButton);
     modificaBtn.style.display = 'inline-block'
@@ -267,6 +270,7 @@ saveChangesBtn.addEventListener('click',async () =>{
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ 
+                mittente: mittente,
                 destinatari: readytoAdd,
             }),
         });

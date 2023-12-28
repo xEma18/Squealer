@@ -93,13 +93,14 @@ app.post('/editUser', async (req, res)=>{
 
 //API per modificare i campi di uno specifico squeal (di cui ho username del mittente)
 app.post('/editSqueal', async (req, res)=>{
-  console.log("body:"+req.body.destinatari);
+  console.log("body: "+req.body.mittente);
   try{
-    const squeal = await SquealModel.findSquealByUsername(req.body.destinatari);
+    //Cerco lo squeal da modificare
+    const squeal = await SquealModel.findSquealByUsername(req.body.mittente);
         if (squeal !== null) {
-            // Aggiorna i campi dell'utente con i nuovi valori
-            console.log("destinatari"+squeal.destinatari);
-            squeal.destinatari.push(req.body.destinatari);
+            // Aggiorna il campo destinatari con i nuovi utenti aggiunti
+            console.log("destinatari: "+squeal.destinatari);
+            squeal.destinatari.push(...req.body.destinatari); //L'operatore di spread mi permette di aggiungere tutti i destinatari nuovi alla fine dell'array di quelli esistenti
             // Salva le modifiche nel database
             await squeal.save();
             // Invia una risposta di successo
