@@ -8,12 +8,17 @@ import condorIcon from '../assets/icon_condor.png'
 
 
 const Feed = () => {
-  const location=useLocation();
   const [squeals, setSqueals] = useState([]);
-  const username=location.state?.username;
+  //Scrivo questa parte  fuori  dallo useEffect perché se lo mettessi dentro, verrebbe eseguito solo la prima volta che viene renderizzato il componente (perché ho messo "[]" come secondo parametro di useEffect")
+  const savedData = sessionStorage.getItem('accountData');
+  const accountData = JSON.parse(savedData);   // Se non ci sono dati di registrazione salvati in sessionStorage, salva un oggetto con un campo username:@guest
+  const username=accountData.username;
+  
+
 
 
   useEffect(() => {
+      
       // Effettua una richiesta GET al server per ottenere i gli squeals filtrati per username (ricevo solo gli squeals con "username" tra i destinatari)
       fetch("http://localhost:3001/squealsToUser", {
         method:'POST',
@@ -25,7 +30,7 @@ const Feed = () => {
           .then(response => response.json())
           .then(data => setSqueals(data))
           .catch(error => console.error('Errore nel caricamento degli squeals:', error));
-  }, []); // Il secondo parametro vuoto [] indica che useEffect verrà eseguito solo una volta alla creazione del componente
+  }, [username]); // Il secondo parametro vuoto [] indicherebbe che useEffect verrà eseguito solo una volta alla creazione del componente, ho messo "username", così useffect viene eseguito ogni volta che cambia username (quindi ogni volta chen accedo al feed con un account diverso)
 
 
     return (
@@ -41,7 +46,7 @@ const Feed = () => {
                 />
               </div>
               <div className="feed">
-                
+            
           {squeals.map(squeal => (
                 <div className="user-post" key={squeal._id}>
                   <div className="profile-pic">
