@@ -34,6 +34,7 @@ app.post('/login', async (req, res) => {
     if (user !== null) {
       res.status(200).json(user);
     } else {
+      console.log("uagliò");
       res.status(401).json({ error: 'Credenziali non valide' }); // Cambiato lo status a 401 per indicare un errore di autenticazione
     }
   } catch (error) {
@@ -76,6 +77,71 @@ app.post('/squealsToUser', async (req, res) => {
       res.status(500).json({ error: 'Errore durante il recupero degli squeals all\'utente' });
   }
 });
+
+app.post('/addEmoticonGood', async (req, res)=>{
+  try{
+    const squeal = await SquealModel.findById(req.body._id);
+    if (!squeal) {
+      return res.status(404).json({ error: 'Squeal non trovato' });
+    }
+    squeal.emoticonNum.good += 1;
+    squeal.emoticonGivenBy.good.push(req.body.username);
+    await squeal.save();
+    res.status(200).json(squeal);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore interno del server' });
+  }
+});
+
+
+app.post('/removeEmoticonGood', async (req, res)=>{
+  try{
+    const squeal = await SquealModel.findById(req.body._id);
+    if (!squeal) {
+      return res.status(404).json({ error: 'Squeal non trovato' });
+    }
+    squeal.emoticonNum.good -= 1;
+    squeal.emoticonGivenBy.good.pop(req.body.username);
+    await squeal.save();
+    res.status(200).json(squeal);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore interno del server' });
+  }
+})
+
+app.post('/addEmoticonBad', async (req, res)=>{
+  try{
+    const squeal = await SquealModel.findById(req.body._id);
+    if (!squeal) {
+      return res.status(404).json({ error: 'Squeal non trovato' });
+    }
+    squeal.emoticonNum.bad += 1;
+    squeal.emoticonGivenBy.bad.push(req.body.username);
+    await squeal.save();
+    res.status(200).json(squeal);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore interno del server' });
+  }
+})
+
+app.post('/removeEmoticonBad', async (req, res)=>{
+  try{
+    const squeal = await SquealModel.findById(req.body._id);
+    if (!squeal) {
+      return res.status(404).json({ error: 'Squeal non trovato' });
+    }
+    squeal.emoticonNum.bad -= 1;
+    squeal.emoticonGivenBy.bad.pop(req.body.username);
+    await squeal.save();
+    res.status(200).json(squeal);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore interno del server' });
+  }
+})
 
 //API per modificare i campi (tipo account, popolarità, caratteri...) di uno specifico utente (di cui ho nome e cognome)
 app.post('/editUser', async (req, res)=>{

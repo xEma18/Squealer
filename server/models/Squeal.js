@@ -13,6 +13,12 @@ const SquealSchema = new mongoose.Schema({
         bad: Number,
         verybad: Number,
     },
+    emoticonGivenBy:{ //array di username degli utenti che hanno dato l'emoticon
+        verygood:[String],
+        good:[String],
+        bad:[String],
+        verybad:[String],
+    },
     impression: Number,
     profilePic: String,
     bodyImage: String,

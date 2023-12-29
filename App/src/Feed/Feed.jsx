@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import './feed_style.css';
 import '../style.css';
 import condorIcon from '../assets/icon_condor.png'
+import axios from 'axios';
 
 
 
@@ -13,9 +14,8 @@ const Feed = () => {
   const savedData = sessionStorage.getItem('accountData');
   const accountData = JSON.parse(savedData);   // Se non ci sono dati di registrazione salvati in sessionStorage, salva un oggetto con un campo username:@guest
   const username=accountData.username;
+  const [givenEmoticonGood, setGivenEmoticonGood]=useState(false);
   
-
-
 
   useEffect(() => {
       
@@ -31,6 +31,51 @@ const Feed = () => {
           .then(data => setSqueals(data))
           .catch(error => console.error('Errore nel caricamento degli squeals:', error));
   }, [username]); // Il secondo parametro vuoto [] indicherebbe che useEffect verrà eseguito solo una volta alla creazione del componente, ho messo "username", così useffect viene eseguito ogni volta che cambia username (quindi ogni volta chen accedo al feed con un account diverso)
+
+
+  const checkEmoticonsGiven=async(squeal)=>{
+    if  (squeal.emoticonGivenBy.good.includes(username)){
+      setGivenEmoticonGood(true);
+    }
+  }
+
+  const handleEmoticonGood = async (squeal) => {
+    //controllo se l'utente ha già dato un emoticon good a questo squeal e seleziono l'endpoint da chiamare
+    const endpoint = squeal.emoticonGivenBy.good.includes(username) ? '/removeEmoticonGood' : '/addEmoticonGood';
+    try {
+        const response = await axios.post(`http://localhost:3001${endpoint}`, { "_id": squeal._id, "username": username });
+        // Aggiorna lo stato locale con i dati aggiornati del squeal
+        const updatedSqueals = squeals.map(s => {
+            if (s._id === squeal._id) {
+                return response.data; // response.data dovrebbe contenere il squeal aggiornato
+            }
+            return s;
+        });
+        setSqueals(updatedSqueals);
+    } catch (error) {
+        console.error('Errore nel gestire il like:', error);
+    }
+};
+
+const handleEmoticonBad = async (squeal) => {
+  //controllo se l'utente ha già dato un emoticon bad a questo squeal e seleziono l'endpoint da chiamare
+  const endpoint = squeal.emoticonGivenBy.bad.includes(username) ? '/removeEmoticonBad' : '/addEmoticonBad';
+  try {
+      const response = await axios.post(`http://localhost:3001${endpoint}`, { "_id": squeal._id, "username": username });
+      // Aggiorna lo stato locale con i dati aggiornati del squeal
+      const updatedSqueals = squeals.map(s => {
+          if (s._id === squeal._id) {
+              return response.data; // response.data dovrebbe contenere il squeal aggiornato
+          }
+          return s;
+      });
+      setSqueals(updatedSqueals);
+  } catch (error) {
+      console.error('Errore nel gestire il like:', error);
+  }
+}
+
+
 
 
     return (
@@ -75,12 +120,12 @@ const Feed = () => {
                           <i className="fa-regular fa-comment"></i>
                           <span className="post-comments-number"> {squeal.commentsNum}</span>
                         </div>
-                        <div className="post-likes">
-                          <i className="fa-regular fa-thumbs-up"></i>
+                        <div className="post-likes" onClick={() => handleEmoticonGood(squeal)}>
+                          <i className={` ${squeal.emoticonGivenBy.good.includes(username) ? "fa-solid fa-thumbs-up" : "fa-regular fa-thumbs-up"}`}></i>
                           <span className="post-likes-number"> {squeal.emoticonNum.good}</span>
                         </div>
-                        <div className="post-dislikes">
-                          <i className="fa-regular fa-thumbs-down"></i>
+                        <div className="post-dislikes" onClick={() => handleEmoticonBad(squeal)}>
+                          <i className={` ${squeal.emoticonGivenBy.bad.includes(username) ? "fa-solid fa-thumbs-down" : "fa-regular fa-thumbs-down"}`}></i>
                           <span className="post-dislikes-number"> {squeal.emoticonNum.bad}</span>
                         </div>
                         <div className="post-impressions">

@@ -26,7 +26,7 @@ UserSchema.statics.findByCredentials=async function(username, password){
         if(user.password===password){
             return user
         }else{
-            return null
+            return;
         }
     }
 };
@@ -38,10 +38,10 @@ UserSchema.statics.findByNameAndLastname = async function(name, lastname) {
         if (user.lastname === lastname) {
           return user;
         } else {
-          return null;
+          return;
         }
       } else {
-        return null; // Utente non trovato
+        return; // Utente non trovato
       }
     } catch (error) {
       console.error('Errore durante la ricerca dell\'utente:', error);
