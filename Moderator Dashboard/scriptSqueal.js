@@ -25,13 +25,23 @@ function updateSqueal(squeal) {
     const aggiungiSpazio = () => {
         for (let i = 0; i < squeal.length; i++) {
             const squealCopy = { ...squeal[i] }; // Creo una copia dell'oggetto squeal[i]
-            squealCopy.destinatari = squealCopy.destinatari.map(dest => dest + "&nbsp;");
+            squealCopy.destinatari = squealCopy.destinatari.map(dest => "&nbsp;" + dest );
             dest.push(squealCopy);
         }
         return dest;
     };
-
     const squealConSpazi = aggiungiSpazio();
+
+    const DateISO = () => {
+        for(let i = 0; i < squeal.length; i++){
+        // Converti in stringa ISO la data dello squeal
+        const dataISO = squeal[i].date.toISOString();
+        // Estrai solo la parte della data
+        const squealDate = dataISO.split('T')[0];
+        }
+        return squealDate
+    }
+    const squealDate = DateISO();
 
     console.log(squeal[0].destinatari.length);
     for(let i=0; i<squeal.length; i++){
@@ -39,7 +49,10 @@ function updateSqueal(squeal) {
             <div class="card ms-1" id="card-${i}">
                 <div class="card-body">
                     <!-- Mittente -->
-                    <h4 class="card-title" id="mittente">@${squeal[i].mittente}</h5>
+                    <div class="d-flex justify-content-between">
+                        <h4 class="card-title fw-bold" id="mittente">@${squeal[i].mittente}</h5>
+                        <span class="justify-content-end id="date">${squealDate[i].date}</span>
+                    </div>
                     <!-- Destinatari -->
                     <h6 class="fw-bold">Destinatari:</h6>
                     <h6 class="card-subtitle mb-2" id="destinatari">${squealConSpazi[i].destinatari}... </h6>                    
@@ -175,12 +188,17 @@ const arrayNuoviUtenti = [];
 
 //Array con gli utenti che verranno aggiunti al database
 const readytoAdd = [];
+
 destinatari.appendChild(addButton);
 
 // Aggiungi un gestore di eventi al pulsante +
 addButton.addEventListener('click', () => {
     //Rimuovo il bottone + dal div destinatari
     destinatari.removeChild(addButton);
+
+    //
+    window.addEventListener('keydown', handleEscapeKey);
+
     // Crea la finestra di sovraimpressione
     const overlay = document.createElement('div');
     overlay.classList.add('overlay');
@@ -229,10 +247,20 @@ addButton.addEventListener('click', () => {
                 console.log("Errore nella risposta da parte del database")
             } else {
                 const userList = await response.json();
-                // Verifica se il nuovo destinatario è presente nella lista degli utenti
+                // Verifica se il nuovo destinatario è presente nella lista degli utenti e se non è l'utente stesso
                 if (userList.some(user => user.username === nuovoDestinatario)) {
-                    arrayNuoviUtenti.push(nuovoDestinatario);
-                    destinatariAggiuntiDiv.innerHTML += `${nuovoDestinatario}`;
+                    if (nuovoDestinatario != mittente){
+                        if (!destinatari.innerHTML.includes(nuovoDestinatario)) {
+                            arrayNuoviUtenti.push(nuovoDestinatario);
+                            destinatariAggiuntiDiv.innerHTML += `${nuovoDestinatario}`;
+                        }
+                        else {
+                            alert("L'utente è già presente fra i destinatari")
+                        }
+                    }
+                    else {
+                        alert("Non puoi inserire come destinatario l'utente stesso");
+                    }
                 } else {
                     alert("Utente non trovato nel database!");
                 }
@@ -241,9 +269,36 @@ addButton.addEventListener('click', () => {
             console.error('Errore durante il recupero degli utenti:', error);
         }
     });
-
+/*
+    //Chiudi la scheda con esc
+    window.addEventListener('keydown', function(event) {
+        if (event.key === "Escape") {
+            for(let i = 0; i<arrayNuoviUtenti.length; i++){
+                destinatari.textContent += `${arrayNuoviUtenti[i]},`
+                readytoAdd[i] = arrayNuoviUtenti[i];
+            }
+            // Azzera arrayNuoviUtenti per ulteriori modifiche
+            arrayNuoviUtenti.length = 0;
+            destinatari.appendChild(addButton);
+            document.body.removeChild(overlay);
+        }
+    });
+*/
+    function handleEscapeKey(event) {
+        if (event.key === "Escape") {
+            window.removeEventListener('keydown', handleEscapeKey);
+            for(let i = 0; i<arrayNuoviUtenti.length; i++){
+                destinatari.textContent += `${arrayNuoviUtenti[i]},`
+                readytoAdd[i] = arrayNuoviUtenti[i];
+            }
+            // Azzera arrayNuoviUtenti per ulteriori modifiche
+            arrayNuoviUtenti.length = 0;
+            destinatari.appendChild(addButton);
+            document.body.removeChild(overlay);
+        }
+    }
+    //Chiudi la scheda con il tasto chiudi
     chiudiFinestraButton.addEventListener('click', () => {
-        // Chiudi la finestra di sovraimpressione
         for(let i = 0; i<arrayNuoviUtenti.length; i++){
             destinatari.textContent += `${arrayNuoviUtenti[i]},`
             readytoAdd[i] = arrayNuoviUtenti[i];
@@ -252,8 +307,10 @@ addButton.addEventListener('click', () => {
         arrayNuoviUtenti.length = 0;
         destinatari.appendChild(addButton);
         document.body.removeChild(overlay);
+        window.removeEventListener('keydown', handleEscapeKey);
     });
 });
+
 console.log(arrayNuoviUtenti);
 console.log(mittente);
 

@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const SquealSchema = new mongoose.Schema({
     mittente: String,
     destinatari: [String], 
-    data: Date,
+    date: Date,
     text: String,
     year: Number,
     commentsNum: Number,
