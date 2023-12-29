@@ -15,9 +15,12 @@ const SignUp2 = ({ updateRegistrationData }) => {
   const [isPasswordWithNumber, setIsPasswordWithNumber]=useState(false);
   const [isPasswordWithSpecialChar, setIsPasswordWithSpecialChar]=useState(false);
   const [showErrorPassword, setShowErrorPassword]=useState(false);
+  const [showErrorEmail, setShowErrorEmail]=useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  
 
   const handleNext=async ()=>{
-    if(isPasswordShort===false && isPasswordLong===false && isPasswordWithNumber===true && isPasswordWithSpecialChar===true && username.startsWith('@')){
+    if(isPasswordShort===false && isPasswordLong===false && isPasswordWithNumber===true && isPasswordWithSpecialChar===true && username.startsWith('@')&& isEmailValid(email)){
       updateRegistrationData({
         email,
         password,
@@ -26,9 +29,18 @@ const SignUp2 = ({ updateRegistrationData }) => {
       navigate('/SignUp3');
     }
     else{
-      setShowErrorPassword(true);
+      if(!isEmailValid(email)){
+        setShowErrorEmail(true);
+        setShowErrorPassword(false);
+      }
+      else{
+        setShowErrorEmail(false);
+        setShowErrorPassword(true);
+      }
     }
   }
+
+
 
   const handleChangeUsername=async (e)=>{
     setUsername(e.target.value);
@@ -72,7 +84,15 @@ const SignUp2 = ({ updateRegistrationData }) => {
 }
 
 
-  
+const isEmailValid = (email) => {
+  // Utilizza un' espressione regolare per validare l'email
+  return /\S+@\S+\.\S+/.test(email);
+}
+
+
+const togglePasswordVisibility = () => {
+  setShowPassword(!showPassword);
+}
 
   return (
     <>
@@ -82,10 +102,23 @@ const SignUp2 = ({ updateRegistrationData }) => {
       </div>
       <form id="signup-form">
         <div className="title t-small">Credenziali</div>
+        
         <input type="text" id="username" placeholder="Username (es: @MarioRossi)" onChange={(e)=>handleChangeUsername(e)} value={username} />
-        {showErrorDot && <span style={{fontWeight:"bold", fontSize:"115%"}}>L'Username deve iniziare con "@".</span>}
+        {showErrorDot && <span style={{fontWeight:"bold", fontSize:"115%", color:"red"}}>L'Username deve iniziare con "@".</span>}
+        
         <input type="email" id="email" placeholder="Email" onChange={(e)=>setEmail(e.target.value)} value={email} />
-        <input type="password" id="password" placeholder="Password" onChange={(e)=>handleChangePassword(e)} value={password} />
+        {showErrorEmail && <span style={{fontWeight:"bold", fontSize:"115%", color:"red"}}>La tua email non è valida.</span>}
+        
+        <div className="input-wrapper">
+          <input type={showPassword ? "text" : "password"} id="password" placeholder="Password" onChange={(e)=>handleChangePassword(e)} value={password} className="password-input" />
+          <img 
+          src={showPassword ? "https://www.pngitem.com/pimgs/m/495-4950508_show-password-show-password-icon-png-transparent-png.png" : "https://www.pngitem.com/pimgs/m/600-6000108_modify-the-password-small-eyes-eye-password-png.png"} 
+          onClick={togglePasswordVisibility} 
+          className="toggle-password"
+          alt="Mostra/Nascondi Password"
+          
+        />
+        </div>
         <ul className="pw-requisites">
           <li style={{ color: isPasswordShort ? 'red':'green'}}>Minimo 8 caratteri</li>
           <li style={{ color: isPasswordLong ? 'red':'green'}}>Massimo 16 caratteri</li>
@@ -94,7 +127,7 @@ const SignUp2 = ({ updateRegistrationData }) => {
         </ul>
         {showErrorPassword && 
         <div style={{marginTop:"5%"}}>
-          <span style={{fontWeight:"bold", fontSize:"150%"}}>La tua password non rispetta i requisiti.</span>
+          <span style={{fontWeight:"bold", fontSize:"125%", color:"red"}}>La tua password non rispetta i requisiti.</span>
         </div>
         }
         <div className="btn btn-avanti" id="btn-signup-2" onClick={handleNext}>Avanti</div>

@@ -8,7 +8,9 @@ const InitialPageComponent = () => {
 
   const handleGuestAccess = () => {
     // Naviga al componente Feed passando lo stato di guest
-    navigate('/feed', { state: { username: "guest" } });
+    sessionStorage.setItem('accountData', JSON.stringify({ username: "@guest" }));
+    navigate('/Feed');
+    //navigate('/Feed', { state: { guestUsername: "@guest" } });
   };
   
     return (
