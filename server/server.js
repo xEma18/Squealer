@@ -2,7 +2,7 @@ const express=require('express')
 const mongoose=require('mongoose')
 const cors=require('cors')
 const UserModel= require('./models/Users')
-const SquealModel= require('./models/Squeal')
+const SquealModel= require('./models/Squeals')
 
 const app=express()
 app.use(cors()) //enable to use cors
@@ -54,10 +54,10 @@ app.get('/users', async (req, res) => {
 });
 
 // API per ottenere la lista degli squeal
-app.get('/squeal', async (req, res) => {
+app.get('/squeals', async (req, res) => {
   try {
-      const squeal = await SquealModel.find();
-      res.status(200).json(squeal);
+      const squeals = await SquealModel.find();
+      res.status(200).json(squeals);
   } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Errore durante il recupero degli squeal' });
@@ -102,16 +102,43 @@ app.post('/editUser', async (req, res)=>{
     }
 });
 
-//API per modificare i campi di uno specifico squeal (di cui ho username del mittente)
-app.post('/editSqueal', async (req, res)=>{
+//API per aggiungere i destinatari di uno specifico squeal (di cui ho username del mittente)
+app.post('/addRecv', async (req, res)=>{
   console.log("body: "+req.body.mittente);
   try{
     //Cerco lo squeal da modificare
     const squeal = await SquealModel.findSquealByUsername(req.body.mittente);
         if (squeal !== null) {
             // Aggiorna il campo destinatari con i nuovi utenti aggiunti
-            console.log("destinatari: "+squeal.destinatari);
             squeal.destinatari.push(...req.body.destinatari); //L'operatore di spread mi permette di aggiungere tutti i destinatari nuovi alla fine dell'array di quelli esistenti
+            console.log("destinatari aggiornati: "+squeal.destinatari);
+            // Salva le modifiche nel database
+            await squeal.save();
+            // Invia una risposta di successo
+            res.status(200).json({ message: 'Modifiche allo Squeal apportate con successo nel database' });
+        } else {
+            // Invia una risposta con errore se l'utente non è stato trovato
+            res.status(404).json({ message: 'Squeal non trovato nel database' });
+        }
+    } catch (error) {
+        console.error('Errore durante l\'aggiornamento dello squeal nel database:', error);
+        // Invia una risposta con errore generico
+        res.status(500).json({ message: 'Errore durante l\'aggiornamento dello squeal nel database' });
+    }
+});
+
+//API per aggiungere i destinatari di uno specifico squeal (di cui ho username del mittente)
+app.post('/remRecv', async (req, res)=>{
+  console.log("body")
+  console.log(req.body);
+  try{
+    //Cerco lo squeal da modificare
+    const squeal = await SquealModel.findSquealByUsername(req.body.mittente);
+        if (squeal !== null) {
+          console.log(typeof squeal.destinatari);
+            // Aggiorna il campo destinatari con i nuovi utenti aggiunti
+            squeal.destinatari = squeal.destinatari.map(nome => nome.trim()).filter(nome => !req.body.destinatari.includes(nome));
+            console.log("destinatari aggiornati: " + squeal.destinatari);
             // Salva le modifiche nel database
             await squeal.save();
             // Invia una risposta di successo

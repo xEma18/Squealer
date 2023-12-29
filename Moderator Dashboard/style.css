@@ -105,7 +105,18 @@ outline-offset: 3px;
 }
 
 /* Aggiungi questi stili al tuo foglio di stile CSS o nella sezione di stile della tua pagina HTML */
-.overlay {
+.overlay-add{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Un colore semitrasparente per l'overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.overlay-rem{
     position: fixed;
     top: 0;
     left: 0;

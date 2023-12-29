@@ -43,5 +43,5 @@ SquealSchema.statics.findSquealsToUser = async function (username) {
         throw error;
     }
 };
-const SquealModel = mongoose.model("squeal", SquealSchema, "squeal");
+const SquealModel = mongoose.model("squeals", SquealSchema, "squeals");
 module.exports = SquealModel;
