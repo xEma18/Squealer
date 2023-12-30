@@ -1,4 +1,4 @@
-/*Fetch degli utenti*/ 
+/*Fetch degli squeal*/ 
 let squeal; //Array con gli squeal
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -22,25 +22,34 @@ document.getElementById("apply-filter").addEventListener("click", function () {
     const dateF = document.getElementById("date-filter").value;
 
     // Eseguo la funzione di filtro
-    filtraUtenti(senderF, receiverF, dateF);
+    filtraSqueal(senderF, receiverF, dateF);
 });
-function filtraUtenti(sender, receiver, date) {
+function filtraSqueal(sender, receiver, date) {
     const cards = document.querySelectorAll(".card"); // Seleziona tutte le carte degli utenti
 
     cards.forEach(card => {
         const senderCard = card.querySelector(".card-title").innerText;
-        //Prendo l'elemento Tipo utente: tipoutente creo un array del tipo ["Tipo utente","tipoutente"] con [1] prendo il tipoutente e grazie a .trim() rimuovo lo spazio bianco iniziale
-        const receiverCard = card.querySelector('#destinatari').innerText.split(":")[1];
-        console.log(receiverCard);
+        // Creo un array con i destinatari divisi da una virgola
+        const receiverCard = card.querySelector('#destinatari').innerText.split(",");
+        
         const dateCard = card.querySelector('#date').innerText;
-
+        console.log(dateCard)
+        console.log(date);
         // Controllo se l'utente soddisfa i criteri di filtro
         const senderMatch = sender === "" || senderCard.toLowerCase().includes(sender.toLowerCase());
-        const receiverMatch = receiver === "" || receiverCard.toLowerCase().includes(receiver.toLowerCase());
-        const dateMatch = date ===  "" || dateCard ;
-
+        let receiverMatch = "";
+        let isMatched = false;
+        //Controllo se esiste almeno un match con i destinatari 
+        for(let i = 0; i < receiverCard.length; i++){
+            receiverMatch = receiver === "" || receiverCard[i].toLowerCase().includes(receiver.toLowerCase());
+            if(receiverMatch){
+                isMatched = true;
+            }
+        }
+        const dateMatch = date ===  "" || dateCard.includes(date);
+        console.log(dateMatch)
         // Nascondo o mostro la carta in base ai criteri di filtro
-        if (senderMatch && receiverMatch && dateMatch) {
+        if (senderMatch && isMatched && dateMatch) {
             card.style.display = "block"; // Mostra la carta
         } else {
             card.style.display = "none"; // Nascondi la carta
@@ -88,7 +97,7 @@ function updateSqueal(squeal) {
                     <div class="container-fluid">
                     <div class="row">
                       <div class="col-6 d-flex justify-content-center">
-                        <button type="button" class="btn btn-primary" id="modificaBtn">Modifica Destinatari</button>
+                        <button type="button" class="btn btn-primary" id="modificaBtn">Modifica Squeal</button>
                       </div>
                       <div class="col-6 d-flex justify-content-center" id="emoticons">
                       <!-- Emoticons for reazioni -->
@@ -162,21 +171,20 @@ function selectEmoticon(emoticonId) {
 }
 
 // Aggiungi un gestore di eventi al pulsante "Modifica"
-async function ModifyButton(cardId,cardNumber,squealConSpazi) {
+async function ModifyButton(cardId,cardNumber) {
     try {
         const response = await fetch('http://localhost:3001/squeals');
         if (!response.ok) {
             // ... (gestione degli errori)
         } else {
-            const responseData = await response.json();
-            // Aggiorna la lista degli utenti dopo la modifica
-            const updatedSquealResponse = await fetch('http://localhost:3001/users');
-            users = await updatedSquealResponse.json();
-            updateSqueal(squeal);
-            console.log(squeal);
+            // Aggiorna la lista degli squeal dopo la modifica
+            const updatedSquealResponse = await fetch('http://localhost:3001/squeals');
+            squeals = await updatedSquealResponse.json();
+            updateSqueal(squeals);
+            console.log(squeals);
         }
     } catch (error) {
-        console.error('Errore durante il recupero degli utenti:', error);
+        console.error('Errore durante il recupero degli squeal:', error);
     }
 
 // Capisco che card è stata selezionata

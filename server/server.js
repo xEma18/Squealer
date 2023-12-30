@@ -3,8 +3,9 @@ const mongoose=require('mongoose')
 const cors=require('cors')
 const UserModel= require('./models/Users')
 const SquealModel= require('./models/Squeals')
-
+const ChannelModel= require('./models/Channels')
 const app=express()
+
 app.use(cors()) //enable to use cors
  //allows to convert in json format files I transfer from frontend to server
 app.use(express.json({ limit: '20mb' })); // Imposta il limite a 10 MB
@@ -213,7 +214,7 @@ app.post('/addRecv', async (req, res)=>{
     }
 });
 
-//API per aggiungere i destinatari di uno specifico squeal (di cui ho username del mittente)
+//API per rimuovere i destinatari di uno specifico squeal (di cui ho username del mittente)
 app.post('/remRecv', async (req, res)=>{
   console.log("body")
   console.log(req.body);
@@ -238,6 +239,17 @@ app.post('/remRecv', async (req, res)=>{
         // Invia una risposta con errore generico
         res.status(500).json({ message: 'Errore durante l\'aggiornamento dello squeal nel database' });
     }
+});
+
+// API per ottenere la lista degli canali
+app.get('/channels', async (req, res) => {
+  try {
+      const channels = await ChannelModel.find();
+      res.status(200).json(channels);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Errore durante il recupero dei canali' });
+  }
 });
 
 app.listen(3001, ()=>{
