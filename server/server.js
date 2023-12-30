@@ -141,7 +141,25 @@ app.post('/removeEmoticonBad', async (req, res)=>{
     console.error(error);
     res.status(500).json({ error: 'Errore interno del server' });
   }
-})
+});
+
+app.post('/addImpression', async (req, res) => {
+  try {
+      const { _id, username } = req.body;
+      const squeal = await SquealModel.findById(_id);
+      if (!squeal) {
+          return res.status(404).json({ error: 'Squeal non trovato' });
+      }
+      if (!squeal.impressionGivenBy.includes(username)) {
+          squeal.impressionGivenBy.push(username);
+          await squeal.save();
+      }
+      res.status(200).json(squeal);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Errore interno del server' });
+  }
+});
 
 //API per modificare i campi (tipo account, popolarità, caratteri...) di uno specifico utente (di cui ho nome e cognome)
 app.post('/editUser', async (req, res)=>{

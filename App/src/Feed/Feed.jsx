@@ -14,7 +14,6 @@ const Feed = () => {
   const savedData = sessionStorage.getItem('accountData');
   const accountData = JSON.parse(savedData);   // Se non ci sono dati di registrazione salvati in sessionStorage, salva un oggetto con un campo username:@guest
   const username=accountData.username;
-  const [givenEmoticonGood, setGivenEmoticonGood]=useState(false);
   
 
   useEffect(() => {
@@ -33,32 +32,30 @@ const Feed = () => {
   }, [username]); // Il secondo parametro vuoto [] indicherebbe che useEffect verrà eseguito solo una volta alla creazione del componente, ho messo "username", così useffect viene eseguito ogni volta che cambia username (quindi ogni volta chen accedo al feed con un account diverso)
 
 
-  const checkEmoticonsGiven=async(squeal)=>{
-    if  (squeal.emoticonGivenBy.good.includes(username)){
-      setGivenEmoticonGood(true);
-    }
-  }
 
   const handleEmoticonGood = async (squeal) => {
-    //controllo se l'utente ha già dato un emoticon good a questo squeal e seleziono l'endpoint da chiamare
-    const endpoint = squeal.emoticonGivenBy.good.includes(username) ? '/removeEmoticonGood' : '/addEmoticonGood';
-    try {
-        const response = await axios.post(`http://localhost:3001${endpoint}`, { "_id": squeal._id, "username": username });
-        // Aggiorna lo stato locale con i dati aggiornati del squeal
-        const updatedSqueals = squeals.map(s => {
-            if (s._id === squeal._id) {
-                return response.data; // response.data dovrebbe contenere il squeal aggiornato
-            }
-            return s;
-        });
-        setSqueals(updatedSqueals);
-    } catch (error) {
-        console.error('Errore nel gestire il like:', error);
-    }
+    if(username!='@guest'){ //se l'utente non è guest, può mettere like/dislike
+      //controllo se l'utente ha già dato un emoticon good a questo squeal e seleziono l'endpoint da chiamare
+      const endpoint = squeal.emoticonGivenBy.good.includes(username) ? '/removeEmoticonGood' : '/addEmoticonGood';
+      try {
+          const response = await axios.post(`http://localhost:3001${endpoint}`, { "_id": squeal._id, "username": username });
+          // Aggiorna lo stato locale con i dati aggiornati del squeal
+          const updatedSqueals = squeals.map(s => {
+              if (s._id === squeal._id) {
+                  return response.data; // response.data dovrebbe contenere il squeal aggiornato
+              }
+              return s;
+          });
+          setSqueals(updatedSqueals);
+      } catch (error) {
+          console.error('Errore nel gestire il like:', error);
+      }
+  }
 };
 
 const handleEmoticonBad = async (squeal) => {
-  //controllo se l'utente ha già dato un emoticon bad a questo squeal e seleziono l'endpoint da chiamare
+  if(username!='@guest'){
+    //controllo se l'utente ha già dato un emoticon bad a questo squeal e seleziono l'endpoint da chiamare
   const endpoint = squeal.emoticonGivenBy.bad.includes(username) ? '/removeEmoticonBad' : '/addEmoticonBad';
   try {
       const response = await axios.post(`http://localhost:3001${endpoint}`, { "_id": squeal._id, "username": username });
@@ -73,6 +70,8 @@ const handleEmoticonBad = async (squeal) => {
   } catch (error) {
       console.error('Errore nel gestire il like:', error);
   }
+  }
+  
 }
 
 
