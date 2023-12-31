@@ -197,7 +197,7 @@ app.post('/addRecv', async (req, res)=>{
     const squeal = await SquealModel.findSquealByUsername(req.body.mittente);
         if (squeal !== null) {
             // Aggiorna il campo destinatari con i nuovi utenti aggiunti
-            squeal.destinatari.push(...req.body.destinatari); //L'operatore di spread mi permette di aggiungere tutti i destinatari nuovi alla fine dell'array di quelli esistenti
+            squeal.destinatari = squeal.destinatari.concat(req.body.destinatari);
             console.log("destinatari aggiornati: "+squeal.destinatari);
             // Salva le modifiche nel database
             await squeal.save();

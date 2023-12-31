@@ -255,7 +255,6 @@ remButton.addEventListener('click', () => {
     // Creo la finestra di sovraimpressione
     const overlay = document.createElement('div');
     overlay.classList.add('overlay-rem');
-    console.log(overlay);
 
     // Aggiungo il contenuto della finestra di sovraimpressione
     overlay.innerHTML = `
@@ -472,6 +471,7 @@ addButton.addEventListener('click', () => {
 saveChangesBtn.addEventListener('click',async () =>{
     cardBody.removeChild(saveChangesBtn);
     destinatari.removeChild(addButton);
+    destinatari.removeChild(remButton);
     modificaBtn.style.display = 'inline-block'
     if(addFlag){
     console.log(readytoAdd);
@@ -485,7 +485,7 @@ saveChangesBtn.addEventListener('click',async () =>{
             },
             body: JSON.stringify({ 
                 mittente: mittente,
-                destinatari: readytoRemove,
+                destinatari: readytoAdd,
             }),
         });
         if (!response.ok) {
