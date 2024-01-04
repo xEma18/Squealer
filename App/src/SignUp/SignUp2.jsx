@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import '../style.css';
 import { Link, useNavigate} from 'react-router-dom';
+import { set } from 'mongoose';
 
 
 
@@ -17,16 +18,31 @@ const SignUp2 = ({ updateRegistrationData }) => {
   const [showErrorPassword, setShowErrorPassword]=useState(false);
   const [showErrorEmail, setShowErrorEmail]=useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showErrorUserAndEmailAlreadyRegistered, setShowErrorUserAndEmailAlreadyRegistered]=useState(false);
   
 
   const handleNext=async ()=>{
     if(isPasswordShort===false && isPasswordLong===false && isPasswordWithNumber===true && isPasswordWithSpecialChar===true && username.startsWith('@')&& isEmailValid(email)){
-      updateRegistrationData({
-        email,
-        password,
-        username,
-      });
-      navigate('/SignUp3');
+      try {
+        const response = await fetch("http://localhost:3001/checkIfUserAndEmailAlreadyRegistered", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, username })
+        });
+
+        const data = await response.json();
+        
+        if (data.exists) {
+            setShowErrorUserAndEmailAlreadyRegistered(true);
+        } else {
+            updateRegistrationData({ email, password, username });
+            navigate('/SignUp3');
+          }
+    } catch (error) {
+        console.error('Errore:', error);
+      }
     }
     else{
       if(!isEmailValid(email)){
@@ -44,6 +60,7 @@ const SignUp2 = ({ updateRegistrationData }) => {
 
   const handleChangeUsername=async (e)=>{
     setUsername(e.target.value);
+    setShowErrorUserAndEmailAlreadyRegistered(false);
     if (!e.target.value.startsWith('@')) { //qui non ci posso mettere "username.startsWith('@') perché lo state non vine aggiornato subito, quindi non è aggiornato quando viene eseguito questo if"
       setShowErrorDot(true);
       setUsername('');
@@ -55,6 +72,7 @@ const SignUp2 = ({ updateRegistrationData }) => {
 
   const handleChangePassword=async (e)=>{
     setPassword(e.target.value);
+    setShowErrorPassword(false);
     if (e.target.value.length<8){
       setIsPasswordShort(true);
     }
@@ -89,6 +107,12 @@ const isEmailValid = (email) => {
   return /\S+@\S+\.\S+/.test(email);
 }
 
+const handleEmailChange = (e) => {
+  setEmail(e.target.value);
+  setShowErrorUserAndEmailAlreadyRegistered(false);
+  setShowErrorEmail(false);
+}
+
 
 const togglePasswordVisibility = () => {
   setShowPassword(!showPassword);
@@ -106,7 +130,7 @@ const togglePasswordVisibility = () => {
         <input type="text" id="username" placeholder="Username (es: @MarioRossi)" onChange={(e)=>handleChangeUsername(e)} value={username} />
         {showErrorDot && <span style={{fontWeight:"bold", fontSize:"115%", color:"red"}}>L'Username deve iniziare con "@".</span>}
         
-        <input type="email" id="email" placeholder="Email" onChange={(e)=>setEmail(e.target.value)} value={email} />
+        <input type="email" id="email" placeholder="Email" onChange={(e)=>handleEmailChange(e)} value={email} />
         {showErrorEmail && <span style={{fontWeight:"bold", fontSize:"115%", color:"red"}}>La tua email non è valida.</span>}
         
         <div className="input-wrapper">
@@ -128,6 +152,11 @@ const togglePasswordVisibility = () => {
         {showErrorPassword && 
         <div style={{marginTop:"5%"}}>
           <span style={{fontWeight:"bold", fontSize:"125%", color:"red"}}>La tua password non rispetta i requisiti.</span>
+        </div>
+        }
+        {showErrorUserAndEmailAlreadyRegistered && 
+        <div style={{marginTop:"5%"}}>
+          <span style={{fontWeight:"bold", fontSize:"125%", color:"red"}}>L'Username e/o l'email che hai inserito sono già in uso.</span>
         </div>
         }
         <div className="btn btn-avanti" id="btn-signup-2" onClick={handleNext}>Avanti</div>

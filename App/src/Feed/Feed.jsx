@@ -1,11 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './feed_style.css';
 import '../style.css';
 import condorIcon from '../assets/icon_condor.png'
 import axios from 'axios';
 
+function useIntersectionObserver(elementRef, callback, options) {
+  useEffect(() => {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          callback();
+        }
+      });
+    }, options);
 
+    if (elementRef.current) {
+      observer.observe(elementRef.current);
+    }
+
+    return () => {
+      if (elementRef.current) {
+        observer.unobserve(elementRef.current);
+      }
+    };
+  }, [elementRef, callback, options]);
+}
 
 
 const Feed = () => {
@@ -14,10 +34,11 @@ const Feed = () => {
   const savedData = sessionStorage.getItem('accountData');
   const accountData = JSON.parse(savedData);   // Se non ci sono dati di registrazione salvati in sessionStorage, salva un oggetto con un campo username:@guest
   const username=accountData.username;
+  const refs = useRef([]);
+  const [registeredImpressions, setRegisteredImpressions] = useState(new Set());
   
 
   useEffect(() => {
-      
       // Effettua una richiesta GET al server per ottenere i gli squeals filtrati per username (ricevo solo gli squeals con "username" tra i destinatari)
       fetch("http://localhost:3001/squealsToUser", {
         method:'POST',
@@ -27,7 +48,11 @@ const Feed = () => {
         body:JSON.stringify({username})
         })
           .then(response => response.json())
-          .then(data => setSqueals(data))
+          .then(data => {
+            setSqueals(data);
+            // Inizializza refs per i nuovi squeals
+            refs.current = data.map((_, i) => refs.current[i] || React.createRef());
+        })
           .catch(error => console.error('Errore nel caricamento degli squeals:', error));
   }, [username]); // Il secondo parametro vuoto [] indicherebbe che useEffect verrà eseguito solo una volta alla creazione del componente, ho messo "username", così useffect viene eseguito ogni volta che cambia username (quindi ogni volta chen accedo al feed con un account diverso)
 
@@ -69,12 +94,54 @@ const handleEmoticonBad = async (squeal) => {
       setSqueals(updatedSqueals);
   } catch (error) {
       console.error('Errore nel gestire il like:', error);
+    }
   }
-  }
-  
 }
 
+const handleImpression = async (squealId) => {
+  if (registeredImpressions.has(squealId)) {
+    return; // Se l'impression è già stata registrata, non fare nulla
+  }
+    try {
+      console.log("handleImpression");
+      const response = await axios.post(`http://localhost:3001/addImpression`, { "_id": squealId, "username": username });
+      // Aggiorna lo stato locale con i dati aggiornati del squeal
+      const updatedSqueals = squeals.map(s => {
+          if (s._id === squealId) {
+              return response.data; // response.data dovrebbe contenere il squeal aggiornato
+          }
+          return s;
+      });
+      setSqueals(updatedSqueals);
+      setRegisteredImpressions(new Set(registeredImpressions).add(squealId)); // Aggiorna l'elenco delle impressioni registrate
+  } catch (error) {
+      console.error('Errore nel gestire il like:', error);
+    }
+}
 
+useEffect(() => {
+  const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+          if (entry.isIntersecting) {
+              handleImpression(entry.target.dataset.squealId);
+          }
+      });
+  }, {});
+
+  refs.current.forEach(ref => {
+      if (ref.current) {
+          observer.observe(ref.current);
+      }
+  });
+
+  return () => {
+      refs.current.forEach(ref => {
+          if (ref.current) {
+              observer.unobserve(ref.current);
+          }
+      });
+  };
+}, [squeals]); // Dipendenze: aggiorna l'observer quando la lista di squeals cambia
 
 
     return (
@@ -91,8 +158,8 @@ const handleEmoticonBad = async (squeal) => {
               </div>
               <div className="feed">
             
-          {squeals.map(squeal => (
-                <div className="user-post" key={squeal._id}>
+          {squeals.map((squeal, index) => (
+                 <div className="user-post" key={squeal._id} ref={refs.current[index]} data-squeal-id={squeal._id}>
                   <div className="profile-pic">
                     <img
                     src={squeal.profilePic}
