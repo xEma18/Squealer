@@ -163,7 +163,7 @@ const Feed = () => {
           <div className="feedHeader-container">
             <div className="feedHeader">
               <img id="feedCondor-icon" src={condorIcon} alt="Condor Icon" />
-              <i class="fa-solid fa-user"></i>
+              <i className="fa-solid fa-user"></i>
             </div>
           </div>
           {/* L'item "footer" ha posizione fixed. L'ho messo qui per comodità. */}
