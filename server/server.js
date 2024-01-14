@@ -46,6 +46,19 @@ app.post('/login', async (req, res) => {
   }
 });
 
+//API per controllare che non ci si registri con username o email già presenti nel database
+app.post('/checkIfUserAndEmailAlreadyRegistered', async (req, res) => {
+  const { email, username } = req.body;
+  
+  const userExists = await UserModel.findOne({ $or: [{ email }, { username }] });
+  
+  if (userExists) {
+      return res.status(200).json({ exists: true });
+  } else {
+      return res.status(200).json({ exists: false });
+  }
+});
+
 // API per ottenere la lista degli utenti
 app.get('/users', async (req, res) => {
   try {
@@ -152,7 +165,8 @@ app.post('/addImpression', async (req, res) => {
           return res.status(404).json({ error: 'Squeal non trovato' });
       }
       if (!squeal.impressionGivenBy.includes(username)) {
-          squeal.impressionGivenBy.push(username);
+          squeal.impressionGivenBy.push(username)
+          squeal.impression += 1;
           await squeal.save();
       }
       res.status(200).json(squeal);
