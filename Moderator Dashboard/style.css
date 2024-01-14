@@ -9,6 +9,8 @@ nav {
 .custom-bg {
     background-color: rgba(245, 245, 245, 0.997); 
 }
+/*HomePage*/
+
 .button {
 pointer-events: auto;
 cursor: pointer;
@@ -70,16 +72,20 @@ outline: 2px solid #443ffc;
 outline-offset: 3px;
 }
 
+/*Users*/
+
 .scrolling-wrapper-flexbox {
     display: flex;
     flex-wrap: nowrap;
     overflow-x: auto;
 }
-    .card {
-      flex: 0 0 auto;
-      width: 25rem;
-    }
- 
+.card {      
+    flex: 0 0 auto;
+    width: 25rem;
+}
+
+/*Squeals*/
+
 .selected {
     color: rgb(0, 255, 64); /* Puoi personalizzare il colore selezionato */
 }
@@ -116,19 +122,8 @@ outline-offset: 3px;
     justify-content: center;
     align-items: center;
 }
-.overlay-rem{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Un colore semitrasparente per l'overlay */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
-.overlay-channel{
+.overlay-rem{
     position: fixed;
     top: 0;
     left: 0;
@@ -151,4 +146,63 @@ outline-offset: 3px;
     position: absolute;
     top: 0;
     right: 0;
+}
+
+/* Channels */
+
+.scrolling-wrapper-vertical {
+    max-height: 237px; /* Imposta l'altezza massima */
+    overflow-y: auto; /* Abilita lo scrolling verticale se il contenuto è più alto */
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.overlay {
+    position: fixed;
+    display: none;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 2;
+    cursor: pointer;
+}
+
+.overlay-content {
+    position: absolute;
+    top: 25%;
+    left: 25%;
+    width: 50%;
+    height: 65%;
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    cursor: default;
+}
+
+.close {
+    position: absolute;
+    font-size: 30px; 
+    top: 10px;
+    right: 25px;
+    cursor: pointer; 
+}
+
+.post-area {
+    background: white; 
+    padding: 10px; 
+}
+
+.post-area textarea {
+    width: 100%; /* Usa il 100% della larghezza del contenitore .post-area */
+    height: 150px; /* Imposta un'altezza iniziale */
+    min-height: 100px; /* Altezza minima */
+    max-height: 100px; /* Altezza massima */
+    padding: 10px; /* Spazio interno per il testo */
+    border: 1px solid #ccc; /* Bordo opzionale */
+    box-sizing: border-box; /* Include padding e bordo nel calcolo della larghezza/altezza */
+    resize: vertical; /* Permette all'utente di ridimensionare verticalmente la textarea */
 }
