@@ -78,7 +78,7 @@ function isOfficial(channel){
                 <div class="card-body">
                     <!-- Mittente -->
                     <div class="d-flex justify-content-between">
-                        <h4 class="card-title fw-bold" id="name">§${channel[i].name}</h5>
+                        <h4 class="card-title fw-bold" id="name">${channel[i].name}</h5>
                         <span class="justify-content-end" id="popolarity">${isOfficial(channel[i]) ? channel[i].popolarity : ''}</span>
                     </div>
                     <!-- Numero di squeal e follower -->
@@ -177,9 +177,6 @@ function updateSqueal(squeal) {
                     <!-- Pulsante Modifica -->
                     <div class="container-fluid">
                     <div class="row">
-                      <div class="col-6 d-flex justify-content-center">
-                        <button type="button" class="btn btn-primary" id="modificaBtn">Modifica Squeal</button>
-                      </div>
                       <div class="col-6 d-flex justify-content-center" id="emoticons">
                       <!-- Emoticons for reazioni -->
                       <div class="text-center">
@@ -206,24 +203,15 @@ function updateSqueal(squeal) {
 }
 
 async function ViewButton(cardId,cardNumber) {
+    // Mostra l'overlay
+    const overlay = document.getElementById('squealOverlay');
+    overlay.style.display = 'block';
 
-    // Creo la finestra di sovraimpressione
-    const overlay = document.createElement('div');
-    overlay.classList.add('overlay-channel');
+    // Aggiungi il gestore dell'evento per chiudere l'overlay
+    document.getElementById('closeOverlay').addEventListener('click', function() {
+        overlay.style.display = 'none';
+    });
 
-    // Aggiungo il contenuto della finestra di sovraimpressione
-    overlay.innerHTML = `
-    <section id="Squeal">
-    <!--Container con le card degli squeal-->
-        <div class="container mt-5" id="BtnBox">
-        <h1>Squeal</h1>
-            <div class="scrolling-wrapper-flexbox d-flex" id="wrapper-overlay">
-            </div>
-        </div>
-    </section>
-    `;
-    // Aggiungo la finestra di sovraimpressione al body
-    document.body.appendChild(overlay);
     try {
         const response = await fetch('http://localhost:3001/squeals');
         squeal = await response.json();
@@ -235,6 +223,7 @@ async function ViewButton(cardId,cardNumber) {
     }
 
 }
+
 
 // Aggiungi un gestore di eventi al pulsante "Modifica"
 async function ModifyButton(cardId,cardNumber) {
@@ -260,14 +249,11 @@ const card = document.getElementById(cardId);
 // Prendo tutti i campi della card
 const modifyBtn = card.querySelector("#modifyBtn");
 const viewBtn = card.querySelector("#viewBtn");
-const type = card.querySelector("#type");
-const name = card.querySelector("#name")
-const popolarity = card.querySelector("#popolarity");
-const squealNum = card.querySelector("#squealNum");
 const description = card.querySelector("#description");
  
 // Rendi invisibile il pulsante modifica
 modifyBtn.style.display = "none";
+viewBtn.style.display = "none";
 
 // Mostra il pulsante "salva modifiche"
 const cardBody = card.querySelector(".card-body");
@@ -278,12 +264,17 @@ saveChangesBtn.innerText = "Salva Modifiche";
 cardBody.appendChild(saveChangesBtn);
 
 /*Abilita la modifica dei campi*/
-
+postText = `<div class="row d-flex mt-4 post-area">
+                <div class="col d-flex justify-content-center">
+                    <textarea id="description" placeholder="${squeal[i].description}"></textarea>
+                </div>
+            </div>`
 
 
 saveChangesBtn.addEventListener('click',async () =>{
     cardBody.removeChild(saveChangesBtn);
     modifyBtn.style.display = 'inline-block';
+    viewBtn.style.display = 'inline-block';
     // Chiamata POST all'API per aggiornare i valori nel database
     /*
     try {
