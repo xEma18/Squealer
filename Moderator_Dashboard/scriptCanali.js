@@ -202,7 +202,32 @@ function updateSqueal(squeal) {
     }
 }
 
+/*
+async function addSquealToChannel(squealId, channelName) {
+    try {
+        const response = await fetch('http://localhost:3001/editChannel', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name: channelName, newSquealId: squealId }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Errore durante l\'aggiornamento del canale');
+        }
+
+        // Gestisci la risposta...
+    } catch (error) {
+        console.error('Errore durante l\'aggiunta dello squeal al canale', error);
+    }
+}
+*/
+
 async function ViewButton(cardId,cardNumber) {
+    // Capisco che card è stata selezioinata 
+    const card = document.getElementById(cardId);
+    
     // Mostra l'overlay
     const overlay = document.getElementById('squealOverlay');
     overlay.style.display = 'block';
@@ -222,7 +247,75 @@ async function ViewButton(cardId,cardNumber) {
         console.error('Errore durante il recupero degli squeal:', error);
     }
 
+    // Post dello squeal
+    postNewSqueal.addEventListener('click',async () =>{
+
+    // Prendo i campi che mi servono per il nuovo squeal
+    const postText = overlay.querySelector("#postText").value;
+    const postNewSqueal = overlay.querySelector("#postNewSqueal")
+    actualDate = new Date();
+
+        const squealData = {
+            mittente: "Squeal Moderator",
+            destinatari: [`${channel[cardNumber].name}`],
+            text: `${postText}`,
+            date: actualDate,
+            impression: 0,
+            profilePic: null,
+            bodyImage: null,
+        };
+
+        //Aggiunta nuovo squeal al database
+        try {
+            
+            const response = await fetch('http://localhost:3001/newSqueal', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(squealData),
+            });
+    
+            if (!response.ok) {
+                throw new Error('Errore durante l\'invio dello squeal');
+            }
+    
+            const newSqueal = await response.json();
+
+            // Aggiungi il nuovo ID dello squeal all'elenco degli squeal del canale
+            //await addSquealToChannel(newSqueal._id, 'nomeDelCanale');  
+            // Creazione del toast
+            const toastHtml = `
+            <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
+                <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header bg-dark-subtle">
+                        <img src="./icon_condor.png" class="rounded me-2" alt="icon condor" style="width: 20px; height: 20px;>
+                        <strong class="me-auto">Squealer</strong>
+                        <div class="container d-flex justify-content-end">
+                        <small class="text-body-secondary">11 mins ago</small>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    </div>
+                    <div class="toast-body bg-success" style="--bs-bg-opacity: .5;">
+                        Squeal successfully added to the channel!
+                    </div>
+                </div>
+            </div>`;
+
+            // Aggiunta del toast al DOM
+            const toastContainer = document.getElementById('toastContainer');
+            toastContainer.innerHTML = toastHtml;
+
+            // Inizializzazione e visualizzazione del toast
+            const toastElement = document.getElementById('liveToast');
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        } catch (error) {
+            console.error('Errore durante l\'aggiunta dello squeal nel db', error);
+        }
+    });
 }
+
 
 
 // Aggiungi un gestore di eventi al pulsante "Modifica"
@@ -250,7 +343,8 @@ const card = document.getElementById(cardId);
 const modifyBtn = card.querySelector("#modifyBtn");
 const viewBtn = card.querySelector("#viewBtn");
 const description = card.querySelector("#description");
- 
+console.log(description)
+
 // Rendi invisibile il pulsante modifica
 modifyBtn.style.display = "none";
 viewBtn.style.display = "none";
@@ -264,28 +358,38 @@ saveChangesBtn.innerText = "Salva Modifiche";
 cardBody.appendChild(saveChangesBtn);
 
 /*Abilita la modifica dei campi*/
-postText = `<div class="row d-flex mt-4 post-area">
-                <div class="col d-flex justify-content-center">
-                    <textarea id="description" placeholder="${squeal[i].description}"></textarea>
-                </div>
-            </div>`
+description.innerHTML = `<div class="row d-flex mt-4 post-area">
+                            <div class="col d-flex justify-content-center">
+                                <textarea id="textarea">${channel[cardNumber].description}</textarea>
+                            </div>
+                        </div>`
+
 
 
 saveChangesBtn.addEventListener('click',async () =>{
+    // Gestione pulsanti
     cardBody.removeChild(saveChangesBtn);
     modifyBtn.style.display = 'inline-block';
     viewBtn.style.display = 'inline-block';
+
+    //Prendo la descrizione nuova
+    const newDesc = textarea.value;
+    console.log(newDesc)
+
+    // Elimino la textarea
+    description.innerHTML =  `<p id="description">${newDesc}</p>`
+
     // Chiamata POST all'API per aggiornare i valori nel database
-    /*
+
     try {
-        const response = await fetch('http://localhost:3001/addRecv', { 
+        const response = await fetch('http://localhost:3001/editChannelDescription', { 
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ 
-                mittente: mittente,
-                destinatari: readytoRemove,
+                name: channel[cardNumber].name,
+                description: newDesc,
             }),
         });
         if (!response.ok) {
@@ -300,33 +404,8 @@ saveChangesBtn.addEventListener('click',async () =>{
     catch (error) {
         console.error('Errore durante la chiamata POST all\'API:', error);
     }
-    } else if(remFlag){
-        remFlag = false;
-        try {
-            const response = await fetch('http://localhost:3001/remRecv', { 
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ 
-                    mittente: mittente,
-                    destinatari: readytoRemove,
-                }),
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                console.error(`Errore durante la chiamata POST all'API: ${errorData.message}`);
-            }
-            else {
-                const responseData = await response.json();
-                console.log(responseData.message);
-            } 
-        }
-        catch (error) {
-            console.error('Errore durante la chiamata POST all\'API:', error);
-        }
-    }*/
-});
+   
+})
 
 }
 

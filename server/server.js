@@ -203,6 +203,18 @@ app.post('/editUser', async (req, res)=>{
     }
 });
 
+// API per aggiungere un nuovo squeal
+app.post('/newSqueal', async (req, res) => {
+  try {
+      const newSqueal = new SquealModel(req.body);
+      await newSqueal.save();
+      res.status(201).json(newSqueal);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Errore durante l\'aggiunta dello squeal' });
+  }
+});
+
 //API per aggiungere i destinatari di uno specifico squeal (di cui ho username del mittente)
 app.post('/addRecv', async (req, res)=>{
   console.log("body: "+req.body.mittente);
@@ -265,6 +277,49 @@ app.get('/channels', async (req, res) => {
       res.status(500).json({ error: 'Errore durante il recupero dei canali' });
   }
 });
+
+
+// API per modificare la descrizione di un canale
+app.post('/editChannelDescription', async (req, res)=>{
+  try{
+    const channel = await ChannelModel.findChannelByName(req.body.name);
+        if (channel !== null) {
+            // Aggiorna i campi dell'utente con i nuovi valori
+            channel.description = req.body.description;
+            // Salva le modifiche nel database
+            await channel.save();
+            // Invia una risposta di successo
+            res.status(200).json({ message: 'Dati utente aggiornati con successo nel database' });
+        } else {
+            // Invia una risposta con errore se l'utente non è stato trovato
+            res.status(404).json({ message: 'Canale non trovato nel database' });
+        }
+    } catch (error) {
+        console.error('Errore durante l\'aggiornamento del canale nel database:', error);
+        // Invia una risposta con errore generico
+        res.status(500).json({ message: 'Errore durante l\'aggiornamento del canale nel database' });
+    }
+});
+// Api per modificare 
+app.post('/editChannelSqueal', async (req, res) => {
+  try {
+      const channel = await ChannelModel.findChannelByName(req.body.name);
+      if(channel !== null) {
+        // Aggiorna l'elenco dei squeal del canale con il nuovo ID dello squeal
+        if (req.body.newSquealId) {
+        channel.listofSqueals.push(req.body.newSquealId);
+        }
+        // Potresti voler aggiungere qui altri aggiornamenti se necessario
+        await channel.save();
+        res.status(200).json({ message: 'Canale aggiornato con successo nel database' });
+        } else {
+        res.status(404).json({ message: 'Canale non trovato nel database' });
+        }
+        } catch (error) {
+        console.error('Errore durante aggiornamento del canale nel database:', error);
+        res.status(500).json({ message: 'Errore durante aggiornamento del canale nel database' });
+        }
+    });
 
 app.listen(3001, ()=>{
     console.log("Server is running")

@@ -5,7 +5,6 @@ const SquealSchema = new mongoose.Schema({
     destinatari: [String], 
     date: Date,
     text: String,
-    year: Number,
     commentsNum: Number,
     emoticonNum: {
         verygood: Number,
