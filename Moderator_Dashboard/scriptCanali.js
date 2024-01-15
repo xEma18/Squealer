@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const response = await fetch('http://localhost:3001/channels');
         channel = await response.json();
-        console.log(channel);
         // Aggiorna le card con i dati degli utenti
         updateChannels(channel);
     } catch (error) {
@@ -69,7 +68,9 @@ function isOfficial(channel){
     if(channel.type == "official"){
         return true
     }
-    else return false
+    else {
+        return false
+        }
     }
 
     for(let i=0; i < channel.length; i++){
@@ -79,10 +80,9 @@ function isOfficial(channel){
                     <!-- Mittente -->
                     <div class="d-flex justify-content-between">
                         <h4 class="card-title fw-bold" id="name">${channel[i].name}</h5>
-                        <span class="justify-content-end" id="popolarity">${isOfficial(channel[i]) ? channel[i].popolarity : ''}</span>
                     </div>
                     <!-- Numero di squeal e follower -->
-                    <h6 class="card-subtitle mb-3" id="squealNum"><span class="fw-bold">Squeal:</span> ${channel[i].postNum} <span class="fw-bold">Follower:</span> 21244</h6>                    
+                    <h6 class="card-subtitle mb-3" id="squealNum"><span class="fw-bold">Squeal:</span> </span>${channel[i].postNum} <span class="fw-bold">Follower:</span> 21244 <span class="justify-content-end fw-bold" id="popolarity">Popolarity: </span>${isOfficial(channel[i]) ? 'Nothing' : channel[i].popolarity}</h6>                    
                     <!-- Contenuto -->
                     <h6 class="fw-bold">Descrizione canale:</h6>
                     <p id="description">${channel[i].description}</p>
@@ -140,7 +140,7 @@ function getCardNumber(cardId) {
 function updateSqueal(squeal) {
     // Prendo l'elemento con le card
     const container = document.querySelector('#wrapper-overlay');
-    console.log(container);
+
     // Resetto il wrapper da eventuali card rimaste
     container.innerHTML = "";
     // Itero sugli squeal creando una card per squeal
@@ -155,7 +155,6 @@ function updateSqueal(squeal) {
     };
     const squealConSpazi = aggiungiSpazio();
 
-    console.log(squeal[0].destinatari.length);
     for(let i=0; i<squeal.length; i++){
             // Converti in stringa ISO la data dello squeal
             const date = squeal[i].date
@@ -202,10 +201,11 @@ function updateSqueal(squeal) {
     }
 }
 
-/*
+
 async function addSquealToChannel(squealId, channelName) {
     try {
-        const response = await fetch('http://localhost:3001/editChannel', {
+        console.log("entro in addSquealToChannel")
+        const response = await fetch('http://localhost:3001/editChannelSqueal', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -216,104 +216,147 @@ async function addSquealToChannel(squealId, channelName) {
         if (!response.ok) {
             throw new Error('Errore durante l\'aggiornamento del canale');
         }
-
-        // Gestisci la risposta...
     } catch (error) {
         console.error('Errore durante l\'aggiunta dello squeal al canale', error);
     }
 }
-*/
+
+async function handlePostClick(overlay,cardNumber) {
+    // Prendo i campi che mi servono per il nuovo squeal
+    let postText = overlay.querySelector("#postText").value;
+    let actualDate = new Date();
+    
+    const squealData = {
+        mittente: "Squeal Moderator",
+        destinatari: [`${channel[cardNumber].name}`],
+        text: `${postText}`,
+        date: actualDate,
+        impression: 0,
+        profilePic: null,
+        bodyImage: null,
+    };
+    //Aggiunta nuovo squeal al database
+    try {
+        console.log("Aggiungo nuovo squeal")
+        const response = await fetch('http://localhost:3001/newSqueal', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(squealData),
+        });
+
+        if (!response.ok) {
+            throw new Error('Errore durante l\'invio dello squeal');
+        }
+
+        const newSqueal = await response.json();
+
+        // Azzero la textarea
+        overlay.querySelector("#postText").value = "";
+
+        console.log("Cambio l'id nel canale")
+        // Aggiungi il nuovo ID dello squeal all'elenco degli squeal del canale
+        await addSquealToChannel(newSqueal._id,channel[cardNumber].name);
+        console.log("Canale aggiornato",channel[cardNumber].name)
+
+        // Creazione del toast
+        const toastHtml = `
+        <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
+            <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header bg-dark-subtle">
+                    <img src="./icon_condor.png" class="rounded me-2" alt="icon condor" style="width: 20px; height: 20px;>
+                    <strong class="me-auto">Squealer</strong>
+                    <div class="container d-flex justify-content-end">
+                    <small class="text-body-secondary">11 mins ago</small>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div class="toast-body bg-success" style="--bs-bg-opacity: .5;">
+                    Squeal successfully added to the channel!
+                </div>
+            </div>
+        </div>`;
+
+        // Aggiunta del toast al DOM
+        const toastContainer = document.getElementById('toastContainer');
+        toastContainer.innerHTML = toastHtml;
+
+        // Inizializzazione e visualizzazione del toast
+        const toastElement = document.getElementById('liveToast');
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+    } catch (error) {
+        console.error('Errore durante l\'aggiunta dello squeal nel db', error);
+    }
+    /*
+    // Refresh degli squeal dopo la modifica
+    try {
+        const response = await fetch(`http://localhost:3001/squealsByChannel?channelId=${channelId}`);
+        const squealsForChannel = await response.json();
+        console.log(squealsForChannel);
+
+        // Aggiorna le card con i dati degli utenti
+        updateSqueal(squealsForChannel);
+    } catch (error) {
+        console.error('Errore durante il recupero degli squeal del canale:', error);
+    }
+    */
+    console.log("Fine funzione post")
+};
+
+let currentPostHandler; // Variabile globale per tenere traccia del gestore attuale
 
 async function ViewButton(cardId,cardNumber) {
+    console.log("ViewButton")
     // Capisco che card è stata selezioinata 
     const card = document.getElementById(cardId);
     
+    // Capisco che canale ho selezionato
+    const selectedChannel = channel[cardNumber];
+    console.log("canale selezionato: ",selectedChannel)
+
+    // Prendo l'id del canale
+    const channelId = selectedChannel._id;
+    console.log("id canale: ",channel[cardNumber].name)
+
     // Mostra l'overlay
     const overlay = document.getElementById('squealOverlay');
     overlay.style.display = 'block';
 
+    const postNewSqueal = overlay.querySelector("#postNewSqueal");
+    console.log(postNewSqueal)
+
     // Aggiungi il gestore dell'evento per chiudere l'overlay
     document.getElementById('closeOverlay').addEventListener('click', function() {
         overlay.style.display = 'none';
+
+        if (currentPostHandler) {
+            postNewSqueal.removeEventListener('click', currentPostHandler);
+            currentPostHandler = null; // Resetta la variabile di riferimento
+        }
     });
 
     try {
-        const response = await fetch('http://localhost:3001/squeals');
-        squeal = await response.json();
-        console.log(squeal);
+        console.log("Prendo gli squeal del canale")
+        const response = await fetch(`http://localhost:3001/squealsByChannel?channelId=${channelId}`);
+        const squealsForChannel = await response.json();
         // Aggiorna le card con i dati degli utenti
-        updateSqueal(squeal);
+        updateSqueal(squealsForChannel);
     } catch (error) {
-        console.error('Errore durante il recupero degli squeal:', error);
+        console.error('Errore durante il recupero degli squeal del canale:', error);
+    }
+    
+     // Assicurati che non ci siano listener precedenti attivi
+    if (currentPostHandler) {
+        postNewSqueal.removeEventListener('click', currentPostHandler);
     }
 
-    // Post dello squeal
-    postNewSqueal.addEventListener('click',async () =>{
+    // Crea un nuovo listener e tieni traccia di esso
+    currentPostHandler = () => handlePostClick(overlay, cardNumber);
+    postNewSqueal.addEventListener('click', currentPostHandler);
 
-    // Prendo i campi che mi servono per il nuovo squeal
-    const postText = overlay.querySelector("#postText").value;
-    const postNewSqueal = overlay.querySelector("#postNewSqueal")
-    actualDate = new Date();
-
-        const squealData = {
-            mittente: "Squeal Moderator",
-            destinatari: [`${channel[cardNumber].name}`],
-            text: `${postText}`,
-            date: actualDate,
-            impression: 0,
-            profilePic: null,
-            bodyImage: null,
-        };
-
-        //Aggiunta nuovo squeal al database
-        try {
-            
-            const response = await fetch('http://localhost:3001/newSqueal', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(squealData),
-            });
-    
-            if (!response.ok) {
-                throw new Error('Errore durante l\'invio dello squeal');
-            }
-    
-            const newSqueal = await response.json();
-
-            // Aggiungi il nuovo ID dello squeal all'elenco degli squeal del canale
-            //await addSquealToChannel(newSqueal._id, 'nomeDelCanale');  
-            // Creazione del toast
-            const toastHtml = `
-            <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
-                <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-                    <div class="toast-header bg-dark-subtle">
-                        <img src="./icon_condor.png" class="rounded me-2" alt="icon condor" style="width: 20px; height: 20px;>
-                        <strong class="me-auto">Squealer</strong>
-                        <div class="container d-flex justify-content-end">
-                        <small class="text-body-secondary">11 mins ago</small>
-                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                        </div>
-                    </div>
-                    <div class="toast-body bg-success" style="--bs-bg-opacity: .5;">
-                        Squeal successfully added to the channel!
-                    </div>
-                </div>
-            </div>`;
-
-            // Aggiunta del toast al DOM
-            const toastContainer = document.getElementById('toastContainer');
-            toastContainer.innerHTML = toastHtml;
-
-            // Inizializzazione e visualizzazione del toast
-            const toastElement = document.getElementById('liveToast');
-            const toast = new bootstrap.Toast(toastElement);
-            toast.show();
-        } catch (error) {
-            console.error('Errore durante l\'aggiunta dello squeal nel db', error);
-        }
-    });
+    console.log("Fine funzione view")
 }
 
 
@@ -323,14 +366,12 @@ async function ModifyButton(cardId,cardNumber) {
     try {
         const response = await fetch('http://localhost:3001/channels');
         if (!response.ok) {
-            // ... (gestione degli errori)
+
         } else {
             // Aggiorna la lista degli utenti dopo la modifica
             const updatedSquealResponse = await fetch('http://localhost:3001/channels');
             channels = await updatedSquealResponse.json();
             updateChannels(channels);
-            console.log("channels:")
-            console.log(channels);
         }
     } catch (error) {
         console.error('Errore durante il recupero dei canali:', error);
@@ -343,7 +384,6 @@ const card = document.getElementById(cardId);
 const modifyBtn = card.querySelector("#modifyBtn");
 const viewBtn = card.querySelector("#viewBtn");
 const description = card.querySelector("#description");
-console.log(description)
 
 // Rendi invisibile il pulsante modifica
 modifyBtn.style.display = "none";
@@ -364,8 +404,6 @@ description.innerHTML = `<div class="row d-flex mt-4 post-area">
                             </div>
                         </div>`
 
-
-
 saveChangesBtn.addEventListener('click',async () =>{
     // Gestione pulsanti
     cardBody.removeChild(saveChangesBtn);
@@ -374,7 +412,7 @@ saveChangesBtn.addEventListener('click',async () =>{
 
     //Prendo la descrizione nuova
     const newDesc = textarea.value;
-    console.log(newDesc)
+   
 
     // Elimino la textarea
     description.innerHTML =  `<p id="description">${newDesc}</p>`

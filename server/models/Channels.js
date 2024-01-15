@@ -14,10 +14,9 @@ const ChannelSchema = new mongoose.Schema({
 
 // Aggiungi la funzione statica dopo la definizione del modello
 ChannelSchema.statics.findChannelByName = async function (name) {
-    console.log(name);
+    console.log("nome canale trovato",name);
     try {
         const channel = await this.findOne({ name: name });
-            console.log("channel:", channel);
             return channel;
     } catch (error) {
         console.error('Errore durante la ricerca del canale:', error);
