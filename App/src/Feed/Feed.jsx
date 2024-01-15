@@ -31,7 +31,7 @@ const Feed = () => {
   const [squeals, setSqueals] = useState([]);
   //Scrivo questa parte  fuori  dallo useEffect perché se lo mettessi dentro, verrebbe eseguito solo la prima volta che viene renderizzato il componente (perché ho messo "[]" come secondo parametro di useEffect")
   const savedData = sessionStorage.getItem("accountData");
-  const accountData = JSON.parse(savedData); // Se non ci sono dati di registrazione salvati in sessionStorage, salva un oggetto con un campo username:@guest
+  const accountData = JSON.parse(savedData);
   const username = accountData.username;
   const refs = useRef([]);
   const [registeredImpressions, setRegisteredImpressions] = useState(new Set());
@@ -115,7 +115,6 @@ const Feed = () => {
       return; // Se l'impression è già stata registrata, non fare nulla
     }
     try {
-      console.log("handleImpression");
       const response = await axios.post(`http://localhost:3001/addImpression`, {
         _id: squealId,
         username: username,
@@ -172,7 +171,7 @@ const Feed = () => {
           {/* L'item "footer" ha posizione fixed. L'ho messo qui per comodità. */}
           <div className="feedFooter">
             <i className="fa-solid fa-house fa-1x"></i>
-            <i className="fa-solid fa-feather fa-1x"></i>
+            <Link to="/writeSqueal"><i className="fa-solid fa-feather fa-1x"></i></Link>
             <i className="fa-solid fa-magnifying-glass fa-1x"></i>
           </div>
           <div className="feed">

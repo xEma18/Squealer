@@ -115,6 +115,23 @@ app.post('/squealsToUser', async (req, res) => {
   }
 });
 
+app.post('/getUserImageAndCharLeft', async (req, res) => {
+  try {
+    const username = req.body.username;
+    const user = await UserModel.findOne({ username: username }).select('image caratteriGiornalieri caratteriSettimanali caratteriMensili');
+
+    if (user) {
+      res.status(200).json(user);
+    } else {
+      res.status(404).json({ message: 'Utente non trovato' });
+    }
+    } catch (error) {
+    console.error('Errore durante la ricerca dell utente:', error);
+    res.status(500).json({ message: 'Errore interno del server' });
+    }
+    });
+
+
 app.post('/addEmoticonGood', async (req, res)=>{
   try{
     const squeal = await SquealModel.findById(req.body._id);

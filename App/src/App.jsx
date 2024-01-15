@@ -7,6 +7,7 @@ import SignUp3 from './SignUp/SignUp3.jsx';
 import SignUp4 from './SignUp/SignUp4.jsx';
 import Login from './Login/Login.jsx';
 import Feed from './Feed/Feed.jsx';
+import WriteSqueal from './Feed/writeSqueal/writeSqueal.jsx';
 
 
 
@@ -47,6 +48,7 @@ const App = () => {
         <Route path= "/SignUp4" element={<SignUp4 updateRegistrationData={updateRegistrationData} registrationData={registrationData}  />} />
         <Route path= "/LogIn" element={<Login />} />
         <Route path= "/Feed" element={<Feed />} />
+        <Route path= "/WriteSqueal" element={<WriteSqueal />} />
 
       </Routes>
     </Router>
