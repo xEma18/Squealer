@@ -19,7 +19,8 @@ const SignUp2 = ({ updateRegistrationData }) => {
   const [showErrorEmail, setShowErrorEmail]=useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showErrorUserAndEmailAlreadyRegistered, setShowErrorUserAndEmailAlreadyRegistered]=useState(false);
-  
+  const [showErrorUnderscore, setShowErrorUnderscore]=useState(false);
+
 
   const handleNext=async ()=>{
     if(isPasswordShort===false && isPasswordLong===false && isPasswordWithNumber===true && isPasswordWithSpecialChar===true && username.startsWith('@')&& isEmailValid(email)){
@@ -61,6 +62,7 @@ const SignUp2 = ({ updateRegistrationData }) => {
   const handleChangeUsername=async (e)=>{
     setUsername(e.target.value);
     setShowErrorUserAndEmailAlreadyRegistered(false);
+    
     if (!e.target.value.startsWith('@')) { //qui non ci posso mettere "username.startsWith('@') perché lo state non vine aggiornato subito, quindi non è aggiornato quando viene eseguito questo if"
       setShowErrorDot(true);
       setUsername('');
@@ -68,7 +70,18 @@ const SignUp2 = ({ updateRegistrationData }) => {
     else{
       setShowErrorDot(false);
     }
-}
+
+    //faccio in modo che non si possano mettere "_" perché mi servono per splittare "guest" dal numero che lo segue
+    if (e.target.value.includes('_')) {
+      setShowErrorUnderscore(true);
+      //inputValue = inputValue.replace(/_/g, '');
+      setUsername(e.target.value.replace(/_/g, ''));
+    }
+    else{
+      setShowErrorUnderscore(false);
+    }
+
+  }
 
   const handleChangePassword=async (e)=>{
     setPassword(e.target.value);
@@ -128,8 +141,10 @@ const togglePasswordVisibility = () => {
         <div className="title t-small">Credenziali</div>
         
         <input type="text" id="username" placeholder="Username (es: @MarioRossi)" onChange={(e)=>handleChangeUsername(e)} value={username} />
-        {showErrorDot && <span style={{fontWeight:"bold", fontSize:"115%", color:"red"}}>L'Username deve iniziare con "@".</span>}
-        
+        {showErrorDot && <span style={{fontWeight:"bold", fontSize:"115%", color:"red"}}>L'Username deve iniziare con "@". </span>}
+
+        {showErrorUnderscore && <span style={{fontWeight:"bold", fontSize:"115%", color:"red"}}><br/> L'Username non può contenere "_".</span>}
+
         <input type="email" id="email" placeholder="Email" onChange={(e)=>handleEmailChange(e)} value={email} />
         {showErrorEmail && <span style={{fontWeight:"bold", fontSize:"115%", color:"red"}}>La tua email non è valida.</span>}
         
