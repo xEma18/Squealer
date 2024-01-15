@@ -2,15 +2,28 @@ import React, { useState } from 'react';
 import { Link,useNavigate } from 'react-router-dom';
 import condorIcon from './assets/icon_condor.png'
 import './style.css';
+import axios from 'axios';
 
 const InitialPageComponent = () => {
   const navigate = useNavigate();
 
-  const handleGuestAccess = () => {
-    // Naviga al componente Feed passando lo stato di guest
-    sessionStorage.setItem('accountData', JSON.stringify({ username: "@guest" }));
-    navigate('/Feed');
-    //navigate('/Feed', { state: { guestUsername: "@guest" } });
+  const handleGuestAccess = async () => {
+    try {
+      // Esegui una richiesta al server per ottenere il numero unico del guest
+      const response = await axios.get('http://localhost:3001/generateGuestNumber');
+      const guestNumber = response.data.guestNumber; // Assumi che la risposta abbia una struttura del genere
+  
+      // Componi lo username del guest
+      const guestUsername = `@guest_${guestNumber}`;
+  
+      // Salva nel sessionStorage
+      sessionStorage.setItem('accountData', JSON.stringify({ username: guestUsername }));
+  
+      // Naviga al componente Feed
+      navigate('/Feed');
+    } catch (error) {
+      console.error("Errore nell'accesso come guest:", error);
+    }
   };
   
     return (
