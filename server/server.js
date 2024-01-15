@@ -4,6 +4,7 @@ const cors=require('cors')
 const UserModel= require('./models/Users')
 const SquealModel= require('./models/Squeals')
 const ChannelModel= require('./models/Channels')
+const CounterModel= require('./models/Counters')
 const app=express()
 
 app.use(cors()) //enable to use cors
@@ -69,6 +70,28 @@ app.get('/users', async (req, res) => {
       res.status(500).json({ error: 'Errore durante il recupero degli utenti' });
   }
 });
+
+app.get('/generateGuestNumber', async (req, res) => {
+  try {
+    const counterName = 'guestCounter';
+    const counter = await CounterModel.findOne({ name: counterName });
+
+    if (counter) {
+      currentValue = counter.count;
+      // Se il contatore esiste, lo incremento
+      counter.count += 1;
+      await counter.save();
+      res.status(200).json({ guestNumber: currentValue });
+      } else {
+      // Il contatore esiste per forza, ma per sicurezza gestisco anche il caso in cui non esista
+      res.status(404).json({ error: 'Contatore non trovato' });
+      }
+      } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Errore interno del server' });
+      }
+      });
+
 
 // API per ottenere la lista degli squeal
 app.get('/squeals', async (req, res) => {

@@ -43,7 +43,7 @@ const Feed = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username }),
+      body: JSON.stringify({ username: username.split('_')[0] }), //nel caso in cui l'utente sia un guest, username è del tipo @guest_1, quindi splitto la stringa e prendo solo la prima parte, se nella stringa non ci sono "_" non cambia nulla
     })
       .then((response) => response.json())
       .then((data) => {
@@ -57,7 +57,9 @@ const Feed = () => {
   }, [username]); // Il secondo parametro vuoto [] indicherebbe che useEffect verrà eseguito solo una volta alla creazione del componente, ho messo "username", così useffect viene eseguito ogni volta che cambia username (quindi ogni volta chen accedo al feed con un account diverso)
 
   const handleEmoticonGood = async (squeal) => {
-    if (username != "@guest") {
+    // Uso un'espressione regolare per verificare se l'username è nel formato "guest_x". Se "username" soddisfa il pattern, allora isGuest sarà true
+    const isGuest = /^@guest_\d+$/.test(username);
+    if (!isGuest) {
       //se l'utente non è guest, può mettere like/dislike
       //controllo se l'utente ha già dato un emoticon good a questo squeal e seleziono l'endpoint da chiamare
       const endpoint = squeal.emoticonGivenBy.good.includes(username)
@@ -83,7 +85,8 @@ const Feed = () => {
   };
 
   const handleEmoticonBad = async (squeal) => {
-    if (username != "@guest") {
+    const isGuest = /^@guest_\d+$/.test(username);
+    if (!isGuest) {
       //controllo se l'utente ha già dato un emoticon bad a questo squeal e seleziono l'endpoint da chiamare
       const endpoint = squeal.emoticonGivenBy.bad.includes(username)
         ? "/removeEmoticonBad"
