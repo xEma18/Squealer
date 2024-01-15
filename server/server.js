@@ -245,8 +245,11 @@ app.post('/editUser', async (req, res)=>{
 
 // API per aggiungere un nuovo squeal
 app.post('/newSqueal', async (req, res) => {
+  console.log("newSqueal");
   try {
       const newSqueal = new SquealModel(req.body);
+      console.log("Squeal da aggiungere:")
+      console.log(newSqueal)
       await newSqueal.save();
       res.status(201).json(newSqueal);
   } catch (error) {
@@ -307,7 +310,7 @@ app.post('/remRecv', async (req, res)=>{
     }
 });
 
-// API per ottenere la lista degli canali
+// API per ottenere la lista di tutti i canali
 app.get('/channels', async (req, res) => {
   try {
       const channels = await ChannelModel.find();
@@ -340,13 +343,18 @@ app.post('/editChannelDescription', async (req, res)=>{
         res.status(500).json({ message: 'Errore durante l\'aggiornamento del canale nel database' });
     }
 });
-// Api per modificare 
+
+// Api per modificare il numero di squeal nel canale
 app.post('/editChannelSqueal', async (req, res) => {
   try {
+      console.log("editChannelSqueal")
+      console.log("Entro nella modifica numero squeal del canale");
       const channel = await ChannelModel.findChannelByName(req.body.name);
       if(channel !== null) {
-        // Aggiorna l'elenco dei squeal del canale con il nuovo ID dello squeal
+        // Aggiorna l'elenco degli squeal del canale con il nuovo ID dello squeal
         if (req.body.newSquealId) {
+          console.log("squeal che si sta aggiungendo all'array");
+          console.log(req.body.newSquealId);
         channel.listofSqueals.push(req.body.newSquealId);
         }
         // Potresti voler aggiungere qui altri aggiornamenti se necessario
@@ -360,6 +368,27 @@ app.post('/editChannelSqueal', async (req, res) => {
         res.status(500).json({ message: 'Errore durante aggiornamento del canale nel database' });
         }
     });
+
+    // Api per ritornare gli squeal di uno specifico canale
+    app.get('/squealsByChannel', async (req, res) => {
+      try {
+          console.log("squealsByChannel")
+          console.log(req.query)
+          const channelId = req.query.channelId;
+          console.log(channelId);
+          const channel = await ChannelModel.findById(channelId);
+          console.log(channel);
+          if (!channel) {
+              return res.status(404).send('Canale non trovato');
+          }
+          const squeals = await SquealModel.find({ '_id': { $in: channel.listofSqueals } });
+          console.log(squeals);
+          res.json(squeals);
+      } catch (error) {
+          res.status(500).send('Errore interno del server');
+      }
+    });
+  
 
 app.listen(3001, ()=>{
     console.log("Server is running")
