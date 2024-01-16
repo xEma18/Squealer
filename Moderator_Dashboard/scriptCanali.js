@@ -201,7 +201,6 @@ function updateSqueal(squeal) {
     }
 }
 
-
 async function addSquealToChannel(squealId, channelName) {
     try {
         console.log("entro in addSquealToChannel")
@@ -221,7 +220,7 @@ async function addSquealToChannel(squealId, channelName) {
     }
 }
 
-async function handlePostClick(overlay,cardNumber) {
+async function handlePostClick(overlay,cardNumber,channelId) {
     // Prendo i campi che mi servono per il nuovo squeal
     let postText = overlay.querySelector("#postText").value;
     let actualDate = new Date();
@@ -289,7 +288,6 @@ async function handlePostClick(overlay,cardNumber) {
     } catch (error) {
         console.error('Errore durante l\'aggiunta dello squeal nel db', error);
     }
-    /*
     // Refresh degli squeal dopo la modifica
     try {
         const response = await fetch(`http://localhost:3001/squealsByChannel?channelId=${channelId}`);
@@ -301,7 +299,6 @@ async function handlePostClick(overlay,cardNumber) {
     } catch (error) {
         console.error('Errore durante il recupero degli squeal del canale:', error);
     }
-    */
     console.log("Fine funzione post")
 };
 
@@ -353,13 +350,11 @@ async function ViewButton(cardId,cardNumber) {
     }
 
     // Crea un nuovo listener e tieni traccia di esso
-    currentPostHandler = () => handlePostClick(overlay, cardNumber);
+    currentPostHandler = () => handlePostClick(overlay, cardNumber,channelId);
     postNewSqueal.addEventListener('click', currentPostHandler);
 
     console.log("Fine funzione view")
 }
-
-
 
 // Aggiungi un gestore di eventi al pulsante "Modifica"
 async function ModifyButton(cardId,cardNumber) {
@@ -413,7 +408,6 @@ saveChangesBtn.addEventListener('click',async () =>{
     //Prendo la descrizione nuova
     const newDesc = textarea.value;
    
-
     // Elimino la textarea
     description.innerHTML =  `<p id="description">${newDesc}</p>`
 
@@ -447,8 +441,52 @@ saveChangesBtn.addEventListener('click',async () =>{
 
 }
 
+document.getElementById("addChannelButton").addEventListener("click", function() {
+    document.getElementById("newChannelOverlay").style.display = "block";
+});
+  
+document.getElementById("closeNewChannelOverlay").addEventListener("click", function() {
+    document.getElementById("newChannelOverlay").style.display = "none";
+});
+  
 
+  document.getElementById("newChannelForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const name = document.getElementById("newChannelName").value;
+    const type = document.getElementById("newChannelType").value;
+    const description = document.getElementById("newChannelDescription").value;
+  
+    // Chiamata API per salvare il nuovo canale
+    try {
+      const response = await fetch('http://localhost:3001/addChannel', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, type, description }),
+      });
+  
+      if (response.ok) {
+        // Aggiungi il nuovo canale all'interfaccia utente...
+        document.getElementById("newChannelOverlay").style.display = "none";
+      } else {
+        throw new Error('Errore nella creazione del canale');
+      }
+    } catch (error) {
+      console.error('Errore:', error);
+    }
 
+    // Refresha i canali
+    try {
+        const response = await fetch('http://localhost:3001/channels');
+        channel = await response.json();
+        // Aggiorna le card con i dati degli utenti
+        updateChannels(channel);
+    } catch (error) {
+        console.error('Errore durante il recupero dei canali:', error);
+    }
+  });
+  
 /*
 // Attach click event listeners to each emoticon
 document.getElementById('verygood').addEventListener('click', function () {

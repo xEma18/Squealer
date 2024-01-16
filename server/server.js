@@ -388,7 +388,20 @@ app.post('/editChannelSqueal', async (req, res) => {
           res.status(500).send('Errore interno del server');
       }
     });
-  
+    app.post('/addChannel', async (req, res) => {
+      try {
+        const newChannel = new ChannelModel({
+          name: req.body.name,
+          type: req.body.type,
+          description: req.body.description,
+        });
+        await newChannel.save();
+        res.status(201).json(newChannel);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Errore durante la creazione del canale' });
+      }
+    });
 
 app.listen(3001, ()=>{
     console.log("Server is running")
