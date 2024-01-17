@@ -60,29 +60,28 @@ p {
 
 .squeal-body {
   display: flex;
-  justify-content: center;
+  justify-content: start;
   align-items: flex-start;
-
   padding: 1rem;
 }
 
-.squeal-body .profile-pic {
-  flex: 1;
 
+.squeal-body .profile-pic {
+
+  width:20%;
   display: flex;
-  justify-content: center;
+  
   align-items: center;
 
   z-index: -1;
 }
 
 .squeal-body .profile-pic img {
-  height: 3rem;
-  width: 100%;
+  max-height: 3rem;
   object-fit: cover;
-  /* border-radius: 50%; */
   clip-path: circle();
 }
+
 
 .squeal-body .text-content {
   flex: 5;

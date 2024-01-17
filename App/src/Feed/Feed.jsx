@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./feed_style.css";
 import "../style.css";
 import condorIcon from "../assets/icon_condor.png";
@@ -28,6 +28,7 @@ function useIntersectionObserver(elementRef, callback, options) {
 }
 
 const Feed = () => {
+  const navigate = useNavigate();
   const [squeals, setSqueals] = useState([]);
   //Scrivo questa parte  fuori  dallo useEffect perché se lo mettessi dentro, verrebbe eseguito solo la prima volta che viene renderizzato il componente (perché ho messo "[]" come secondo parametro di useEffect")
   const savedData = sessionStorage.getItem("accountData");
@@ -127,7 +128,7 @@ const Feed = () => {
         return s;
       });
       setSqueals(updatedSqueals);
-      setRegisteredImpressions(new Set(registeredImpressions).add(squealId)); // Aggiorna l'elenco delle impressioni registrate
+      setRegisteredImpressions((prevSet) => new Set([...prevSet, squealId])); // Aggiorna l'elenco delle impressioni registrate
     } catch (error) {
       console.error("Errore nel gestire il like:", error);
     }
@@ -157,6 +158,13 @@ const Feed = () => {
     };
   }, [squeals]); // Dipendenze: aggiorna l'observer quando la lista di squeals cambia
 
+  const handleWriteSquealButton = () => {
+    //se l'utente è guest, non può scrivere uno squeal, mentre se non è guest, va a navigate a WriteSqueal
+    const isGuest = /^@guest_\d+$/.test(username);
+    if (!isGuest) {
+      navigate('/Feed/WriteSqueal');
+    }
+  }
   return (
     //header
     <div id="feedBody">
@@ -171,7 +179,7 @@ const Feed = () => {
           {/* L'item "footer" ha posizione fixed. L'ho messo qui per comodità. */}
           <div className="feedFooter">
             <i className="fa-solid fa-house fa-1x"></i>
-            <Link to="/writeSqueal"><i className="fa-solid fa-feather fa-1x"></i></Link>
+            <i className="fa-solid fa-feather fa-1x" onClick={handleWriteSquealButton}></i>
             <i className="fa-solid fa-magnifying-glass fa-1x"></i>
           </div>
           <div className="feed">
@@ -191,7 +199,7 @@ const Feed = () => {
                     <i className="fa-solid fa-feather"></i>
                     <span className="post-date">
                       {" "}
-                      {new Date(squeal.data).toLocaleDateString("en-US", {
+                      {new Date(squeal.date).toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
                       })}

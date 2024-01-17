@@ -216,6 +216,17 @@ app.post('/addImpression', async (req, res) => {
   }
 });
 
+app.post('/postSqueal', async (req, res) => {
+  try {
+      const newSqueal = new SquealModel(req.body);
+      await newSqueal.save();
+      res.status(201).json(newSqueal);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Errore durante l\'invio dello squeal' });
+  }
+});
+
 //API per modificare i campi (tipo account, popolarità, caratteri...) di uno specifico utente (di cui ho nome e cognome)
 app.post('/editUser', async (req, res)=>{
   try{

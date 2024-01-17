@@ -48,7 +48,7 @@ const App = () => {
         <Route path= "/SignUp4" element={<SignUp4 updateRegistrationData={updateRegistrationData} registrationData={registrationData}  />} />
         <Route path= "/LogIn" element={<Login />} />
         <Route path= "/Feed" element={<Feed />} />
-        <Route path= "/WriteSqueal" element={<WriteSqueal />} />
+        <Route path= "/Feed/WriteSqueal" element={<WriteSqueal />} />
 
       </Routes>
     </Router>
