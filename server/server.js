@@ -104,7 +104,7 @@ app.get('/squeals', async (req, res) => {
   }
 });
 
-//API per ottenere gli Squeals che hanno come destinatario un utente specifico
+//API per ottenere gli Squeals che hanno come destinatario un utente specifico + tutti gli squeal "pubblici" (@everyone) se username !="guest"
 app.post('/squealsToUser', async (req, res) => {
   try {
       const squeals = await SquealModel.findSquealsToUser(req.body.username);
