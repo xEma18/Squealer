@@ -22,6 +22,11 @@ const SquealSchema = new mongoose.Schema({
     impressionGivenBy: [String],
     profilePic: String,
     bodyImage: String,
+    mapLocation: {
+        lat: Number, // Latitudine
+        lng: Number, // Longitudine
+        zoom: Number // Livello di Zoom
+    },
 });
 
 

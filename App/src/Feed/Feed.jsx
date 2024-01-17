@@ -55,6 +55,8 @@ const Feed = () => {
       .catch((error) =>
         console.error("Errore nel caricamento degli squeals:", error)
       );
+
+
   }, [username]); // Il secondo parametro vuoto [] indicherebbe che useEffect verrà eseguito solo una volta alla creazione del componente, ho messo "username", così useffect viene eseguito ogni volta che cambia username (quindi ogni volta chen accedo al feed con un account diverso)
 
   const handleEmoticonGood = async (squeal) => {
@@ -158,6 +160,33 @@ const Feed = () => {
     };
   }, [squeals]); // Dipendenze: aggiorna l'observer quando la lista di squeals cambia
 
+  //inizializza le eventuali mappe presenti negli squeals (inserendo già latitudine, longitudine e zoom)
+  useEffect(() => {
+    squeals.forEach((squeal) => {
+      if (squeal.mapLocation) {
+        const mapId = `map-${squeal._id}`;
+        const container = document.getElementById(mapId);
+  
+        // Controlla se la mappa è già stata inizializzata
+        if (container && !container._leaflet_id) {
+          const map = L.map(mapId).setView([squeal.mapLocation.lat, squeal.mapLocation.lng], squeal.mapLocation.zoom);
+  
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '© OpenStreetMap contributors'
+          }).addTo(map);
+
+          const marker = L.marker([squeal.mapLocation.lat, squeal.mapLocation.lng]).addTo(map);
+          marker.bindPopup('Sei qui!').openPopup();
+        }
+      }
+    });
+  }, [squeals]);
+  
+  
+
+
+  
+
   const handleWriteSquealButton = () => {
     //se l'utente è guest, non può scrivere uno squeal, mentre se non è guest, va a navigate a WriteSqueal
     const isGuest = /^@guest_\d+$/.test(username);
@@ -210,6 +239,7 @@ const Feed = () => {
                     {squeal.bodyImage && (
                       <img src={squeal.bodyImage} alt="bodyImage" />
                     )}
+                     {squeal.mapLocation && (<div id={`map-${squeal._id}`} style={{ height: '200px', width: '100%' }}></div>)}
                   </div>
                   <div className="post-reactions">
                     <div className="post-comments">
