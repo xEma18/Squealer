@@ -12,58 +12,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-/* Gestione filtraggio risultati */
-/*
+/* Filtri canali*/
+// Event listener per il pulsante "Applica"
 document.getElementById("apply-filter").addEventListener("click", function () {
-    // Ottiengo i valori dai campi di filtro
-    const senderF = document.getElementById("sender-filter").value;
-    const receiverF = document.getElementById("receiver-filter").value;
-    const dateF = document.getElementById("date-filter").value;
+    // Ottieni i valori dai campi di filtro
+    const nameFilter = document.getElementById("sender-filter").value;
+    const typeFilter = document.getElementById("type-filter").value;
 
-    // Eseguo la funzione di filtro
-    filtraChannels(senderF, receiverF, dateF);
+    // Esegui la funzione di filtro
+    filterChannels(nameFilter, typeFilter);
 });
-function filtraChannels(sender, receiver, date) {
-    const cards = document.querySelectorAll(".card"); // Seleziona tutte le carte degli utenti
+
+function filterChannels(name, type) {
+    const cards = document.querySelectorAll(".card");
 
     cards.forEach(card => {
-        const senderCard = card.querySelector(".card-title").innerText;
-        // Creo un array con i destinatari divisi da una virgola
-        const receiverCard = card.querySelector('#destinatari').innerText.split(",");
-        
-        const dateCard = card.querySelector('#date').innerText;
-        console.log(dateCard)
-        console.log(date);
-        // Controllo se l'utente soddisfa i criteri di filtro
-        const senderMatch = sender === "" || senderCard.toLowerCase().includes(sender.toLowerCase());
-        let receiverMatch = "";
-        let isMatched = false;
-        //Controllo se esiste almeno un match con i destinatari 
-        for(let i = 0; i < receiverCard.length; i++){
-            receiverMatch = receiver === "" || receiverCard[i].toLowerCase().includes(receiver.toLowerCase());
-            if(receiverMatch){
-                isMatched = true;
-            }
-        }
-        const dateMatch = date ===  "" || dateCard.includes(date);
-        console.log(dateMatch)
-        // Nascondo o mostro la carta in base ai criteri di filtro
-        if (senderMatch && isMatched && dateMatch) {
-            card.style.display = "block"; // Mostra la carta
+        const channelName = card.querySelector("#name").innerText;
+        const channelType = card.getAttribute('data-type');
+
+        const nameMatch = name ===  "" || channelName.toLowerCase().includes(name.toLowerCase());
+        const typeMatch = type === "Tutti" || channelType === type;
+
+        if (nameMatch && typeMatch) {
+            card.style.display = "block";
         } else {
-            card.style.display = "none"; // Nascondi la carta
+            card.style.display = "none";
         }
     });
 }
-*/
 
-// Funzione che mostra i canali a schermo
-function updateChannels(channel) {
-    // Prendo l'elemento con le card
-    const container = document.querySelector('#wrapper');
-    // Resetto il wrapper da eventuali card rimaste
-    container.innerHTML = "";
-
+// Verifica se il canale è ufficiale
 function isOfficial(channel){
     if(channel.type == "official"){
         return true
@@ -73,16 +51,24 @@ function isOfficial(channel){
         }
     }
 
+// Funzione che mostra i canali a schermo
+function updateChannels(channel) {
+    // Prendo l'elemento con le card
+    const container = document.querySelector('#wrapper');
+    // Resetto il wrapper da eventuali card rimaste
+    container.innerHTML = "";
+
     for(let i=0; i < channel.length; i++){
-            container.innerHTML +=`
-            <div class="card ms-1" id="card-${i}">
+        const channelType = isOfficial(channel[i]) ? 'official' : 'unofficial';
+        container.innerHTML += `
+            <div class="card ms-1" id="card-${i}" data-type="${channelType}">
                 <div class="card-body">
                     <!-- Mittente -->
                     <div class="d-flex justify-content-between">
                         <h4 class="card-title fw-bold" id="name">${channel[i].name}</h5>
                     </div>
                     <!-- Numero di squeal e follower -->
-                    <h6 class="card-subtitle mb-3" id="squealNum"><span class="fw-bold">Squeal:</span> </span>${channel[i].postNum} <span class="fw-bold">Follower:</span> 21244 <span class="justify-content-end fw-bold" id="popolarity">Popolarity: </span>${isOfficial(channel[i]) ? 'Nothing' : channel[i].popolarity}</h6>                    
+                    <h6 class="card-subtitle mb-3" id="squealNum"><span class="fw-bold">Squeal:</span> </span>${channel[i].postNum} <span class="fw-bold">Follower:</span> 21244 <span class="justify-content-end fw-bold" id="popolarity">Popolarity:</span>${isOfficial(channel[i]) ? 'Nothing' : channel[i].popolarity}</h6>                    
                     <!-- Contenuto -->
                     <h6 class="fw-bold">Descrizione canale:</h6>
                     <p id="description">${channel[i].description}</p>
@@ -160,8 +146,9 @@ function updateSqueal(squeal) {
             const date = squeal[i].date
             // Estrai solo la parte della data
             const squealDate = date.split('T')[0];
+            
             container.innerHTML +=`
-            <div class="card ms-1" id="card-${i}">
+            <div class="card ms-1" id="card-${squeal[i]._id}">
                 <div class="card-body">
                     <!-- Mittente -->
                     <div class="d-flex justify-content-between">
@@ -192,14 +179,47 @@ function updateSqueal(squeal) {
                             sentiment_very_dissatisfied
                         </span>
                         <span>Impression: ${squeal[i].impression}</span>
+                        <!-- Pulsante Elimina Squeal -->
+                        <button type="button" class="btn btn-danger" id="removeSquealBtn-${i}">Remove Squeal</button>
                       </div>
                       </div>
                     </div>
                   </div>
                 </div>
             </div>`
+            // Dopo aver aggiunto tutte le card, impostiamo gli event listener sui pulsanti
+            let buttonSelected = document.querySelector(`#removeSquealBtn-${i}`);
+                buttonSelected.addEventListener('click', function() {
+                    const squealId = squeal[i]._id;
+                    console.log(squealId);
+                    removeSqueal(squealId);
+                });
+            
     }
+    
 }
+
+    // Eventlistener per quando aggiungo lo squeal (tasto remove squeal)
+    async function removeSqueal(squealId) {
+        console.log("Sto per eliminare lo squeal:",squealId)
+        try {
+            const response = await fetch('http://localhost:3001/removeSqueal', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ _id: squealId }),
+            });
+
+            if (response.ok) {
+                document.getElementById(`card-${squealId}`).remove();
+            } else {
+                console.error('Errore durante la rimozione dello squeal');
+            }
+        } catch (error) {
+            console.error('Errore:', error);
+        }
+    }
 
 async function addSquealToChannel(squealId, channelName) {
     try {
@@ -246,10 +266,12 @@ async function handlePostClick(overlay,cardNumber,channelId) {
         });
 
         if (!response.ok) {
-            throw new Error('Errore durante l\'invio dello squeal');
+            console.error('Risposta non valida dal server:', response.status);
+            throw new Error('Risposta non valida dal server');
         }
-
+        console.log("stato",response.status)
         const newSqueal = await response.json();
+        console.log("squeal aggiunto",newSqueal);
 
         // Azzero la textarea
         overlay.querySelector("#postText").value = "";
@@ -352,11 +374,14 @@ async function ViewButton(cardId,cardNumber) {
     // Crea un nuovo listener e tieni traccia di esso
     currentPostHandler = () => handlePostClick(overlay, cardNumber,channelId);
     postNewSqueal.addEventListener('click', currentPostHandler);
-
-    console.log("Fine funzione view")
 }
 
-// Aggiungi un gestore di eventi al pulsante "Modifica"
+// Eventlistener per quando elimino lo squeal
+document.getElementById("addChannelButton").addEventListener("click", function() {
+    document.getElementById("newChannelOverlay").style.display = "block";
+});
+
+// Gestore di eventi del pulsante "Modifica"
 async function ModifyButton(cardId,cardNumber) {
     try {
         const response = await fetch('http://localhost:3001/channels');
@@ -398,10 +423,24 @@ description.innerHTML = `<div class="row d-flex mt-4 post-area">
                                 <textarea id="textarea">${channel[cardNumber].description}</textarea>
                             </div>
                         </div>`
+// Mostra il pulsante "Rimuovi Canale"
+const removeChannelBtn = document.createElement("button");
+removeChannelBtn.classList.add("btn");
+removeChannelBtn.classList.add("btn-danger");
+removeChannelBtn.classList.add("mx-3");
+removeChannelBtn.innerText = "Rimuovi Canale";
+removeChannelBtn.id = "removeBtn";
+cardBody.appendChild(removeChannelBtn);
+
+// Aggiungi l'ascoltatore di eventi per la rimozione del canale
+removeChannelBtn.addEventListener('click', () => {
+    RemoveChannel(cardId, cardNumber);
+});
 
 saveChangesBtn.addEventListener('click',async () =>{
     // Gestione pulsanti
     cardBody.removeChild(saveChangesBtn);
+    cardBody.removeChild(removeChannelBtn);
     modifyBtn.style.display = 'inline-block';
     viewBtn.style.display = 'inline-block';
 
@@ -440,17 +479,9 @@ saveChangesBtn.addEventListener('click',async () =>{
 })
 
 }
-
-document.getElementById("addChannelButton").addEventListener("click", function() {
-    document.getElementById("newChannelOverlay").style.display = "block";
-});
   
-document.getElementById("closeNewChannelOverlay").addEventListener("click", function() {
-    document.getElementById("newChannelOverlay").style.display = "none";
-});
-  
-
-  document.getElementById("newChannelForm").addEventListener("submit", async function(e) {
+// Eventlistener per quando mando i dati del form al server
+document.getElementById("newChannelForm").addEventListener("submit", async function(e) {
     e.preventDefault();
     const name = document.getElementById("newChannelName").value;
     const type = document.getElementById("newChannelType").value;
@@ -487,6 +518,31 @@ document.getElementById("closeNewChannelOverlay").addEventListener("click", func
     }
   });
   
+// Funzione di chiusura overlay nuovo canale  
+document.getElementById("closeNewChannelOverlay").addEventListener("click", function() {
+    document.getElementById("newChannelOverlay").style.display = "none";
+});
+
+// Funzione per rimuovere i canali
+async function RemoveChannel(cardId, cardNumber) {
+    try {
+        const response = await fetch('http://localhost:3001/removeChannel', { 
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name: channel[cardNumber].name }),
+        });
+        if (!response.ok) {
+            throw new Error('Errore durante la rimozione del canale');
+        } else {
+            // Rimuovi la card dalla UI...
+            document.getElementById(cardId).remove();
+        }
+    } catch (error) {
+        console.error('Errore durante la rimozione del canale:', error);
+    }
+}
 /*
 // Attach click event listeners to each emoticon
 document.getElementById('verygood').addEventListener('click', function () {

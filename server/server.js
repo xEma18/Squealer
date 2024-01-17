@@ -269,6 +269,29 @@ app.post('/newSqueal', async (req, res) => {
   }
 });
 
+// Api per rimuovere uno specifico squeal
+app.post('/removeSqueal', async (req, res) => {
+  console.log("removeSqueal")
+  try {
+      console.log("entrato nel try")
+      const squealId = req.body._id;
+      console.log(req.body)
+      console.log("id dello squeal da eliminare",squealId)
+      const deletedSqueal = await SquealModel.findByIdAndDelete(squealId);
+      console.log("squeal eliminato",squealId)
+
+      if (deletedSqueal) {
+          res.status(200).json({ message: 'Squeal rimosso con successo' });
+      } else {
+          res.status(404).json({ error: 'Squeal non trovato' });
+      }
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Errore durante la rimozione dello squeal' });
+  }
+});
+
+
 //API per aggiungere i destinatari di uno specifico squeal (di cui ho username del mittente)
 app.post('/addRecv', async (req, res)=>{
   console.log("body: "+req.body.mittente);
@@ -399,6 +422,8 @@ app.post('/editChannelSqueal', async (req, res) => {
           res.status(500).send('Errore interno del server');
       }
     });
+
+    // Api per aggiungere un canale
     app.post('/addChannel', async (req, res) => {
       try {
         const newChannel = new ChannelModel({
@@ -413,6 +438,25 @@ app.post('/editChannelSqueal', async (req, res) => {
         res.status(500).json({ error: 'Errore durante la creazione del canale' });
       }
     });
+
+    //Api per rimuovere un canale
+    app.post('/removeChannel', async (req, res) => {
+      try {
+          const channelName = req.body.name;
+          // Utilizza il modello di Mongoose per trovare e rimuovere il canale per nome
+          const deletedChannel = await ChannelModel.findOneAndDelete({ name: channelName });
+  
+          if (deletedChannel) {
+              res.status(200).json({ message: 'Canale rimosso con successo' });
+          } else {
+              res.status(404).json({ error: 'Canale non trovato' });
+          }
+      } catch (error) {
+          console.error(error);
+          res.status(500).json({ error: 'Errore durante la rimozione del canale' });
+      }
+  });
+  
 
 app.listen(3001, ()=>{
     console.log("Server is running")
