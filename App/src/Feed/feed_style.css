@@ -145,3 +145,109 @@ e a destra l'icona dell'user */
 .user-post .post-reactions {
   color: #5b3c1d;
 }
+
+/*  */
+/*  */
+/* Comments styling */
+.comments-container {
+  position: relative;
+  height: 100vh;
+  overflow-y: scroll;
+}
+
+.comments-header {
+  padding: 1.3rem 1.6rem;
+  font-size: 1.3rem;
+  font-weight: 800;
+
+  margin-bottom: 1rem;
+}
+
+.comments-header i {
+  margin-right: 0.7rem;
+}
+
+.user-comment {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  border-bottom: 1px solid rgb(221, 220, 220);
+
+  padding: 1rem;
+}
+
+.user-comment .profile-pic {
+  flex: 1;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: -1;
+}
+
+.user-comment .profile-pic img {
+  height: 3rem;
+  width: 100%;
+  object-fit: cover;
+  clip-path: circle();
+}
+
+.user-comment .comment-body {
+  flex: 5;
+}
+
+.user-comment .comment-username {
+  font-weight: bold;
+  /* color: #5b3c1d; */
+}
+
+.user-comment .comment-username h {
+  font-weight: normal;
+}
+
+.user-comment .fa-feather {
+  color: #dbb77c;
+}
+
+.user-comment .comment-date {
+  color: #0000009b;
+}
+
+.write-comment {
+  position: fixed;
+  bottom: 0px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+
+  padding: 1rem 1.3rem;
+
+  background-color: #fbfbfb;
+}
+
+.write-comment input {
+  flex: 8;
+
+  font-size: 1.1rem;
+
+  outline: none;
+  border-radius: 9999px;
+  border: 1px solid #5b3c1d;
+
+  padding: 0.6rem;
+}
+
+.write-comment i {
+  text-align: right;
+  flex: 1;
+
+  color: #dbb77c;
+  font-size: 1.2rem;
+}
+/*  */
+/*  */
