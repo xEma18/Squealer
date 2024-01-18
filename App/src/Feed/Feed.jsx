@@ -73,10 +73,11 @@ const Feed = () => {
           _id: squeal._id,
           username: username,
         });
+
         // Aggiorna lo stato locale con i dati aggiornati del squeal
         const updatedSqueals = squeals.map((s) => {
           if (s._id === squeal._id) {
-            return response.data; // response.data dovrebbe contenere il squeal aggiornato
+            return response.data; 
           }
           return s;
         });
@@ -303,13 +304,13 @@ const Feed = () => {
                         {squeal.emoticonNum.bad}
                       </span>
                     </div>
-                    <div className="post-impressions">
+                    {squeal.category!=='private' && <div className="post-impressions">
                       <i className="fa-regular fa-eye"></i>
                       <span className="post-impressions-number">
                         {" "}
                         {squeal.impression}
                       </span>
-                    </div>
+                    </div>}
                   </div>
                 </div>
               </div>
