@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./feed_style.css";
 import "../style.css";
 import condorIcon from "../assets/icon_condor.png";
@@ -28,10 +28,11 @@ function useIntersectionObserver(elementRef, callback, options) {
 }
 
 const Feed = () => {
+  const navigate = useNavigate();
   const [squeals, setSqueals] = useState([]);
   //Scrivo questa parte  fuori  dallo useEffect perché se lo mettessi dentro, verrebbe eseguito solo la prima volta che viene renderizzato il componente (perché ho messo "[]" come secondo parametro di useEffect")
   const savedData = sessionStorage.getItem("accountData");
-  const accountData = JSON.parse(savedData); // Se non ci sono dati di registrazione salvati in sessionStorage, salva un oggetto con un campo username:@guest
+  const accountData = JSON.parse(savedData);
   const username = accountData.username;
   const refs = useRef([]);
   const [registeredImpressions, setRegisteredImpressions] = useState(new Set());
@@ -43,7 +44,7 @@ const Feed = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username }),
+      body: JSON.stringify({ username: username.split('_')[0] }), //nel caso in cui l'utente sia un guest, username è del tipo @guest_1, quindi splitto la stringa e prendo solo la prima parte, se nella stringa non ci sono "_" non cambia nulla
     })
       .then((response) => response.json())
       .then((data) => {
@@ -54,10 +55,14 @@ const Feed = () => {
       .catch((error) =>
         console.error("Errore nel caricamento degli squeals:", error)
       );
+
+
   }, [username]); // Il secondo parametro vuoto [] indicherebbe che useEffect verrà eseguito solo una volta alla creazione del componente, ho messo "username", così useffect viene eseguito ogni volta che cambia username (quindi ogni volta chen accedo al feed con un account diverso)
 
   const handleEmoticonGood = async (squeal) => {
-    if (username != "@guest") {
+    // Uso un'espressione regolare per verificare se l'username è nel formato "guest_x". Se "username" soddisfa il pattern, allora isGuest sarà true
+    const isGuest = /^@guest_\d+$/.test(username);
+    if (!isGuest) {
       //se l'utente non è guest, può mettere like/dislike
       //controllo se l'utente ha già dato un emoticon good a questo squeal e seleziono l'endpoint da chiamare
       const endpoint = squeal.emoticonGivenBy.good.includes(username)
@@ -83,7 +88,8 @@ const Feed = () => {
   };
 
   const handleEmoticonBad = async (squeal) => {
-    if (username != "@guest") {
+    const isGuest = /^@guest_\d+$/.test(username);
+    if (!isGuest) {
       //controllo se l'utente ha già dato un emoticon bad a questo squeal e seleziono l'endpoint da chiamare
       const endpoint = squeal.emoticonGivenBy.bad.includes(username)
         ? "/removeEmoticonBad"
@@ -112,7 +118,6 @@ const Feed = () => {
       return; // Se l'impression è già stata registrata, non fare nulla
     }
     try {
-      console.log("handleImpression");
       const response = await axios.post(`http://localhost:3001/addImpression`, {
         _id: squealId,
         username: username,
@@ -125,7 +130,7 @@ const Feed = () => {
         return s;
       });
       setSqueals(updatedSqueals);
-      setRegisteredImpressions(new Set(registeredImpressions).add(squealId)); // Aggiorna l'elenco delle impressioni registrate
+      setRegisteredImpressions((prevSet) => new Set([...prevSet, squealId])); // Aggiorna l'elenco delle impressioni registrate
     } catch (error) {
       console.error("Errore nel gestire il like:", error);
     }
@@ -155,6 +160,40 @@ const Feed = () => {
     };
   }, [squeals]); // Dipendenze: aggiorna l'observer quando la lista di squeals cambia
 
+  //inizializza le eventuali mappe presenti negli squeals (inserendo già latitudine, longitudine e zoom)
+  useEffect(() => {
+    squeals.forEach((squeal) => {
+      if (squeal.mapLocation) {
+        const mapId = `map-${squeal._id}`;
+        const container = document.getElementById(mapId);
+  
+        // Controlla se la mappa è già stata inizializzata
+        if (container && !container._leaflet_id) {
+          const map = L.map(mapId).setView([squeal.mapLocation.lat, squeal.mapLocation.lng], squeal.mapLocation.zoom);
+  
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '© OpenStreetMap contributors'
+          }).addTo(map);
+
+          const marker = L.marker([squeal.mapLocation.lat, squeal.mapLocation.lng]).addTo(map);
+          marker.bindPopup('Sei qui!').openPopup();
+        }
+      }
+    });
+  }, [squeals]);
+  
+  
+
+
+  
+
+  const handleWriteSquealButton = () => {
+    //se l'utente è guest, non può scrivere uno squeal, mentre se non è guest, va a navigate a WriteSqueal
+    const isGuest = /^@guest_\d+$/.test(username);
+    if (!isGuest) {
+      navigate('/Feed/WriteSqueal');
+    }
+  }
   return (
     //header
     <div id="feedBody">
@@ -169,7 +208,7 @@ const Feed = () => {
           {/* L'item "footer" ha posizione fixed. L'ho messo qui per comodità. */}
           <div className="feedFooter">
             <i className="fa-solid fa-house fa-1x"></i>
-            <i className="fa-solid fa-feather fa-1x"></i>
+            <i className="fa-solid fa-feather fa-1x" onClick={handleWriteSquealButton}></i>
             <i className="fa-solid fa-magnifying-glass fa-1x"></i>
           </div>
           <div className="feed">
@@ -189,7 +228,7 @@ const Feed = () => {
                     <i className="fa-solid fa-feather"></i>
                     <span className="post-date">
                       {" "}
-                      {new Date(squeal.data).toLocaleDateString("en-US", {
+                      {new Date(squeal.date).toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
                       })}
@@ -200,6 +239,7 @@ const Feed = () => {
                     {squeal.bodyImage && (
                       <img src={squeal.bodyImage} alt="bodyImage" />
                     )}
+                     {squeal.mapLocation && (<div id={`map-${squeal._id}`} style={{ height: '200px', width: '100%' }}></div>)}
                   </div>
                   <div className="post-reactions">
                     <div className="post-comments">

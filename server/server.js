@@ -4,6 +4,7 @@ const cors=require('cors')
 const UserModel= require('./models/Users')
 const SquealModel= require('./models/Squeals')
 const ChannelModel= require('./models/Channels')
+const CounterModel= require('./models/Counters')
 const app=express()
 
 app.use(cors()) //enable to use cors
@@ -70,6 +71,28 @@ app.get('/users', async (req, res) => {
   }
 });
 
+app.get('/generateGuestNumber', async (req, res) => {
+  try {
+    const counterName = 'guestCounter';
+    const counter = await CounterModel.findOne({ name: counterName });
+
+    if (counter) {
+      currentValue = counter.count;
+      // Se il contatore esiste, lo incremento
+      counter.count += 1;
+      await counter.save();
+      res.status(200).json({ guestNumber: currentValue });
+      } else {
+      // Il contatore esiste per forza, ma per sicurezza gestisco anche il caso in cui non esista
+      res.status(404).json({ error: 'Contatore non trovato' });
+      }
+      } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Errore interno del server' });
+      }
+      });
+
+
 // API per ottenere la lista degli squeal
 app.get('/squeals', async (req, res) => {
   try {
@@ -81,7 +104,7 @@ app.get('/squeals', async (req, res) => {
   }
 });
 
-//API per ottenere gli Squeals che hanno come destinatario un utente specifico
+//API per ottenere gli Squeals che hanno come destinatario un utente specifico + tutti gli squeal "pubblici" (@everyone) se username !="guest"
 app.post('/squealsToUser', async (req, res) => {
   try {
       const squeals = await SquealModel.findSquealsToUser(req.body.username);
@@ -91,6 +114,23 @@ app.post('/squealsToUser', async (req, res) => {
       res.status(500).json({ error: 'Errore durante il recupero degli squeals all\'utente' });
   }
 });
+
+app.post('/getUserImageAndCharLeft', async (req, res) => {
+  try {
+    const username = req.body.username;
+    const user = await UserModel.findOne({ username: username }).select('image caratteriGiornalieri caratteriSettimanali caratteriMensili caratteriGiornalieriUsati caratteriMensiliUsati caratteriSettimanaliiUsati');
+
+    if (user) {
+      res.status(200).json(user);
+    } else {
+      res.status(404).json({ message: 'Utente non trovato' });
+    }
+    } catch (error) {
+    console.error('Errore durante la ricerca dell utente:', error);
+    res.status(500).json({ message: 'Errore interno del server' });
+    }
+    });
+
 
 app.post('/addEmoticonGood', async (req, res)=>{
   try{
@@ -176,6 +216,17 @@ app.post('/addImpression', async (req, res) => {
   }
 });
 
+app.post('/postSqueal', async (req, res) => {
+  try {
+      const newSqueal = new SquealModel(req.body);
+      await newSqueal.save();
+      res.status(201).json(newSqueal);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Errore durante l\'invio dello squeal' });
+  }
+});
+
 //API per modificare i campi (tipo account, popolarità, caratteri...) di uno specifico utente (di cui ho nome e cognome)
 app.post('/editUser', async (req, res)=>{
   try{
@@ -202,6 +253,44 @@ app.post('/editUser', async (req, res)=>{
         res.status(500).json({ message: 'Errore durante l\'aggiornamento dell\'utente nel database' });
     }
 });
+
+// API per aggiungere un nuovo squeal
+app.post('/newSqueal', async (req, res) => {
+  console.log("newSqueal");
+  try {
+      const newSqueal = new SquealModel(req.body);
+      console.log("Squeal da aggiungere:")
+      console.log(newSqueal)
+      await newSqueal.save();
+      res.status(201).json(newSqueal);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Errore durante l\'aggiunta dello squeal' });
+  }
+});
+
+// Api per rimuovere uno specifico squeal
+app.post('/removeSqueal', async (req, res) => {
+  console.log("removeSqueal")
+  try {
+      console.log("entrato nel try")
+      const squealId = req.body._id;
+      console.log(req.body)
+      console.log("id dello squeal da eliminare",squealId)
+      const deletedSqueal = await SquealModel.findByIdAndDelete(squealId);
+      console.log("squeal eliminato",squealId)
+
+      if (deletedSqueal) {
+          res.status(200).json({ message: 'Squeal rimosso con successo' });
+      } else {
+          res.status(404).json({ error: 'Squeal non trovato' });
+      }
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Errore durante la rimozione dello squeal' });
+  }
+});
+
 
 //API per aggiungere i destinatari di uno specifico squeal (di cui ho username del mittente)
 app.post('/addRecv', async (req, res)=>{
@@ -255,7 +344,7 @@ app.post('/remRecv', async (req, res)=>{
     }
 });
 
-// API per ottenere la lista degli canali
+// API per ottenere la lista di tutti i canali
 app.get('/channels', async (req, res) => {
   try {
       const channels = await ChannelModel.find();
@@ -265,6 +354,109 @@ app.get('/channels', async (req, res) => {
       res.status(500).json({ error: 'Errore durante il recupero dei canali' });
   }
 });
+
+
+// API per modificare la descrizione di un canale
+app.post('/editChannelDescription', async (req, res)=>{
+  try{
+    const channel = await ChannelModel.findChannelByName(req.body.name);
+        if (channel !== null) {
+            // Aggiorna i campi dell'utente con i nuovi valori
+            channel.description = req.body.description;
+            // Salva le modifiche nel database
+            await channel.save();
+            // Invia una risposta di successo
+            res.status(200).json({ message: 'Dati utente aggiornati con successo nel database' });
+        } else {
+            // Invia una risposta con errore se l'utente non è stato trovato
+            res.status(404).json({ message: 'Canale non trovato nel database' });
+        }
+    } catch (error) {
+        console.error('Errore durante l\'aggiornamento del canale nel database:', error);
+        // Invia una risposta con errore generico
+        res.status(500).json({ message: 'Errore durante l\'aggiornamento del canale nel database' });
+    }
+});
+
+// Api per modificare il numero di squeal nel canale
+app.post('/editChannelSqueal', async (req, res) => {
+  try {
+      console.log("editChannelSqueal")
+      console.log("Entro nella modifica numero squeal del canale");
+      const channel = await ChannelModel.findChannelByName(req.body.name);
+      if(channel !== null) {
+        // Aggiorna l'elenco degli squeal del canale con il nuovo ID dello squeal
+        if (req.body.newSquealId) {
+          console.log("squeal che si sta aggiungendo all'array");
+          console.log(req.body.newSquealId);
+        channel.listofSqueals.push(req.body.newSquealId);
+        }
+        // Potresti voler aggiungere qui altri aggiornamenti se necessario
+        await channel.save();
+        res.status(200).json({ message: 'Canale aggiornato con successo nel database' });
+        } else {
+        res.status(404).json({ message: 'Canale non trovato nel database' });
+        }
+        } catch (error) {
+        console.error('Errore durante aggiornamento del canale nel database:', error);
+        res.status(500).json({ message: 'Errore durante aggiornamento del canale nel database' });
+        }
+    });
+
+    // Api per ritornare gli squeal di uno specifico canale
+    app.get('/squealsByChannel', async (req, res) => {
+      try {
+          console.log("squealsByChannel")
+          console.log(req.query)
+          const channelId = req.query.channelId;
+          console.log(channelId);
+          const channel = await ChannelModel.findById(channelId);
+          console.log(channel);
+          if (!channel) {
+              return res.status(404).send('Canale non trovato');
+          }
+          const squeals = await SquealModel.find({ '_id': { $in: channel.listofSqueals } });
+          console.log(squeals);
+          res.json(squeals);
+      } catch (error) {
+          res.status(500).send('Errore interno del server');
+      }
+    });
+
+    // Api per aggiungere un canale
+    app.post('/addChannel', async (req, res) => {
+      try {
+        const newChannel = new ChannelModel({
+          name: req.body.name,
+          type: req.body.type,
+          description: req.body.description,
+        });
+        await newChannel.save();
+        res.status(201).json(newChannel);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Errore durante la creazione del canale' });
+      }
+    });
+
+    //Api per rimuovere un canale
+    app.post('/removeChannel', async (req, res) => {
+      try {
+          const channelName = req.body.name;
+          // Utilizza il modello di Mongoose per trovare e rimuovere il canale per nome
+          const deletedChannel = await ChannelModel.findOneAndDelete({ name: channelName });
+  
+          if (deletedChannel) {
+              res.status(200).json({ message: 'Canale rimosso con successo' });
+          } else {
+              res.status(404).json({ error: 'Canale non trovato' });
+          }
+      } catch (error) {
+          console.error(error);
+          res.status(500).json({ error: 'Errore durante la rimozione del canale' });
+      }
+  });
+  
 
 app.listen(3001, ()=>{
     console.log("Server is running")

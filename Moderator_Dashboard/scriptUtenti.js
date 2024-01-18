@@ -114,7 +114,7 @@ parentElement.addEventListener("click", function(event) {
     }
 });
 
-// Funzione per ottenere il numero della card dalla sua id
+// Funzione per ottenere il numero della card dal suo id
 function getCardNumber(cardId) {
     // L'id della card è nella forma "card-X", quindi possiamo estrarre il numero dalla fine dell'id
     const cardNumber = cardId.split('-')[1];

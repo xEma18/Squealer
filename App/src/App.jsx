@@ -7,6 +7,7 @@ import SignUp3 from './SignUp/SignUp3.jsx';
 import SignUp4 from './SignUp/SignUp4.jsx';
 import Login from './Login/Login.jsx';
 import Feed from './Feed/Feed.jsx';
+import WriteSqueal from './Feed/writeSqueal/writeSqueal.jsx';
 
 
 
@@ -27,9 +28,12 @@ const App = () => {
     statoAccount:'Attivo',
     tipoUtente:'',
     popolarita:'Bassa',
-    caratteriGiornalieri:'100',
-    caratteriSettimanali:'5',
-    caratteriMensili:'5',
+    caratteriGiornalieri:100,
+    caratteriSettimanali:'700',
+    caratteriMensili:'2800',
+    caratteriGiornalieriUsati:0,
+    caratteriSettimanaliUsati:0,
+    caratteriMensiliUsati:0,
   });
 
    // Funzione per aggiornare i dati della registrazione (mantiene i dati già scritti e scrive in nuovi dati che passo come parametro)
@@ -47,6 +51,7 @@ const App = () => {
         <Route path= "/SignUp4" element={<SignUp4 updateRegistrationData={updateRegistrationData} registrationData={registrationData}  />} />
         <Route path= "/LogIn" element={<Login />} />
         <Route path= "/Feed" element={<Feed />} />
+        <Route path= "/Feed/WriteSqueal" element={<WriteSqueal />} />
 
       </Routes>
     </Router>
