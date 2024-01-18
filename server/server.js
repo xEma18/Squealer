@@ -36,7 +36,6 @@ app.post('/login', async (req, res) => {
     if (user !== null) {
       res.status(200).json(user);
     } else {
-      console.log("uagliò");
       res.status(401).json({ error: 'Credenziali non valide' }); // Cambiato lo status a 401 per indicare un errore di autenticazione
     }
   } catch (error) {
@@ -141,12 +140,15 @@ app.post('/addEmoticonGood', async (req, res)=>{
     squeal.emoticonNum.good += 1;
     squeal.emoticonGivenBy.good.push(req.body.username);
 
-    if(squeal.emoticonNum.good > 0.25*squeal.impression && squeal.emoticonNum.bad > 0.25*squeal.impression){
-      squeal.category="Controversial"
+    if(squeal.category!=='private'){
+      if(squeal.emoticonNum.good > 0.25*squeal.impression && squeal.emoticonNum.bad > 0.25*squeal.impression){
+        squeal.category="Controversial"
+      }
+      else if(squeal.emoticonNum.good > 0.25*squeal.impression){
+        squeal.category="Popular"
+      }
     }
-    else if(squeal.emoticonNum.good > 0.25*squeal.impression){
-      squeal.category="Popular"
-    }
+    
 
     await squeal.save();
     res.status(200).json(squeal);
@@ -165,12 +167,16 @@ app.post('/removeEmoticonGood', async (req, res)=>{
     }
     squeal.emoticonNum.good -= 1;
     squeal.emoticonGivenBy.good.pop(req.body.username);
-    if(squeal.emoticonNum.good > 0.25*squeal.impression && squeal.emoticonNum.bad > 0.25*squeal.impression){
-      squeal.category="Controversial"
+
+    if(squeal.category !== 'private'){
+      if(squeal.emoticonNum.good > 0.25*squeal.impression && squeal.emoticonNum.bad > 0.25*squeal.impression){
+        squeal.category="Controversial"
+      }
+      else if(squeal.emoticonNum.bad > 0.25*squeal.impression){
+        squeal.category="Unpopular"
+      }
     }
-    else if(squeal.emoticonNum.bad > 0.25*squeal.impression){
-      squeal.category="Unpopular"
-    }
+    
     await squeal.save();
     res.status(200).json(squeal);
   } catch (error) {
