@@ -113,8 +113,8 @@ p {
 
 .char-interface {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction:column;
+  
 
   padding: 1rem;
 }
@@ -122,26 +122,26 @@ p {
 .char-interface .word-counter {
   border-radius: 9999px;
   border: 1px solid #5b3c1d;
-
+  
   color: #5b3c1d;
-
+  text-align:center;
   padding: 0.2rem 0.5rem;
 }
 
-.char-interface #buy-char {
+ #buy-char {
+  float: right; /* Posiziona il div a destra */
   border-radius: 9999px;
   border: 2px solid #5b3c1d;
-
   color: #5b3c1d;
-
   font-weight: bold;
-
-  padding: 0.2rem 0.5rem;
-
+  padding: 5px 15px;
+  margin-bottom:2%;
+  margin-right:2%;
+  cursor: pointer;
   transition: 0.3s all ease;
 }
 
-.char-interface #buy-char.inactive {
+#buy-char.inactive {
   opacity: 0.2;
 }
 

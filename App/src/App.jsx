@@ -28,9 +28,13 @@ const App = () => {
     statoAccount:'Attivo',
     tipoUtente:'',
     popolarita:'Bassa',
-    caratteriGiornalieri:'100',
-    caratteriSettimanali:'5',
-    caratteriMensili:'5',
+    caratteriGiornalieri:100,
+    caratteriSettimanali:'700',
+    caratteriMensili:'2800',
+    caratteriGiornalieriRimasti:100,
+    caratteriSettimanaliRimasti:700,
+    caratteriMensiliRimasti:2800,
+    provaa:"prova"
   });
 
    // Funzione per aggiornare i dati della registrazione (mantiene i dati già scritti e scrive in nuovi dati che passo come parametro)

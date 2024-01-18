@@ -24,6 +24,7 @@ const WriteSqueal = () => {
         lng: null,
         zoom: 13 // Imposta un valore di zoom di default
     });
+    const [publicMode, setPublicMode] = useState(false);
 
     //ottenere i dati dell'utente loggato (immagine profilo, numero caratteri rimanenti)
     useEffect(() => {
@@ -84,7 +85,7 @@ const handlePostSqueal = async () => {
 
     const newSqueal = {
         mittente: username,
-        destinatari: recipients,
+        destinatari: publicMode? '@everyone' : recipients,
         text: image === '' ? text : '',
         emoticonNum: {
             verygood: 0,
@@ -119,6 +120,11 @@ const handlePostSqueal = async () => {
         navigate('/Feed');
     }
 
+
+    const handlePublicMode = () => {
+        setPublicMode(!publicMode);
+
+    }
 
     const handleLocationClick = () => {
         setImage('');
@@ -216,14 +222,32 @@ const handlePostSqueal = async () => {
                     <i className="fa-solid fa-location-dot" onClick={handleLocationClick}></i>
                 </div>
                 {/* Contiene il char counter e il tasto per comprare se si sfora */}
-                <div className="char-interface">
-                    {!image && <div className="word-counter">{text.length}/200</div>}
-                    <div id="buy-char" className="inactive">Not enough? Buy it!</div>
-                </div>
+                {publicMode && <div className="char-interface">
+                    
+                    <div style={{display:'flex', alignItems: 'center', justifyContent: 'flex-start', gap:'2%', padding:'2%'}}>
+                        <div>Daily characters used </div>
+                        <div className="word-counter">{text.length}+{userData.caratteriGiornalieriUsati}/{userData.caratteriGiornalieri}</div>
+                    </div>
+
+                    <div style={{display:'flex', alignItems: 'center', justifyContent: 'flex-start', gap:'2%', padding:'2%' }}>
+                        <div>Weekly characters used </div>
+                        <div className="word-counter">{text.length}/{userData.caratteriSettimanali}</div>
+                    </div>
+
+                    <div style={{display:'flex', alignItems: 'center', justifyContent: 'flex-start', gap:'2%', padding:'2%' }}>
+                        <div>Monthly characters used </div>
+                        <div className="word-counter">{text.length}/{userData.caratteriMensili}</div>
+                    </div>
+                </div>}
+                {publicMode &&<div id="buy-char" className="inactive">Not enough? Buy it!</div>}
                 {/* Parte dedicata ai "recipients": titolo, paragrafo e textarea */}
-                <div className="subtitle">Who is it for?</div>
-                <p>Add your recipients, each one separated by a space.</p>
-                <textarea id="recipients-list" placeholder="@foo §foo §BAR" onChange={(e)=>handleRecipientsChange(e)}></textarea>
+                <div style={{width:'100%', display:'flex'}}>
+                    <div className="subtitle" style={{width:'60%'}}>Who is it for?</div>
+                    <div className="btn " style={{width:'58%', marginTop: '5%', marginRight:'2%', height:'50%'}} onClick={handlePublicMode}>{publicMode ? "@recipients" : "@everyone"}</div>
+                </div>
+                {!publicMode && <p>Add your recipients, each one separated by a space.</p>}
+                {!publicMode && <textarea id="recipients-list" placeholder="@foo §foo §BAR" onChange={(e)=>handleRecipientsChange(e)}></textarea>}
+                
             </div>
         );
 };
