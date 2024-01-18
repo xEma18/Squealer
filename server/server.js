@@ -118,7 +118,7 @@ app.post('/squealsToUser', async (req, res) => {
 app.post('/getUserImageAndCharLeft', async (req, res) => {
   try {
     const username = req.body.username;
-    const user = await UserModel.findOne({ username: username }).select('image caratteriGiornalieri caratteriSettimanali caratteriMensili');
+    const user = await UserModel.findOne({ username: username }).select('image caratteriGiornalieri caratteriSettimanali caratteriMensili caratteriGiornalieriUsati caratteriMensiliUsati caratteriSettimanaliiUsati');
 
     if (user) {
       res.status(200).json(user);

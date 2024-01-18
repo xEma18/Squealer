@@ -17,7 +17,6 @@ const UserSchema=new mongoose.Schema({
     caratteriGiornalieri:Number,
     caratteriSettimanali:Number,
     caratteriMensili:Number,
-    provaa:String,
     caratteriGiornalieriUsati:Number,
     caratteriSettimanaliUsati:Number,
     caratteriMensiliUsati:Number,

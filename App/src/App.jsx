@@ -31,10 +31,9 @@ const App = () => {
     caratteriGiornalieri:100,
     caratteriSettimanali:'700',
     caratteriMensili:'2800',
-    caratteriGiornalieriRimasti:100,
-    caratteriSettimanaliRimasti:700,
-    caratteriMensiliRimasti:2800,
-    provaa:"prova"
+    caratteriGiornalieriUsati:0,
+    caratteriSettimanaliUsati:0,
+    caratteriMensiliUsati:0,
   });
 
    // Funzione per aggiornare i dati della registrazione (mantiene i dati già scritti e scrive in nuovi dati che passo come parametro)

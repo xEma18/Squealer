@@ -32,6 +32,7 @@ const WriteSqueal = () => {
         try {
             const response = await axios.post(`http://localhost:3001/getUserImageAndCharLeft`, {username} );
             setUserData(response.data);
+            console.log(userData.caratteriGiornalieriUsati);
         } catch (error) {
             console.error('Errore durante il recupero dei dati utente:', error);
         }
@@ -226,7 +227,7 @@ const handlePostSqueal = async () => {
                     
                     <div style={{display:'flex', alignItems: 'center', justifyContent: 'flex-start', gap:'2%', padding:'2%'}}>
                         <div>Daily characters used </div>
-                        <div className="word-counter">{text.length}+{userData.caratteriGiornalieriUsati}/{userData.caratteriGiornalieri}</div>
+                        <div className="word-counter">{text.length+userData.caratteriGiornalieriUsati}/{userData.caratteriGiornalieri}</div>
                     </div>
 
                     <div style={{display:'flex', alignItems: 'center', justifyContent: 'flex-start', gap:'2%', padding:'2%' }}>
