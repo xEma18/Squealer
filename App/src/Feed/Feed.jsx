@@ -169,8 +169,8 @@ const Feed = () => {
   
         // Controlla se la mappa è già stata inizializzata
         if (container && !container._leaflet_id) {
-          const map = L.map(mapId).setView([squeal.mapLocation.lat, squeal.mapLocation.lng], squeal.mapLocation.zoom);
-  
+          const map = L.map(mapId, {zoomControl:false, attributionControl:false}).setView([squeal.mapLocation.lat, squeal.mapLocation.lng], squeal.mapLocation.zoom);
+          
           L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
               attribution: '© OpenStreetMap contributors'
           }).addTo(map);
@@ -181,6 +181,28 @@ const Feed = () => {
       }
     });
   }, [squeals]);
+  
+  //funzione che risconosce i link all'interno di un testo e li rende cliccabili
+  const renderTextWithLinks = (text) => {
+    // Questa regex cerca di identificare gli URL completi e quelli che iniziano con "www." seguiti da un dominio
+    const urlRegex = /(\bhttps?:\/\/[^\s]+)|(\bwww\.[^\s]+)|(\b[a-z0-9]+([-\._][a-z0-9]+)*\.[a-z]{2,}(\/[^\s]*)?)/gi;
+    return text.split(urlRegex).map((part, i) => {
+      // Controlla se la parte è un URL
+      const isURL = urlRegex.test(part);
+      const isWWW = /^www\./.test(part);
+      // Se è un URL che non inizia con http o https, e inizia con www, non aggiungere "http://"
+      const href = isURL && !isWWW ? part : `http://${part}`;
+      return isURL ? (
+        <a className="link" key={i} href={href} target="_blank" rel="noopener noreferrer">{part}</a>
+      ) : (
+        part
+      );
+    });
+  };
+  
+  
+  
+  
   
   
 
@@ -235,11 +257,11 @@ const Feed = () => {
                     </span>
                   </div>
                   <div className="post-content">
-                    {squeal.text}
+                    {renderTextWithLinks(squeal.text)}
                     {squeal.bodyImage && (
                       <img src={squeal.bodyImage} alt="bodyImage" />
                     )}
-                     {squeal.mapLocation && (<div id={`map-${squeal._id}`} style={{ height: '200px', width: '100%' }}></div>)}
+                     {squeal.mapLocation && (<div  id={`map-${squeal._id}`} style={{ height: '200px', width: '100%' }}></div>)}
                   </div>
                   <div className="post-reactions">
                     <div className="post-comments">
