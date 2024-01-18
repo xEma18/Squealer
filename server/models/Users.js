@@ -57,7 +57,6 @@ UserSchema.statics.findByNameAndLastname = async function(name, lastname) {
     console.log("username:"+username);
     try {
       const user = await this.findOne({username: username });
-      console.log("user:"+user);
       return user; // Restituisci l'utente trovato o null se non trovato
     } catch (error) {
       console.error('Errore durante la ricerca dell\'utente:', error);

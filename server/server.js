@@ -118,7 +118,7 @@ app.post('/squealsToUser', async (req, res) => {
 app.post('/getUserImageAndCharLeft', async (req, res) => {
   try {
     const username = req.body.username;
-    const user = await UserModel.findOne({ username: username }).select('image caratteriGiornalieri caratteriSettimanali caratteriMensili caratteriGiornalieriUsati caratteriMensiliUsati caratteriSettimanaliiUsati');
+    const user = await UserModel.findOne({ username: username }).select('image caratteriGiornalieri caratteriSettimanali caratteriMensili caratteriGiornalieriUsati caratteriMensiliUsati caratteriSettimanaliUsati');
 
     if (user) {
       res.status(200).json(user);
@@ -227,6 +227,25 @@ app.post('/postSqueal', async (req, res) => {
   }
 });
 
+app.post('/updateCharsLeft', async (req, res) => {
+  try{
+    //find by username
+      const user=await UserModel.findByUsername(req.body.username);
+      if(user !== null){
+        user.caratteriGiornalieriUsati = req.body.caratteriGiornalieriUsati;
+        user.caratteriSettimanaliUsati = req.body.caratteriSettimanaliUsati;
+        user.caratteriMensiliUsati = req.body.caratteriMensiliUsati;
+        await user.save();
+        res.status(200).json({ message: 'Dati utente aggiornati con successo nel database' });
+      }
+      }
+  catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore nell\'aggiornamento dei caratteri rimanenti' });
+  }
+});
+
+
 //API per modificare i campi (tipo account, popolarità, caratteri...) di uno specifico utente (di cui ho nome e cognome)
 app.post('/editUser', async (req, res)=>{
   try{
@@ -256,7 +275,6 @@ app.post('/editUser', async (req, res)=>{
 
 // API per aggiungere un nuovo squeal
 app.post('/newSqueal', async (req, res) => {
-  console.log("newSqueal");
   try {
       const newSqueal = new SquealModel(req.body);
       console.log("Squeal da aggiungere:")
