@@ -2,6 +2,7 @@
   <div id="app" class="container">
     <SelectVip />
     <PostMessage />
+    <Feed />
   </div>
 </template>
 

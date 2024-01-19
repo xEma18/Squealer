@@ -305,7 +305,7 @@ async function handlePostClick(overlay,cardNumber,channelId) {
                     <img src="./icon_condor.png" class="rounded me-2" alt="icon condor" style="width: 20px; height: 20px;>
                     <strong class="me-auto">Squealer</strong>
                     <div class="container d-flex justify-content-end">
-                    <small class="text-body-secondary">11 mins ago</small>
+                    <small class="text-body-secondary">just now</small>
                     <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                     </div>
                 </div>
