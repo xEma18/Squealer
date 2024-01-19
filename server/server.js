@@ -118,6 +118,7 @@ app.post('/getUserImageAndCharLeft', async (req, res) => {
   try {
     const username = req.body.username;
     const user = await UserModel.findOne({ username: username }).select('image caratteriGiornalieri caratteriSettimanali caratteriMensili caratteriGiornalieriUsati caratteriMensiliUsati caratteriSettimanaliUsati');
+    console.log(user);
 
     if (user) {
       res.status(200).json(user);
