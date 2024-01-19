@@ -378,8 +378,8 @@ app.post('/editChannelDescription', async (req, res)=>{
     }
 });
 
-// Api per modificare il numero di squeal nel canale
-app.post('/editChannelSqueal', async (req, res) => {
+    // API per aggiungere uno squeal dalla lista squeal canale
+    app.post('/editChannelSqueal', async (req, res) => {
   try {
       console.log("editChannelSqueal")
       console.log("Entro nella modifica numero squeal del canale");
@@ -391,7 +391,6 @@ app.post('/editChannelSqueal', async (req, res) => {
           console.log(req.body.newSquealId);
         channel.listofSqueals.push(req.body.newSquealId);
         }
-        // Potresti voler aggiungere qui altri aggiornamenti se necessario
         await channel.save();
         res.status(200).json({ message: 'Canale aggiornato con successo nel database' });
         } else {
@@ -403,6 +402,29 @@ app.post('/editChannelSqueal', async (req, res) => {
         }
     });
 
+    // API per rimuovere uno squeal dalla lista squeal canale
+    app.post('/removeSquealFromChannel', async (req, res) => {
+      try {
+        console.log("removeSquealFromChannel");
+        const { channelName, squealId } = req.body;
+        
+        // Trova il canale specifico
+        const channel = await ChannelModel.findOne({ name: channelName });
+        if (!channel) {
+          return res.status(404).json({ message: 'Canale non trovato' });
+        }
+    
+        // Rimuovi l'ID dello squeal dalla lista di squeal del canale
+        channel.listofSqueals = channel.listofSqueals.filter(id => id.toString() !== squealId);
+        await channel.save();
+    
+        res.status(200).json({ message: 'Squeal rimosso dal canale con successo' });
+      } catch (error) {
+        console.error('Errore durante la rimozione dello squeal dal canale:', error);
+        res.status(500).json({ message: 'Errore interno del server' });
+      }
+    });
+    
     // Api per ritornare gli squeal di uno specifico canale
     app.get('/squealsByChannel', async (req, res) => {
       try {
