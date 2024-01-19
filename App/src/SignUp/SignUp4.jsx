@@ -33,6 +33,10 @@ const SignUp4 = ({ updateRegistrationData, registrationData }) => {
 
     const response = await axios.post('http://localhost:3001/signup', localRegistrationData); //NB:non passo registrationData perché avendola passata come props, non è aggiornata con la descrizione
     
+    //tolgo l'immagine da localRegistrationData per non salvarla in sessionStorage (è troppo pesante)
+    delete localRegistrationData.image;
+    console.log(localRegistrationData);
+
     // Salva i dati di registrazione in sessionStorage prima di navigare
     sessionStorage.setItem('accountData', JSON.stringify(localRegistrationData));
 
