@@ -40,7 +40,7 @@ const Feed = () => {
   useEffect(() => {
     // Effettua una richiesta GET al server per ottenere i gli squeals filtrati per username (ricevo solo gli squeals con "username" tra i destinatari)
     fetch("http://localhost:3001/squealsToUser", {
-      method: "POST",
+      method: "POST", //Da capire se get o post
       headers: {
         "Content-Type": "application/json",
       },
