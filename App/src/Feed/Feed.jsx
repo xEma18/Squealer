@@ -40,7 +40,7 @@ const Feed = () => {
   useEffect(() => {
     // Effettua una richiesta GET al server per ottenere i gli squeals filtrati per username (ricevo solo gli squeals con "username" tra i destinatari)
     fetch("http://localhost:3001/squealsToUser", {
-      method: "POST",
+      method: "POST", //Da capire se get o post
       headers: {
         "Content-Type": "application/json",
       },
@@ -73,10 +73,11 @@ const Feed = () => {
           _id: squeal._id,
           username: username,
         });
+
         // Aggiorna lo stato locale con i dati aggiornati del squeal
         const updatedSqueals = squeals.map((s) => {
           if (s._id === squeal._id) {
-            return response.data; // response.data dovrebbe contenere il squeal aggiornato
+            return response.data; 
           }
           return s;
         });
@@ -169,8 +170,8 @@ const Feed = () => {
   
         // Controlla se la mappa è già stata inizializzata
         if (container && !container._leaflet_id) {
-          const map = L.map(mapId).setView([squeal.mapLocation.lat, squeal.mapLocation.lng], squeal.mapLocation.zoom);
-  
+          const map = L.map(mapId, {zoomControl:false, attributionControl:false}).setView([squeal.mapLocation.lat, squeal.mapLocation.lng], squeal.mapLocation.zoom);
+          
           L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
               attribution: '© OpenStreetMap contributors'
           }).addTo(map);
@@ -181,6 +182,28 @@ const Feed = () => {
       }
     });
   }, [squeals]);
+  
+  //funzione che risconosce i link all'interno di un testo e li rende cliccabili
+  const renderTextWithLinks = (text) => {
+    // Questa regex cerca di identificare gli URL completi e quelli che iniziano con "www." seguiti da un dominio
+    const urlRegex = /(\bhttps?:\/\/[^\s]+)|(\bwww\.[^\s]+)|(\b[a-z0-9]+([-\._][a-z0-9]+)*\.[a-z]{2,}(\/[^\s]*)?)/gi;
+    return text.split(urlRegex).map((part, i) => {
+      // Controlla se la parte è un URL
+      const isURL = urlRegex.test(part);
+      const isWWW = /^www\./.test(part);
+      // Se è un URL che non inizia con http o https, e inizia con www, non aggiungere "http://"
+      const href = isURL && !isWWW ? part : `http://${part}`;
+      return isURL ? (
+        <a className="link" key={i} href={href} target="_blank" rel="noopener noreferrer">{part}</a>
+      ) : (
+        part
+      );
+    });
+  };
+  
+  
+  
+  
   
   
 
@@ -235,11 +258,11 @@ const Feed = () => {
                     </span>
                   </div>
                   <div className="post-content">
-                    {squeal.text}
+                    {renderTextWithLinks(squeal.text)}
                     {squeal.bodyImage && (
                       <img src={squeal.bodyImage} alt="bodyImage" />
                     )}
-                     {squeal.mapLocation && (<div id={`map-${squeal._id}`} style={{ height: '200px', width: '100%' }}></div>)}
+                     {squeal.mapLocation && (<div  id={`map-${squeal._id}`} style={{ height: '200px', width: '100%' }}></div>)}
                   </div>
                   <div className="post-reactions">
                     <div className="post-comments">
@@ -281,13 +304,13 @@ const Feed = () => {
                         {squeal.emoticonNum.bad}
                       </span>
                     </div>
-                    <div className="post-impressions">
+                    {squeal.category!=='private' && <div className="post-impressions">
                       <i className="fa-regular fa-eye"></i>
                       <span className="post-impressions-number">
                         {" "}
                         {squeal.impression}
                       </span>
-                    </div>
+                    </div>}
                   </div>
                 </div>
               </div>

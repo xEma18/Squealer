@@ -27,6 +27,7 @@ const SquealSchema = new mongoose.Schema({
         lng: Number, // Longitudine
         zoom: Number // Livello di Zoom
     },
+    category: String,
 });
 
 

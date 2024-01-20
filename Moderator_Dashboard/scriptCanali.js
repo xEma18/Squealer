@@ -192,7 +192,7 @@ function updateSqueal(squeal) {
                 buttonSelected.addEventListener('click', function() {
                     const squealId = squeal[i]._id;
                     console.log(squealId);
-                    removeSqueal(squealId);
+                    removeSqueal(squealId,channel[i].name);
                 });
             
     }
@@ -200,7 +200,7 @@ function updateSqueal(squeal) {
 }
 
     // Eventlistener per quando aggiungo lo squeal (tasto remove squeal)
-    async function removeSqueal(squealId) {
+    async function removeSqueal(squealId,channelName) {
         console.log("Sto per eliminare lo squeal:",squealId)
         try {
             const response = await fetch('http://localhost:3001/removeSqueal', {
@@ -219,6 +219,22 @@ function updateSqueal(squeal) {
         } catch (error) {
             console.error('Errore:', error);
         }
+   
+            try{
+              const responseChannel = await fetch('http://localhost:3001/removeSquealFromChannel', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ channelName, squealId }),
+              });
+          
+              if (!responseChannel.ok) {
+                throw new Error('Errore durante la rimozione dello squeal dal canale');
+              }
+            } catch (error) {
+              console.error('Errore:', error);
+            }
     }
 
 async function addSquealToChannel(squealId, channelName) {
@@ -289,7 +305,7 @@ async function handlePostClick(overlay,cardNumber,channelId) {
                     <img src="./icon_condor.png" class="rounded me-2" alt="icon condor" style="width: 20px; height: 20px;>
                     <strong class="me-auto">Squealer</strong>
                     <div class="container d-flex justify-content-end">
-                    <small class="text-body-secondary">11 mins ago</small>
+                    <small class="text-body-secondary">just now</small>
                     <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                     </div>
                 </div>

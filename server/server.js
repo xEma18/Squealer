@@ -36,7 +36,6 @@ app.post('/login', async (req, res) => {
     if (user !== null) {
       res.status(200).json(user);
     } else {
-      console.log("uagliò");
       res.status(401).json({ error: 'Credenziali non valide' }); // Cambiato lo status a 401 per indicare un errore di autenticazione
     }
   } catch (error) {
@@ -118,7 +117,8 @@ app.post('/squealsToUser', async (req, res) => {
 app.post('/getUserImageAndCharLeft', async (req, res) => {
   try {
     const username = req.body.username;
-    const user = await UserModel.findOne({ username: username }).select('image caratteriGiornalieri caratteriSettimanali caratteriMensili caratteriGiornalieriUsati caratteriMensiliUsati caratteriSettimanaliiUsati');
+    const user = await UserModel.findOne({ username: username }).select('image caratteriGiornalieri caratteriSettimanali caratteriMensili caratteriGiornalieriUsati caratteriMensiliUsati caratteriSettimanaliUsati');
+    console.log(user);
 
     if (user) {
       res.status(200).json(user);
@@ -140,6 +140,17 @@ app.post('/addEmoticonGood', async (req, res)=>{
     }
     squeal.emoticonNum.good += 1;
     squeal.emoticonGivenBy.good.push(req.body.username);
+
+    if(squeal.category!=='private'){
+      if(squeal.emoticonNum.good > 0.25*squeal.impression && squeal.emoticonNum.bad > 0.25*squeal.impression){
+        squeal.category="Controversial"
+      }
+      else if(squeal.emoticonNum.good > 0.25*squeal.impression){
+        squeal.category="Popular"
+      }
+    }
+    
+
     await squeal.save();
     res.status(200).json(squeal);
   } catch (error) {
@@ -157,6 +168,16 @@ app.post('/removeEmoticonGood', async (req, res)=>{
     }
     squeal.emoticonNum.good -= 1;
     squeal.emoticonGivenBy.good.pop(req.body.username);
+
+    if(squeal.category !== 'private'){
+      if(squeal.emoticonNum.good > 0.25*squeal.impression && squeal.emoticonNum.bad > 0.25*squeal.impression){
+        squeal.category="Controversial"
+      }
+      else if(squeal.emoticonNum.bad > 0.25*squeal.impression){
+        squeal.category="Unpopular"
+      }
+    }
+    
     await squeal.save();
     res.status(200).json(squeal);
   } catch (error) {
@@ -227,6 +248,25 @@ app.post('/postSqueal', async (req, res) => {
   }
 });
 
+app.post('/updateCharsLeft', async (req, res) => {
+  try{
+    //find by username
+      const user=await UserModel.findByUsername(req.body.username);
+      if(user !== null){
+        user.caratteriGiornalieriUsati = req.body.caratteriGiornalieriUsati;
+        user.caratteriSettimanaliUsati = req.body.caratteriSettimanaliUsati;
+        user.caratteriMensiliUsati = req.body.caratteriMensiliUsati;
+        await user.save();
+        res.status(200).json({ message: 'Dati utente aggiornati con successo nel database' });
+      }
+      }
+  catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore nell\'aggiornamento dei caratteri rimanenti' });
+  }
+});
+
+
 //API per modificare i campi (tipo account, popolarità, caratteri...) di uno specifico utente (di cui ho nome e cognome)
 app.post('/editUser', async (req, res)=>{
   try{
@@ -256,7 +296,6 @@ app.post('/editUser', async (req, res)=>{
 
 // API per aggiungere un nuovo squeal
 app.post('/newSqueal', async (req, res) => {
-  console.log("newSqueal");
   try {
       const newSqueal = new SquealModel(req.body);
       console.log("Squeal da aggiungere:")
@@ -378,8 +417,8 @@ app.post('/editChannelDescription', async (req, res)=>{
     }
 });
 
-// Api per modificare il numero di squeal nel canale
-app.post('/editChannelSqueal', async (req, res) => {
+    // API per aggiungere uno squeal dalla lista squeal canale
+    app.post('/editChannelSqueal', async (req, res) => {
   try {
       console.log("editChannelSqueal")
       console.log("Entro nella modifica numero squeal del canale");
@@ -391,7 +430,6 @@ app.post('/editChannelSqueal', async (req, res) => {
           console.log(req.body.newSquealId);
         channel.listofSqueals.push(req.body.newSquealId);
         }
-        // Potresti voler aggiungere qui altri aggiornamenti se necessario
         await channel.save();
         res.status(200).json({ message: 'Canale aggiornato con successo nel database' });
         } else {
@@ -403,6 +441,29 @@ app.post('/editChannelSqueal', async (req, res) => {
         }
     });
 
+    // API per rimuovere uno squeal dalla lista squeal canale
+    app.post('/removeSquealFromChannel', async (req, res) => {
+      try {
+        console.log("removeSquealFromChannel");
+        const { channelName, squealId } = req.body;
+        
+        // Trova il canale specifico
+        const channel = await ChannelModel.findOne({ name: channelName });
+        if (!channel) {
+          return res.status(404).json({ message: 'Canale non trovato' });
+        }
+    
+        // Rimuovi l'ID dello squeal dalla lista di squeal del canale
+        channel.listofSqueals = channel.listofSqueals.filter(id => id.toString() !== squealId);
+        await channel.save();
+    
+        res.status(200).json({ message: 'Squeal rimosso dal canale con successo' });
+      } catch (error) {
+        console.error('Errore durante la rimozione dello squeal dal canale:', error);
+        res.status(500).json({ message: 'Errore interno del server' });
+      }
+    });
+    
     // Api per ritornare gli squeal di uno specifico canale
     app.get('/squealsByChannel', async (req, res) => {
       try {
