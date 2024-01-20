@@ -27,20 +27,20 @@ export default function CommentsList({ post }) {
 
 function Comment({ comment }) {
   return (
-    <div class="user-comment">
-      <div class="profile-pic">
+    <div class="item">
+      <div class="item-pic">
         <img src={comment.userPicture} alt="Profile picture" />
       </div>
-      <div class="comment-body">
-        <div class="comment-namedate">
-          <span class="comment-username">
+      <div class="item-body">
+        <div class="item-namedate">
+          <span class="item-username">
             <h>@</h>
             {comment.username}
           </span>
           <i class="fa-solid fa-feather"></i>
-          <span class="comment-date"> | {comment.date}</span>
+          <span class="item-date"> | {comment.date}</span>
         </div>
-        <div class="comment-content">{comment.commentBody}</div>
+        <div class="item-content">{comment.commentBody}</div>
       </div>
     </div>
   );

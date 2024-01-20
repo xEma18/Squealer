@@ -8,6 +8,11 @@
 /* IMPORTS */
 @import url("https://fonts.googleapis.com/css2?family=Mukta:wght@200;300;400;500;600;800&display=swap");
 
+:root {
+  --primary-color: #5b3c1d;
+  --secondary-color: #dbb77c;
+}
+
 * {
   box-sizing: inherit;
   padding: 0;
@@ -233,7 +238,6 @@ a:active {
   margin-bottom: 0.5rem;
 }
 
-
 #signup-form .pro-box select {
   width: 100%;
   padding: 1rem;
@@ -263,7 +267,9 @@ a:active {
   bottom: 0;
   width: 85%;
   left: 50%; /* centra il bottone orizzontalmente */
-  transform: translateX(-50%); /*sposta il bottone a sinistra del 50% della sua larghezza*/
+  transform: translateX(
+    -50%
+  ); /*sposta il bottone a sinistra del 50% della sua larghezza*/
   text-align: center;
 }
 
@@ -272,7 +278,9 @@ a:active {
   bottom: 0;
   width: 85%;
   left: 50%; /* centra il bottone orizzontalmente */
-  transform: translateX(-50%); /*sposta il bottone a sinistra del 50% della sua larghezza*/
+  transform: translateX(
+    -50%
+  ); /*sposta il bottone a sinistra del 50% della sua larghezza*/
   text-align: center;
 }
 
@@ -281,19 +289,21 @@ a:active {
   bottom: 0;
   width: 85%;
   left: 50%; /* centra il bottone orizzontalmente */
-  transform: translateX(-50%); /*sposta il bottone a sinistra del 50% della sua larghezza*/
+  transform: translateX(
+    -50%
+  ); /*sposta il bottone a sinistra del 50% della sua larghezza*/
   text-align: center;
 }
 
 #signup-form #btn-signup-4 {
-  
   position: absolute;
   bottom: 0;
   width: 85%;
   left: 50%; /* centra il bottone orizzontalmente */
-  transform: translateX(-50%); /*sposta il bottone a sinistra del 50% della sua larghezza*/
+  transform: translateX(
+    -50%
+  ); /*sposta il bottone a sinistra del 50% della sua larghezza*/
   text-align: center;
-
 }
 
 #signup-form ul.pw-requisites {
@@ -369,6 +379,6 @@ a:active {
   top: 65%;
   transform: translateY(-50%);
   cursor: pointer;
-  width:8%
+  width: 8%;
   /* Stili aggiuntivi per rendere l'icona come desiderato */
 }

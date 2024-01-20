@@ -58,17 +58,17 @@ e a destra l'icona dell'user */
   margin: 0.5rem 0;
 
   font-size: 1.3rem;
-  color: #5b3c1d;
+  color: var(--primary-color);
 }
 
 .footer i.fa-feather {
-  border: 1px solid #dbb77c;
+  border: 1px solid var(--secondary-color);
   border-radius: 50%;
 
   padding: 0.7rem;
 
   font-size: 1.5rem;
-  color: #dbb77c;
+  color: var(--secondary-color);
 }
 
 .feed {
@@ -111,7 +111,7 @@ e a destra l'icona dell'user */
 
 .user-post .post-username {
   font-weight: bold;
-  /* color: #5b3c1d; */
+  /* color: var(--primary-color); */
 }
 
 .user-post .post-username h {
@@ -119,7 +119,7 @@ e a destra l'icona dell'user */
 }
 
 .user-post .fa-feather {
-  color: #dbb77c;
+  color: var(--secondary-color);
 }
 
 .user-post .post-date {
@@ -142,7 +142,7 @@ e a destra l'icona dell'user */
 }
 
 .user-post .post-reactions {
-  color: #5b3c1d;
+  color: var(--primary-color);
 }
 
 /* Comments styling */
@@ -197,7 +197,7 @@ e a destra l'icona dell'user */
 
 .item .item-username {
   font-weight: bold;
-  /* color: #5b3c1d; */
+  /* color: var(--primary-color); */
 }
 
 .item .item-username h {
@@ -205,7 +205,7 @@ e a destra l'icona dell'user */
 }
 
 .item .fa-feather {
-  color: #dbb77c;
+  color: var(--secondary-color);
 }
 
 .item .item-date {
@@ -234,7 +234,7 @@ e a destra l'icona dell'user */
 
   outline: none;
   border-radius: 9999px;
-  border: 1px solid #5b3c1d;
+  border: 1px solid var(--primary-color);
 
   padding: 0.6rem;
 }
@@ -243,7 +243,7 @@ e a destra l'icona dell'user */
   text-align: right;
   flex: 1;
 
-  color: #dbb77c;
+  color: var(--secondary-color);
   font-size: 1.2rem;
 }
 
@@ -282,7 +282,7 @@ e a destra l'icona dell'user */
 
   font-size: 1.4rem;
 
-  color: #dbb77c;
+  color: var(--secondary-color);
 }
 
 .users-list,
@@ -291,6 +291,7 @@ e a destra l'icona dell'user */
 }
 
 .users-list h2,
-.channels-list h2 {
+.channels-list h2,
+.keywords-list h2 {
   padding: 0rem 1rem;
 }
