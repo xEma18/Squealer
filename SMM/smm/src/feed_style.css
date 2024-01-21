@@ -1,3 +1,47 @@
+/* css di jacopo */
+
+
+.scrolling-wrapper-flexbox {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+.card {      
+  flex: 0 0 auto;
+  width: 25rem;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #feedBody {
   max-height: 100vh; /*in react non esiste il body, quindi creo un div che chiamo "Body" e gli do altezza 100% come il body in html*/
   overflow-y: auto; /* mostra la scrollbar solo se necessario */
