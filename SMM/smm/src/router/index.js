@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import postMessage from '../components/postMessage.vue';
 import Feed from '../components/Feed.vue';
+import writeSqueal from '../components/writeSqueal.vue';
 
 const routes = [
   {
@@ -9,9 +9,9 @@ const routes = [
     component: Feed
   },
   {
-    path: '/postMessage',
-    name: 'postMessage',
-    component: postMessage
+    path: '/writeSqueal',
+    name: 'writeSqueal',
+    component: writeSqueal
   }
   
 ];
