@@ -10,7 +10,6 @@
 export default {//scrivendo "export default" esporto App.vue (non devo scriverlo tra i components)
   name: 'App',//assegno un nome al componente (utile per il debugging)
   components: {//scrivo i componenti che ho usato in questo componente  
-
   },
   methods: {
     //qui scrivo le funzioni che voglio usare in questo componente

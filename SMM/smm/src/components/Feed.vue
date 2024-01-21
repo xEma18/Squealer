@@ -1,20 +1,27 @@
 <template>
-  <div class="container">
-      <div class="header-container">
-        <div class="header">
+  <div class="feedContainer">
+      <div class="feedHeader-container ">
+        <div class="feedHeader">
           <img
-            id="condor-icon"
-            src="../../../App/src/assets/icon_condor.png"
+            id="feedCondor-icon"
+            src="../icon_condor.png"
             alt="Condor Icon"
           />
-          <font-awesome-icon :icon="['fas', 'user']" />
+          <!-- <font-awesome-icon :icon="['fas', 'user']" /> -->
         </div>
       </div>
       <!-- L'item "footer" ha posizione fixed. L'ho messo qui per comodità. -->
-      <div class="footer">
-        <font-awesome-icon icon="house" />
-        <i class="fa-solid fa-feather fa-1x"></i>
-        <i class="fa-solid fa-magnifying-glass fa-1x"></i>
+      <div class="feedFooter">
+       <!-- <bulma icon house" /> -->
+       <span class="icon">
+        <i class="fas fa-home"></i>
+       </span>
+       <span class="icon">
+        <i class="fas fa-feather" onclick={PostMessage}></i> <!--Da implementare-->
+       </span>
+       <span class="icon">
+        <i class="fas fa-search"></i>
+       </span>
       </div>
       <div class="feed">
         <!--  -->
@@ -30,12 +37,10 @@
           <div class="post-body">
             <div class="post-namedate">
               <span class="post-username"><span>@</span>Camzz</span>
-              <i class="fa-solid fa-feather"></i>
+              <i class="fas fa-feather"></i>
               <span class="post-date"> | Dec 13</span>
             </div>
             <div class="post-content">
-              <!-- Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Blanditiis eum eius quod, non ullam rem. -->
               <img
                 src="https://images.unsplash.com/photo-1604275689235-fdc521556c16?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 alt=""
@@ -43,19 +48,19 @@
             </div>
             <div class="post-reactions">
               <div class="post-comments">
-                <i class="fa-regular fa-comment"></i>
+                <i class="fas fa-comment"></i>
                 <span class="post-comments-number">69</span>
               </div>
               <div class="post-likes">
-                <i class="fa-regular fa-thumbs-up"></i>
+                <i class="fas fa-thumbs-up"></i>
                 <span class="post-likes-number">227</span>
               </div>
               <div class="post-dislikes">
-                <i class="fa-regular fa-thumbs-down"></i>
+                <i class="fas fa-thumbs-down"></i>
                 <span class="post-dislikes-number">38</span>
               </div>
               <div class="post-impressions">
-                <i class="fa-regular fa-eye"></i>
+                <i class="fas fa-eye"></i>
                 <span class="post-impressions-number">3.148</span>
               </div>
             </div>
@@ -75,7 +80,7 @@
           <div class="post-body">
             <div class="post-namedate">
               <span class="post-username"><span>@</span>Emrata</span>
-              <!-- <i class="fa-solid fa-feather"></i> -->
+              <!-- <i class="fas fa-feather"></i> -->
               <span class="post-date"> | Dec 14</span>
             </div>
             <div class="post-content">
@@ -83,19 +88,19 @@
             </div>
             <div class="post-reactions">
               <div class="post-comments">
-                <i class="fa-regular fa-comment"></i>
+                <i class="fas fa-comment"></i>
                 <span class="post-comments-number">134</span>
               </div>
               <div class="post-likes">
-                <i class="fa-regular fa-thumbs-up"></i>
+                <i class="fas fa-thumbs-up"></i>
                 <span class="post-likes-number">2</span>
               </div>
               <div class="post-dislikes">
-                <i class="fa-regular fa-thumbs-down"></i>
+                <i class="fas fa-thumbs-down"></i>
                 <span class="post-dislikes-number">198</span>
               </div>
               <div class="post-impressions">
-                <i class="fa-regular fa-eye"></i>
+                <i class="fas fa-eye"></i>
                 <span class="post-impressions-number">254</span>
               </div>
             </div>
@@ -115,11 +120,10 @@
           <div class="post-body">
             <div class="post-namedate">
               <span class="post-username"><span>@</span>DiGia</span>
-              <i class="fa-solid fa-feather"></i>
+              <i class="fas fa-feather"></i>
               <span class="post-date"> | Dec 15</span>
             </div>
             <div class="post-content">
-              <!-- La nev l'ha sembr fatt... Stetv a la cas. -->
               <img
                 src="https://static.sky.it/editorialimages/5a52e4808f8e230933693a55e5812d99d34e38cd/skytg24/it/cronaca/2023/01/23/-meteo-neve-oggi-foto/Neve_Norcia.jfif"
                 alt="Snow"
@@ -127,19 +131,19 @@
             </div>
             <div class="post-reactions">
               <div class="post-comments">
-                <i class="fa-regular fa-comment"></i>
+                <i class="fas fa-comment"></i>
                 <span class="post-comments-number">13</span>
               </div>
               <div class="post-likes">
-                <i class="fa-regular fa-thumbs-up"></i>
+                <i class="fas fa-thumbs-up"></i>
                 <span class="post-likes-number">1.543</span>
               </div>
               <div class="post-dislikes">
-                <i class="fa-regular fa-thumbs-down"></i>
+                <i class="fas fa-thumbs-down"></i>
                 <span class="post-dislikes-number">12</span>
               </div>
               <div class="post-impressions">
-                <i class="fa-regular fa-eye"></i>
+                <i class="fas fa-eye"></i>
                 <span class="post-impressions-number">9.008</span>
               </div>
             </div>
@@ -159,25 +163,25 @@
           <div class="post-body">
             <div class="post-namedate">
               <span class="post-username"><span>@</span>Manueee</span>
-              <i class="fa-solid fa-feather"></i>
+              <i class="fas fa-feather"></i>
               <span class="post-date"> | Jan 04</span>
             </div>
-            <div class="post-content">Mi piacciono i piselli ciaoooo.</div>
+            <div class="post-content">Mi piacciono i gatti ciaoooo.</div>
             <div class="post-reactions">
               <div class="post-comments">
-                <i class="fa-regular fa-comment"></i>
+                <i class="fas fa-comment"></i>
                 <span class="post-comments-number">1</span>
               </div>
               <div class="post-likes">
-                <i class="fa-regular fa-thumbs-up"></i>
+                <i class="fas fa-thumbs-up"></i>
                 <span class="post-likes-number">1</span>
               </div>
               <div class="post-dislikes">
-                <i class="fa-regular fa-thumbs-down"></i>
+                <i class="fas fa-thumbs-down"></i>
                 <span class="post-dislikes-number">1.103</span>
               </div>
               <div class="post-impressions">
-                <i class="fa-regular fa-eye"></i>
+                <i class="fas fa-eye"></i>
                 <span class="post-impressions-number">8.390</span>
               </div>
             </div>
@@ -197,7 +201,7 @@
           <div class="post-body">
             <div class="post-namedate">
               <span class="post-username"><span>@</span>Jaques</span>
-              <!-- <i class="fa-solid fa-feather"></i> -->
+              <!-- <i class="fas fa-feather"></i> -->
               <span class="post-date"> | 2h</span>
             </div>
             <div class="post-content">
@@ -208,19 +212,19 @@
             </div>
             <div class="post-reactions">
               <div class="post-comments">
-                <i class="fa-regular fa-comment"></i>
+                <i class="fas fa-comment"></i>
                 <span class="post-comments-number">66</span>
               </div>
               <div class="post-likes">
-                <i class="fa-regular fa-thumbs-up"></i>
+                <i class="fas fa-thumbs-up"></i>
                 <span class="post-likes-number">134</span>
               </div>
               <div class="post-dislikes">
-                <i class="fa-regular fa-thumbs-down"></i>
+                <i class="fas fa-thumbs-down"></i>
                 <span class="post-dislikes-number">0</span>
               </div>
               <div class="post-impressions">
-                <i class="fa-regular fa-eye"></i>
+                <i class="fas fa-eye"></i>
                 <span class="post-impressions-number">1592</span>
               </div>
             </div>
@@ -235,13 +239,13 @@
 </template>
 <script>
   import { ref, onMounted } from 'vue';
-  import { library } from '@fortawesome/fontawesome-svg-core';
-  import { faUser, faHouse, faFeather, faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons';
-  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+  //import { library } from '@fortawesome/fontawesome-svg-core';
+  //import { faUser, faHouse, faFeather, faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons';
+  //import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
   
-  import '../../../../Front-end Ema/src/style/feed_style.css'
+  import "../feed_style.css"
   
-  library.add(faHouse, faFeather, faMagnifyingGlass);
+  //library.add(faHouse, faFeather, faMagnifyingGlass);
   
   export default {
     setup() {
@@ -269,7 +273,7 @@
       return { squeals };
     },
     components:{
-      FontAwesomeIcon
+      /*FontAwesomeIcon*/
     }
   }
 </script>
