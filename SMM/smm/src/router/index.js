@@ -5,8 +5,8 @@ import Feed from '../components/Feed.vue';
 const routes = [
   {
     path: '/', // per navigare a una nuova rotta: this.$router.push({ path: '/nuovaPagina', query: { chiave: 'valore' } });
-    name: 'feed', // posso sfruttare anche il name per navigare: this.$router.push({ name: 'nuovaPagina', query: { chiave: 'valore' } });
-    component: Feed
+    name: 'homepage', // posso sfruttare anche il name per navigare: this.$router.push({ name: 'nuovaPagina', query: { chiave: 'valore' } });
+    component: homePage
   },
   {
     path: '/postMessage',
