@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Feed from '../components/Feed.vue';
+import homePage from '../components/homePage.vue';
 import writeSqueal from '../components/writeSqueal.vue';
 
 const routes = [
