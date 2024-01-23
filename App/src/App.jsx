@@ -8,6 +8,7 @@ import SignUp4 from './SignUp/SignUp4.jsx';
 import Login from './Login/Login.jsx';
 import Feed from './Feed/Feed.jsx';
 import WriteSqueal from './Feed/writeSqueal/writeSqueal.jsx';
+import CommentsList from './Feed/CommentsList.jsx';
 
 
 
@@ -52,6 +53,7 @@ const App = () => {
         <Route path= "/LogIn" element={<Login />} />
         <Route path= "/Feed" element={<Feed />} />
         <Route path= "/Feed/WriteSqueal" element={<WriteSqueal />} />
+        <Route path= "/Feed/CommentsList" element={<CommentsList />} />
 
       </Routes>
     </Router>
