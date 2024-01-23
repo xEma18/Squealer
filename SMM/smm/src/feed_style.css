@@ -1,0 +1,340 @@
+/* css di jacopo */
+
+
+.scrolling-wrapper-flexbox {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+.card {      
+  flex: 0 0 auto;
+  width: 25rem;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#feedBody {
+  max-height: 100vh; /*in react non esiste il body, quindi creo un div che chiamo "Body" e gli do altezza 100% come il body in html*/
+  overflow-y: auto; /* mostra la scrollbar solo se necessario */
+}
+
+#feedCondor-icon {
+  height: 2.5rem;
+  /* margin-top: 0.5rem; */
+  /* margin-left: 2rem; */
+}
+
+.feedContainer {
+  padding: 0.8rem 0;
+  position: relative;
+}
+
+/* questo elemento mi serve per mettere al centro l'icona del condor
+e a destra l'icona dell'user */
+.feedHeader-container {
+  display: flex;
+  align-items: end;
+  justify-content: flex-end;
+}
+
+.feedHeader {
+  /* 40px è la width del condor, 14px la width dell'user e 1rem è il l-r-margin */
+  width: calc(50% + 40px - 14px - 1rem);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin: 0 1rem 1rem 1rem;
+}
+
+.feedHeader i {
+  font-size: 1.2rem;
+}
+
+.feedHeader #condor-icon2 {
+  margin: 0;
+}
+
+.feedFooter {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+  border-top: 1px solid rgb(221, 220, 220);
+  background-color: #f7f7f7;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 500; /* per farlo stare sopra la mappa (nel caso in cui ci siano uno squeal con la mappa */
+}
+
+.feedFooter i {
+  margin: 0.5rem 0;
+  font-size: 1.3rem;
+  color: #5b3c1d;
+}
+
+.feedFooter i.fa-feather {
+  border: 1px solid #dbb77c;
+  border-radius: 50%;
+
+  padding: 0.7rem;
+
+  font-size: 1.5rem;
+  color: #dbb77c;
+}
+
+.feed {
+  margin-bottom: 3rem;
+  border-top: 1px solid rgb(221, 220, 220);
+}
+
+.user-post {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  border-bottom: 1px solid rgb(221, 220, 220);
+
+  padding: 1rem;
+}
+
+.user-post .profile-pic {
+  flex: 1;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: -1;
+}
+
+.user-post .profile-pic img {
+  height: 3rem;
+  width: 100%;
+  object-fit: cover;
+  /* border-radius: 50%; */
+  clip-path: circle();
+}
+
+.user-post .post-body {
+  flex: 5;
+}
+
+.user-post .post-username {
+  font-weight: bold;
+  /* color: #5b3c1d; */
+}
+
+.user-post .post-username h {
+  font-weight: normal;
+}
+
+.user-post .fa-feather {
+  color: #dbb77c;
+}
+
+.user-post .post-date {
+  color: #0000009b;
+}
+
+.user-post .post-content img {
+  display: block;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.user-post .post-reactions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-top: 0.8rem;
+}
+
+.user-post .post-reactions {
+  color: #5b3c1d;
+}
+
+/*  */
+/*  */
+/* Comments styling */
+.comments-container {
+  position: relative;
+  height: 100vh;
+  overflow-y: scroll;
+}
+
+.comments-header {
+  padding: 1.3rem 1.6rem;
+  font-size: 1.3rem;
+  font-weight: 800;
+
+  margin-bottom: 1rem;
+}
+
+.comments-header i {
+  margin-right: 0.7rem;
+}
+
+.item {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  border-bottom: 1px solid rgb(221, 220, 220);
+
+  padding: 1rem;
+}
+
+.item .item-pic {
+  flex: 1;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: -1;
+}
+
+.item .item-pic img {
+  height: 3rem;
+  width: 100%;
+  object-fit: cover;
+  clip-path: circle();
+}
+
+.item .item-body {
+  flex: 5;
+}
+
+.item .item-username {
+  font-weight: bold;
+  /* color: #5b3c1d; */
+}
+
+.item .item-username h {
+  font-weight: normal;
+}
+
+.item .fa-feather {
+  color: #dbb77c;
+}
+
+.item .item-date {
+  color: #0000009b;
+}
+
+.write-comment {
+  position: fixed;
+  bottom: 0px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+
+  padding: 1rem 1.3rem;
+
+  background-color: #fbfbfb;
+}
+
+.write-comment input {
+  flex: 8;
+
+  font-size: 1.1rem;
+
+  outline: none;
+  border-radius: 9999px;
+  border: 1px solid #5b3c1d;
+
+  padding: 0.6rem;
+}
+
+.write-comment i {
+  text-align: right;
+  flex: 1;
+
+  color: #dbb77c;
+  font-size: 1.2rem;
+}
+
+/* Search styling */
+#search-form {
+  display: grid;
+  grid-template-columns: 1fr 4fr 0.5fr;
+
+  padding: 1.5rem 1rem;
+
+  gap: 0.4rem;
+}
+
+#search-form img {
+  height: 2.5rem;
+  width: 100%;
+  object-fit: cover;
+  clip-path: circle();
+}
+
+#search-form input[type="text"] {
+  border: 1px solid #949797;
+  border-radius: 9999px;
+
+  padding: 0.5rem 1.5rem;
+
+  font-size: 1rem;
+  color: #333;
+
+  outline: none;
+}
+
+#search-form i {
+  align-self: center;
+  justify-self: center;
+
+  font-size: 1.4rem;
+
+  color: #dbb77c;
+}
+
+.users-list,
+.channels-list {
+  margin-bottom: 1rem;
+}
+
+.users-list h2,
+.channels-list h2,
+.keywords-list h2 {
+  padding: 0rem 1rem;
+}
