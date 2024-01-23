@@ -10,7 +10,7 @@ export default function CommentsList({ post }) {
 
   return (
     <div class="comments-container">
-      <div class="comments-header">
+      <div class="go-back">
         <span>
           <i class="fa-solid fa-arrow-left"></i> Feed
         </span>
