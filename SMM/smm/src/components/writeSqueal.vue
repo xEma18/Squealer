@@ -2,17 +2,17 @@
     <section class="section">
       <div class="container">
         <nav class="level is-mobile">
-          <div class="level-left">
-            <a class="level-item button is-white" @click="navigateToFeed">
+          <div class="level-left ">
+            <a class="level-item button is-white is-rounded" @click="navigateToFeed">
               <span class="icon"><i class="fas fa-times"></i></span>
             </a>
           </div>
           <div class="level-right">
-            <button class="level-item button is-white" @click="handlePostSqueal">Squeal</button>
+            <button class="level-item button is-white is-rounded" @click="handlePostSqueal">Squeal</button>
           </div>
         </nav>
   
-        <div class="columns">
+        <div class="columns squeal-about-it">
           <div class="column is-2">
             <figure class="image is-64x64">
               <img :src="userData.image" alt="Profile Picture" class="is-rounded">
@@ -25,7 +25,7 @@
             </div>
             <div v-else-if="showMap" ref="mapRef" class="map-container"></div>
             <div v-else class="textarea-container">
-              <textarea class="textarea" placeholder="Squeal about it!" v-model="text"></textarea>
+              <textarea class="textarea" placeholder="Squeal about it!" v-model="text" @input="updateCharacterCount" :maxlength="maxLength"></textarea>
             </div>
           </div>
         </div>
@@ -34,7 +34,7 @@
           <div class="control">
             <label class="label">
               <input id="fileInput" type="file" accept="image/*" @change="handleImageChange" hidden>
-              <span class="icon" @click="triggerFileInput"><i class="fas fa-image"></i></span>
+              <span class="icon"><i class="fas fa-image"></i></span>
             </label>
           </div>
           <div class="control">
@@ -45,46 +45,69 @@
           </div>
         </div>
   
-        <div v-if="publicMode" class="char-interface box">
-    <h3 class="title is-6">Character Count</h3>
-    <div class="char-count">
-      <p>Daily characters used <span>{{ dailyCharsUsed }}/{{ dailyCharLimit }}</span></p>
-      <progress class="progress is-small is-primary" :value="dailyCharsUsed" :max="dailyCharLimit"></progress>
-      <p>Weekly characters used <span>{{ weeklyCharsUsed }}/{{ weeklyCharLimit }}</span></p>
-      <progress class="progress is-small is-link" :value="weeklyCharsUsed" :max="weeklyCharLimit"></progress>
-      <p>Monthly characters used <span>{{ monthlyCharsUsed }}/{{ monthlyCharLimit }}</span></p>
-      <progress class="progress is-small is-info" :value="monthlyCharsUsed" :max="monthlyCharLimit"></progress>
-    </div>
-    <button class="button is-small is-warning">Not enough? Buy it!</button>
-  </div>
+        <div v-if="publicMode" class="characterCounterContainer">
+          <character-count :daily-chars-used="dailyCharsUsed"
+                            :weekly-chars-used="weeklyCharsUsed"
+                            :monthly-chars-used="monthlyCharsUsed"
+                            :daily-char-limit="dailyCharLimit"
+                            :weekly-char-limit="weeklyCharLimit"
+                            :monthly-char-limit="monthlyCharLimit">
+          </character-count>
+        </div>
+        
+        <div v-else class="characterCounterContainer">
+          <div class="char-interface box">
+            <h3 class="title is-5">Characters Counter: Private Mode</h3>
+            <div class="char-count">
+              <p>Daily characters: UNLIMITED</p>
+              <progress class="progress is-small is-info" max="100" id="indeterminate-progress"></progress>
+              <p>Weekly characters: UNLIMITED</p>
+              <progress class="progress is-small is-primary" max="100" id="indeterminate-progress"></progress>
+              <p>Monthly characters: UNLIMITED</p>
+              <progress class="progress is-small is-primary" max="100" id="indeterminate-progress"></progress>
+            </div>
+          </div>
+        </div>
   
         <div class="content">
           <h2 class="subtitle">Who is it for?</h2>
           <p>Add your recipients, each one separated by a space.</p>
-          <textarea class="textarea" id="recipients-list" placeholder="@foo §foo §BAR" v-model="recipientsText" @input="handleRecipientsChange"></textarea>
+          <textarea class="textarea" id="recipients-list" placeholder="@foo §foo §BAR @everyone" v-model="recipientsText" @input="handleRecipientsChange"></textarea>
         </div>
       </div>
     </section>
   </template>
   
+
   <script>
+  import CharacterCount from './charactersCounter.vue';
+
   export default {
+    components: {
+      CharacterCount
+    },
     data() {
       return {
         userData: {}, // Dati utente
-        text: '', // Testo inserito dall'utente
-        image: '', // Immagine inserita dall'utente
-        recipientsText: '', // Testo dei destinatari
-        recipients: [], // Array di destinatari
+        text: '', 
+        image: '', 
+        recipientsText: '', 
+        recipients: [], 
         showMap: false, // Mostra mappa
         mapInfo: { lat: null, lng: null, zoom: 13 }, // Informazioni mappa
-        publicMode: false, // Modalità pubblica
-        dailyCharsUsed: 908,
-        weeklyCharsUsed: 1883,
-        monthlyCharsUsed: 2483,
-        dailyCharLimit: 4009,
-        weeklyCharLimit: 1400,
-        monthlyCharLimit: 5600,
+        publicMode: false, 
+
+        userData: {
+        caratteriGiornalieriUsati: 100, // Numero di caratteri giornalieri già usati
+        caratteriSettimanaliUsati: 700, // Numero di caratteri settimanali già usati
+        caratteriMensiliUsati: 1400, // Numero di caratteri mensili già usati
+      },
+        dailyCharsUsed: 100,
+        weeklyCharsUsed: 700,
+        monthlyCharsUsed: 1400,
+        dailyCharLimit: 200,
+        weeklyCharLimit: 2800,
+        monthlyCharLimit: 11200,
       };
     },
     methods: {
@@ -92,22 +115,27 @@
         this.$router.push('/');
       },
       handlePostSqueal() {
-        // Gestione invio post
+        // Gestione invio post: devo aspettare di avere dalla homepage i dati utente
       },
-      triggerFileInput() {
-      this.$refs.fileInput.click(); // Questo triggererà l'input del file nascosto
-    },
-    handleImageChange(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          this.image = e.target.result; // Imposta l'immagine come base64
-          this.text = ''; // Pulisce la textarea quando viene caricata un'immagine
-        };
-        reader.readAsDataURL(file);
-      }
-    },
+      updateCharacterCount() {
+        const textLength = this.text.length;
+        
+        // Aggiorna i contatori dei caratteri
+        this.dailyCharsUsed = this.userData.caratteriGiornalieriUsati + textLength;
+        this.weeklyCharsUsed = this.userData.caratteriSettimanaliUsati + textLength;
+        this.monthlyCharsUsed = this.userData.caratteriMensiliUsati + textLength;
+      },
+      handleImageChange(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            this.image = e.target.result; // Imposta l'immagine come base64
+            this.text = ''; // Pulisce la textarea quando viene caricata un'immagine
+          };
+          reader.readAsDataURL(file);
+        }
+      },
       handleLocationClick() {
         // Gestione click sulla localizzazione
       },
@@ -121,11 +149,45 @@
     },
     mounted() {
       // Inizializzazione componenti, come nel useEffect di React
+    },
+    computed:{
+      maxLength() {
+        const remainingDailyChars = this.dailyCharLimit - this.userData.caratteriGiornalieriUsati;
+        const remainingWeeklyChars = this.weeklyCharLimit - this.userData.caratteriSettimanaliUsati;
+        const remainingMonthlyChars = this.monthlyCharLimit - this.userData.caratteriMensiliUsati;
+
+        return Math.min(remainingDailyChars, remainingWeeklyChars, remainingMonthlyChars);
+  }
     }
   };
+  
   </script>
   
   <style>
+#indeterminate-progress {
+  background-image: linear-gradient(to right, #08d4b4 20%, #f4f4f4 40%, #08d4b4 60%);
+  background-size: 200% 100%;
+  animation: indeterminateProgress 2s linear infinite;
+}
+
+@keyframes indeterminateProgress {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.squeal-about-it {
+  margin-top: 4%;
+}
+
+.characterCounterContainer {
+  margin-top: 3%;
+  margin-bottom: 3%;
+}
+
 .image-container img, .map-container {
   max-width: 80%;
   max-height: 165px;
@@ -145,43 +207,10 @@
   cursor: pointer;
 }
 
-.char-interface {
-  background-color: #ffffff;
-  padding: 1rem;
-  margin-top: 1rem;
-  border-radius: 5px;
-}
-
-.char-interface .char-count p {
-  color: #363636;
-  font-size: 0.9rem;
-}
-
-.char-interface .char-count span {
-  font-weight: bold;
-  color: #5B3C1D; /* Metallic Bronze */
-
-}
-
-.progress {
-  margin-bottom: 0.5rem;
-  
-}
-
-.progress.is-primary {
-  background-color: #DBB77C; /* Tumbleweed*/
-}
-
-
-
 .section {
   background-color: #f4f4f4; 
 }
 
-.button.is-warning {
-  background-color: #DBB77C; /* Tumbleweed */
-  color: #5B3C1D; /* Metallic Bronze */
-}
 .level-item.button.is-white, .button.is-warning {
   transition: all 0.3s ease;
   background-color: #DBB77C; /* Tumbleweed */
@@ -194,19 +223,14 @@
   color: #ffffff; /* Bianco per il testo al hover */
 }
 
-.button.is-warning:hover {
-  background-color: #c19a6b; /* Tumbleweed più scuro */
-}
-
-.textarea, .image-container img, .map-container, .char-interface {
+.textarea, .image-container img, .map-container {
   box-shadow: 0 2px 5px rgba(91, 60, 29, 0.2); 
   border: 1px solid #9a9a9a; 
 }
 
-.level-item.button.is-white:hover, .button.is-warning:hover {
+.level-item.button.is-white:hover {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
-
 
 .textarea, .image-container img, .map-container {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -221,7 +245,6 @@
   color: #5B3C1D; 
 }
 
-
 .subtitle {
   color: #DBB77C; 
   margin-bottom: 1rem;
@@ -234,13 +257,12 @@ p {
 /* Stili specifici per desktop */
 @media screen and (min-width: 1024px) {
   .section {
-    padding: 3rem 10rem;
-  }
-
-  .char-interface {
-    margin-bottom: 2rem;
+    padding-top: 1%;
+    padding-left: 0;
+    padding-right: 0;
   }
 }
+
 
 </style>
   
