@@ -18,9 +18,11 @@
       <span><i class="fa-solid fa-arrow-left"></i> Search</span>
     </div>
     <!-- SEZIONE 1: Contiene la presentazione, diviso in header e description -->
-    <div class="profile-presentation">
-      <!-- Prima parte: profile-header. Contiene foto, tasto follow, username -->
-      <div class="profile-header">
+    <div class="item-presentation">
+      <!-- Prima parte: profile-header (per motivi di riusabilità con la parte che riguarda i canali, 
+        si chiama "item"-header. Lo stesso discorso vale per tutte le classi che si chiamano "item", 
+        per essere generici e riusabili). Contiene foto, username -->
+      <div class="item-header">
         <div class="img-container">
           <img
             src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -35,7 +37,7 @@
         </div>
       </div>
       <!-- Seconda parte: profile-description. Contiene descrizione, data di iscrizione, luogo e counter di squeals, likes, dislikes -->
-      <div class="profile-description">
+      <div class="item-description">
         <p>
           Lorem ipsum dolor, sit amet consectetur adasd elit. Modi fuga, facere
           ab nobis veniam corporis et labore dicta ut officia earum autem
@@ -55,7 +57,7 @@
       </div>
     </div>
     <!-- SEZIONE 2: Raccolta degli squeals dell'user. Organizzato esattamente come il feed -->
-    <div class="profile-squeals">
+    <div class="item-squeals">
       <div class="squeals-header"><span>Squeals</span></div>
       <!-- inizio post -->
       <div class="user-post" id="0001">
