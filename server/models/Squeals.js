@@ -6,6 +6,12 @@ const SquealSchema = new mongoose.Schema({
     date: Date,
     text: String,
     commentsNum: Number,
+    comments: [{
+        mittente: String,
+        text: String,
+        date: Date,
+        profilePic: String,
+    }],
     emoticonNum: {
         verygood: Number,
         good: Number,
