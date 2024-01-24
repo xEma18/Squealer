@@ -1,7 +1,7 @@
 // import React from 'react';
 // import ReactDOM from 'react-dom/client';
-// import "./feed_style.css";
-// import "../style.css";
+// import "../feed_style.css";
+// import "../../style.css";
 
 export default function CommentsList({ post }) {
   // postComments è vuoto ma è dove andrebbero salvati i commenti del post.
