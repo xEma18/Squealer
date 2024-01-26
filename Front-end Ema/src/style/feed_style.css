@@ -346,26 +346,6 @@ h {
   object-fit: cover;
 }
 
-/* .profile-header #follow-btn {
-  grid-column-start: 4;
-  grid-row-start: 2;
-  justify-self: center;
-  align-self: center;
-
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: var(--secondary-color);
-
-  border: 2px solid var(--secondary-color);
-  border-radius: 9999px;
-
-  padding: 0rem 0.8rem;
-}
-
-.profile-header #follow-btn i {
-  margin-left: 0.3rem;
-} */
-
 .item-header .username,
 .item-header .channel-name {
   font-weight: bold;
@@ -380,7 +360,7 @@ h {
   color: var(--secondary-color);
 }
 
-.item-description {
+.item-presentation .item-description {
   padding: 0 1.5rem;
 }
 
@@ -446,4 +426,69 @@ h {
 .item-squeals .user-post {
   padding-left: 0;
   padding-right: 0;
+}
+
+/* SMM Styling */
+/* Built upon user profile styling */
+.go-back + h2 {
+  padding: 0 1.5rem 1rem 1.5rem;
+}
+
+.smm-list h2 {
+  padding: 0 1.5rem;
+}
+
+.smm-presentation {
+  margin-bottom: 5rem;
+}
+
+.smm-header {
+  grid-template-columns: repeat(2, 1fr) 0.7fr auto;
+}
+
+.smm-header #toggle-btn {
+  grid-column-start: 4;
+  grid-row-start: 2;
+  justify-self: center;
+  align-self: center;
+
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--secondary-color);
+
+  border: 2px solid var(--secondary-color);
+  border-radius: 9999px;
+
+  padding: 0rem 0.9rem;
+}
+
+.smm-header #toggle-btn i {
+  margin-left: 0.3rem;
+}
+
+.smm-item {
+  display: flex;
+  border-bottom: 1px solid rgb(221, 220, 220);
+  align-items: center;
+  padding: 1rem 1.5rem;
+}
+
+.smm-item .item {
+  flex: 8;
+  border: none;
+  gap: 0.4rem;
+  padding: 0;
+}
+
+.smm-item #select-smm-btn {
+  flex: 1;
+  /* border: 2px solid var(--secondary-color); */
+  border-radius: 9999px;
+
+  font-weight: bold;
+
+  padding: 0.3rem 0.8rem;
+
+  color: #fbfbfb;
+  background-color: var(--secondary-color);
 }

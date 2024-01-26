@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./src/style/style.css" />
+    <link rel="stylesheet" href="./src/style/feed_style.css" />
+    <link rel="icon" href="./src/media/icon_condor.png" />
+    <script
+      src="https://kit.fontawesome.com/d2a5457e40.js"
+      crossorigin="anonymous"
+    ></script>
+    <title>Squealer</title>
+  </head>
+  <body>
+    <!-- Tasto per tornare al feed -->
+    <div class="go-back">
+      <span><i class="fa-solid fa-arrow-left"></i> Feed</span>
+    </div>
+    <h2>Current Manager</h2>
+    <!-- SEZIONE 1: Contiene la presentazione, diviso in header e description -->
+    <div class="item-presentation smm-presentation">
+      <!-- Prima parte: smm-header, fatto riutilizzando la classe item-header, in comune con user-profile e profile-settings- -->
+      <div class="item-header smm-header">
+        <div class="img-container">
+          <img
+            src="https://plus.unsplash.com/premium_photo-1661374927471-24a90ebd5737?q=80&w=2942&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            alt="Profile picture"
+          />
+        </div>
+        <span role="button" id="toggle-btn"
+          >Remove <i class="fa-solid fa-plus"></i
+        ></span>
+        <div class="username">
+          <h>@</h>Michele02 <i class="fa-solid fa-feather"></i>
+        </div>
+      </div>
+      <!-- Seconda parte: smm-description. Contiene solo la descrizione dell'smm-->
+      <div class="item-description smm-desription">
+        <p>Let's make you famous 🚀</p>
+      </div>
+    </div>
+
+    <!-- SEZIONE 2: contiene la lista degli smm disponibili -->
+    <div class="smm-list">
+      <h2>Available Managers</h2>
+      <!-- inizio manager -->
+      <div class="smm-item">
+        <div class="item">
+          <div class="item-pic">
+            <img
+              src="https://plus.unsplash.com/premium_photo-1689551670902-19b441a6afde?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="Profile picture"
+            />
+          </div>
+          <div class="item-body">
+            <div class="item-namedate">
+              <span class="item-username"><h>@</h>Daniela2131</span>
+              <i class="fa-solid fa-feather"></i>
+            </div>
+            <div class="item-content">Lorem ipsum dolor.</div>
+          </div>
+        </div>
+        <div class="button" id="select-smm-btn" role="button">Select</div>
+      </div>
+      <!-- fine manager -->
+      <!-- inizio manager -->
+      <div class="smm-item">
+        <div class="item">
+          <div class="item-pic">
+            <img
+              src="https://images.unsplash.com/photo-1609241728358-53d49c22c01a?q=80&w=2000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="Profile picture"
+            />
+          </div>
+          <div class="item-body">
+            <div class="item-namedate">
+              <span class="item-username"><h>@</h>Laura548</span>
+              <i class="fa-solid fa-feather"></i>
+            </div>
+            <div class="item-content">Lorem ipsum dolor.</div>
+          </div>
+        </div>
+        <div class="button" id="select-smm-btn" role="button">Select</div>
+      </div>
+      <!-- fine manager -->
+      <!-- inizio manager -->
+      <div class="smm-item">
+        <div class="item">
+          <div class="item-pic">
+            <img
+              src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="Profile picture"
+            />
+          </div>
+          <div class="item-body">
+            <div class="item-namedate">
+              <span class="item-username"><h>@</h>Antonio6</span>
+              <i class="fa-solid fa-feather"></i>
+            </div>
+            <div class="item-content">Lorem ipsum dolor.</div>
+          </div>
+        </div>
+        <div class="button" id="select-smm-btn" role="button">Select</div>
+      </div>
+      <!-- fine manager -->
+      <!-- inizio manager -->
+      <div class="smm-item">
+        <div class="item">
+          <div class="item-pic">
+            <img
+              src="https://images.unsplash.com/photo-1601233749202-95d04d5b3c00?q=80&w=2876&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="Profile picture"
+            />
+          </div>
+          <div class="item-body">
+            <div class="item-namedate">
+              <span class="item-username"><h>@</h>Jacopo12</span>
+              <i class="fa-solid fa-feather"></i>
+            </div>
+            <div class="item-content">Lorem ipsum dolor.</div>
+          </div>
+        </div>
+        <div class="button" id="select-smm-btn" role="button">Select</div>
+      </div>
+      <!-- fine manager -->
+      <!-- inizio manager -->
+      <div class="smm-item">
+        <div class="item">
+          <div class="item-pic">
+            <img
+              src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=2896&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="Profile picture"
+            />
+          </div>
+          <div class="item-body">
+            <div class="item-namedate">
+              <span class="item-username"><h>@</h>Manu00</span>
+              <i class="fa-solid fa-feather"></i>
+            </div>
+            <div class="item-content">Lorem ipsum dolor.</div>
+          </div>
+        </div>
+        <div class="button" id="select-smm-btn" role="button">Select</div>
+      </div>
+      <!-- fine manager -->
+      <!-- inizio manager -->
+      <div class="smm-item">
+        <div class="item">
+          <div class="item-pic">
+            <img
+              src="https://plus.unsplash.com/premium_photo-1687832783314-c6b48f49d4ad?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="Profile picture"
+            />
+          </div>
+          <div class="item-body">
+            <div class="item-namedate">
+              <span class="item-username"><h>@</h>Chiara55</span>
+              <i class="fa-solid fa-feather"></i>
+            </div>
+            <div class="item-content">Lorem ipsum dolor.</div>
+          </div>
+        </div>
+        <div class="button" id="select-smm-btn" role="button">Select</div>
+      </div>
+      <!-- fine manager -->
+      <!-- inizio manager -->
+      <div class="smm-item">
+        <div class="item">
+          <div class="item-pic">
+            <img
+              src="https://images.unsplash.com/photo-1584316712724-f5d4b188fee2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="Profile picture"
+            />
+          </div>
+          <div class="item-body">
+            <div class="item-namedate">
+              <span class="item-username"><h>@</h>Lollo29</span>
+              <i class="fa-solid fa-feather"></i>
+            </div>
+            <div class="item-content">Lorem ipsum dolor.</div>
+          </div>
+        </div>
+        <div class="button" id="select-smm-btn" role="button">Select</div>
+      </div>
+      <!-- fine manager -->
+    </div>
+  </body>
+</html>
