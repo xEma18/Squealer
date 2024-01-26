@@ -207,8 +207,9 @@ const Feed = () => {
   
   
 
-
-  
+  const handleSearchButton = () => {
+    navigate('/Feed/Search');
+  }
 
   const handleWriteSquealButton = () => {
     //se l'utente è guest, non può scrivere uno squeal, mentre se non è guest, va a navigate a WriteSqueal
@@ -232,7 +233,7 @@ const Feed = () => {
           <div className="feedFooter">
             <i className="fa-solid fa-house fa-1x"></i>
             <i className="fa-solid fa-feather fa-1x" onClick={handleWriteSquealButton}></i>
-            <i className="fa-solid fa-magnifying-glass fa-1x"></i>
+            <i className="fa-solid fa-magnifying-glass fa-1x" onClick={handleSearchButton}></i>
           </div>
           <div className="feed">
             {squeals.map((squeal, index) => (

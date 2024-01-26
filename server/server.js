@@ -118,7 +118,7 @@ app.post('/getUserImageAndCharLeft', async (req, res) => {
   try {
     const username = req.body.username;
     const user = await UserModel.findOne({ username: username }).select('image caratteriGiornalieri caratteriSettimanali caratteriMensili caratteriGiornalieriUsati caratteriMensiliUsati caratteriSettimanaliUsati');
-    console.log(user);
+    
 
     if (user) {
       res.status(200).json(user);
@@ -518,6 +518,21 @@ app.post('/editChannelDescription', async (req, res)=>{
       }
   });
   
+
+  //APi che dà profile pic from username
+  app.post('/profilePicByUsername', async (req, res) => {
+    try {
+        const user = await UserModel.findByUsername(req.body.username);
+        if (!user) {
+            return res.status(404).json({ error: 'Utente non trovato' });
+        }
+        res.status(200).json({ image: user.image });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Errore interno del server' });
+    }
+  });
+
 
 app.listen(3001, ()=>{
     console.log("Server is running")
