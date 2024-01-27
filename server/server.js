@@ -534,6 +534,50 @@ app.post('/editChannelDescription', async (req, res)=>{
   });
 
 
+  app.post('/search', async (req, res) => {
+    try {
+        const searchTerm = req.body.searchTerm;
+        let users = [], channels = [], keywordCounts = {}; 
+        const loggedUser = req.body.username;
+
+        if (searchTerm.startsWith('@')) {
+            // Ricerca per utenti
+            users = await UserModel.find({ username: new RegExp(searchTerm, 'i') }); // i = case insensitive (maiuscole/minuscole non fanno differenza)
+        
+          } else if (searchTerm.startsWith('§')) {
+            // Ricerca per canali
+            channels = await ChannelModel.find({ name: new RegExp(searchTerm, 'i') });
+
+          } else if (searchTerm.startsWith('#')) {
+              const regex = new RegExp(searchTerm.slice(1), 'i'); // Rimuove '#' e prepara la regex
+              const squeals = await SquealModel.find({ 
+                text: regex,
+                $or: [{ destinatari: loggedUser }, { destinatari: '@everyone' }]
+              });
+              squeals.forEach(squeal => {
+              const words = squeal.text.match(/#\w+/g); // Trova tutte le parole che iniziano con '#'
+                if (words) {
+                    words.forEach(word => {
+                        if (regex.test(word)) { // Aggiungi solo se corrisponde al termine di ricerca specifico
+                            keywordCounts[word]= (keywordCounts[word] || 0) + 1;
+                        }
+                    });
+                }
+            });
+        }
+
+         // Converti l'oggetto keywordCounts in un array di oggetti
+         let keywordsArray = Object.keys(keywordCounts).map(key => {
+          return { keyword: key, count: keywordCounts[key] };
+      });
+
+        res.json({ users, channels, keywords:keywordsArray});
+    } catch (error) {
+        console.error('Errore durante la ricerca:', error);
+        res.status(500).send('Si è verificato un errore durante la ricerca');
+    }
+});
+
 app.listen(3001, ()=>{
     console.log("Server is running")
 })

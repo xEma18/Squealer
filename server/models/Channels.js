@@ -10,6 +10,7 @@ const ChannelSchema = new mongoose.Schema({
     status: String,
     postNum: [String],
     popolarity: String,
+    profilePic: String,
 });
 
 // Aggiungi la funzione statica dopo la definizione del modello
