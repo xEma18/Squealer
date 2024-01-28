@@ -38,12 +38,22 @@ const SquealSchema = new mongoose.Schema({
 
 
 
-// Aggiungi la funzione statica dopo la definizione del modello
 SquealSchema.statics.findSquealByUsername = async function (username) {
     try {
         const squeal = await this.findOne({ mittente: username });
             console.log("squeal:", squeal);
             return squeal;
+    } catch (error) {
+        console.error('Errore durante la ricerca degli squeals:', error);
+        throw error;
+    }
+};
+
+//Funzione che ritorna gli squeals che hanno come mittente un utente specifico
+SquealSchema.statics.findSquealsByUsername = async function (username) {
+    try {
+        const squeals = await this.find({ mittente: username }).sort({ 'date': -1 }); // ordinati per data decrescente
+        return squeals;
     } catch (error) {
         console.error('Errore durante la ricerca degli squeals:', error);
         throw error;

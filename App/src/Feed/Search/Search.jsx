@@ -4,20 +4,22 @@ import axios from "axios";
 
 // Componenti ausiliari per organizzare la visualizzazione
 const UserItem = ({ user }) => (
-    <div className="item" key={user.username}>
-        <div className="item-pic">
-            <img src={user.image} alt="Profile picture" />
-        </div>
-        <div className="item-body">
-            <div className="item-namedate">
-                <span className="item-username">{user.username}</span>
-                {user.tipoUtente === "PRO" ? <i className="fa-solid fa-feather"></i> : ""}
+    <Link to={`/user/${user.username}`} className="item">
+        <div className="item" key={user.username}>
+            <div className="item-pic">
+                <img src={user.image} alt="Profile picture" />
             </div>
-            <div className="item-description">
-                {user.description}
+            <div className="item-body">
+                <div className="item-namedate">
+                    <span className="item-username">{user.username}</span>
+                    {user.tipoUtente === "PRO" ? <i className="fa-solid fa-feather"></i> : ""}
+                </div>
+                <div className="item-description">
+                    {user.description}
+                </div>
             </div>
         </div>
-    </div>
+    </Link>
 );
 
 const ChannelItem = ({ channel }) => (

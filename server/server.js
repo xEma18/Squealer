@@ -566,7 +566,7 @@ app.post('/editChannelDescription', async (req, res)=>{
             });
         }
 
-         // Converti l'oggetto keywordCounts in un array di oggetti
+         // Converti l'oggetto keywordCounts in un array di oggetti (per poterlo scorrere nel frontend)
          let keywordsArray = Object.keys(keywordCounts).map(key => {
           return { keyword: key, count: keywordCounts[key] };
       });
@@ -576,6 +576,54 @@ app.post('/editChannelDescription', async (req, res)=>{
         console.error('Errore durante la ricerca:', error);
         res.status(500).send('Si è verificato un errore durante la ricerca');
     }
+});
+
+//Api per ottenere, dato username, tutti i dati dell'utente (username è come query) const response = await axios.get(`http://localhost:3001/getUserByUsername/${username}`);
+app.get('/getUserByUsername/:username', async (req, res) => {
+  try {
+      const username = req.params.username;
+      console.log('parametro username:', username)
+      const user = await UserModel.findByUsername(username);
+      
+      if (!user) {
+          return res.status(404).json({ error: 'Utente non trovato' });
+      }
+      res.status(200).json(user);
+      console.log(user);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Errore interno del server' });
+  }
+});
+
+//Api per ottenere squeal con mittente uno username dato come query
+app.get('/getSquealsBySender/:username', async (req, res) => {
+  try {
+      const username = req.params.username;
+      const squeals = await SquealModel.findSquealsByUsername(username);
+      res.status(200).json(squeals);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Errore interno del server' });
+  }
+});
+
+//api per ottenere numero di squeal pubblicati da un utente, somma totale numero di likes e dislikes dei suoi post
+app.get('/getUserActivity/:username', async (req, res) => {
+  try {
+      const username = req.params.username;
+      const squeals = await SquealModel.findSquealsByUsername(username);
+      let likes = 0;
+      let dislikes = 0;
+      squeals.forEach(squeal => {
+        likes += squeal.emoticonNum.good;
+        dislikes += squeal.emoticonNum.bad;
+      });
+      res.status(200).json({ squeals: squeals.length, likes, dislikes });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Errore interno del server' });
+  }
 });
 
 app.listen(3001, ()=>{
