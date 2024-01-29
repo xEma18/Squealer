@@ -45,7 +45,7 @@ const Feed = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username: username.split('_')[0] }), //nel caso in cui l'utente sia un guest, username è del tipo @guest_1, quindi splitto la stringa e prendo solo la prima parte, se nella stringa non ci sono "_" non cambia nulla
+      body: JSON.stringify({ username: username.split("_")[0] }), //nel caso in cui l'utente sia un guest, username è del tipo @guest_1, quindi splitto la stringa e prendo solo la prima parte, se nella stringa non ci sono "_" non cambia nulla
     })
       .then((response) => response.json())
       .then((data) => {
@@ -56,8 +56,6 @@ const Feed = () => {
       .catch((error) =>
         console.error("Errore nel caricamento degli squeals:", error)
       );
-
-
   }, [username]); // Il secondo parametro vuoto [] indicherebbe che useEffect verrà eseguito solo una volta alla creazione del componente, ho messo "username", così useffect viene eseguito ogni volta che cambia username (quindi ogni volta chen accedo al feed con un account diverso)
 
   const handleEmoticonGood = async (squeal) => {
@@ -78,7 +76,7 @@ const Feed = () => {
         // Aggiorna lo stato locale con i dati aggiornati del squeal
         const updatedSqueals = squeals.map((s) => {
           if (s._id === squeal._id) {
-            return response.data; 
+            return response.data;
           }
           return s;
         });
@@ -168,26 +166,36 @@ const Feed = () => {
       if (squeal.mapLocation) {
         const mapId = `map-${squeal._id}`;
         const container = document.getElementById(mapId);
-  
+
         // Controlla se la mappa è già stata inizializzata
         if (container && !container._leaflet_id) {
-          const map = L.map(mapId, {zoomControl:false, attributionControl:false}).setView([squeal.mapLocation.lat, squeal.mapLocation.lng], squeal.mapLocation.zoom);
-          
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-              attribution: '© OpenStreetMap contributors'
+          const map = L.map(mapId, {
+            zoomControl: false,
+            attributionControl: false,
+          }).setView(
+            [squeal.mapLocation.lat, squeal.mapLocation.lng],
+            squeal.mapLocation.zoom
+          );
+
+          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: "© OpenStreetMap contributors",
           }).addTo(map);
 
-          const marker = L.marker([squeal.mapLocation.lat, squeal.mapLocation.lng]).addTo(map);
-          marker.bindPopup('Sei qui!').openPopup();
+          const marker = L.marker([
+            squeal.mapLocation.lat,
+            squeal.mapLocation.lng,
+          ]).addTo(map);
+          marker.bindPopup("Sei qui!").openPopup();
         }
       }
     });
   }, [squeals]);
-  
+
   //funzione che risconosce i link all'interno di un testo e li rende cliccabili
   const renderTextWithLinks = (text) => {
     // Questa regex cerca di identificare gli URL completi e quelli che iniziano con "www." seguiti da un dominio
-    const urlRegex = /(\bhttps?:\/\/[^\s]+)|(\bwww\.[^\s]+)|(\b[a-z0-9]+([-\._][a-z0-9]+)*\.[a-z]{2,}(\/[^\s]*)?)/gi;
+    const urlRegex =
+      /(\bhttps?:\/\/[^\s]+)|(\bwww\.[^\s]+)|(\b[a-z0-9]+([-\._][a-z0-9]+)*\.[a-z]{2,}(\/[^\s]*)?)/gi;
     return text.split(urlRegex).map((part, i) => {
       // Controlla se la parte è un URL
       const isURL = urlRegex.test(part);
@@ -195,58 +203,81 @@ const Feed = () => {
       // Se è un URL che non inizia con http o https, e inizia con www, non aggiungere "http://"
       const href = isURL && !isWWW ? part : `http://${part}`;
       return isURL ? (
-        <a className="link" key={i} href={href} target="_blank" rel="noopener noreferrer">{part}</a>
+        <a
+          className="link"
+          key={i}
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {part}
+        </a>
       ) : (
         part
       );
     });
   };
-  
-  
-  
-  
-  
-  
 
   const handleSearchButton = () => {
-    navigate('/Feed/Search');
-  }
+    navigate("/Feed/Search");
+  };
 
   const handleWriteSquealButton = () => {
     //se l'utente è guest, non può scrivere uno squeal, mentre se non è guest, va a navigate a WriteSqueal
     const isGuest = /^@guest_\d+$/.test(username);
     if (!isGuest) {
-      navigate('/Feed/WriteSqueal');
+      navigate("/Feed/WriteSqueal");
     }
-  }
+  };
   return (
     //header
     <div id="feedBody">
       <div>
         <div className="feedContainer">
           <div className={`sidebar ${sidebarOpen ? "open" : ""}`}>
-           <ul className="top-list">
-            <li><i className="fa-solid fa-arrow-left" onClick={()=>setSidebarOpen(false)}></i></li>
-            <li><i className="fa-solid fa-user"></i> Profile</li>
-            <li><i className="fa-solid fa-address-book"></i> Manager</li>
-            <li><i className="fa-solid fa-gear"></i> Settings</li>
-          </ul>
-          <ul className="bottom-list">
-            <li><i className="fa-solid fa-trash"></i> Delete account</li>
-            <li><i className="fa-solid fa-right-from-bracket"></i> Log out</li>
-          </ul>
+            <ul className="top-list">
+              <li>
+                <i
+                  className="fa-solid fa-arrow-left"
+                  onClick={() => setSidebarOpen(false)}
+                ></i>
+              </li>
+              <li>
+                <i className="fa-solid fa-user"></i> Profile
+              </li>
+              <li>
+                <i className="fa-solid fa-address-book"></i> Manager
+              </li>
+            </ul>
+            <ul className="bottom-list">
+              <li>
+                <i className="fa-solid fa-trash"></i> Delete account
+              </li>
+              <li>
+                <i className="fa-solid fa-right-from-bracket"></i> Log out
+              </li>
+            </ul>
           </div>
           <div className="feedHeader-container">
             <div className="feedHeader">
               <img id="feedCondor-icon" src={condorIcon} alt="Condor Icon" />
-              <i className="fa-solid fa-user" onClick={()=>setSidebarOpen(true)}></i>
+              <i
+                className="fa-solid fa-user"
+                onClick={() => setSidebarOpen(true)}
+              ></i>
             </div>
           </div>
           {/* L'item "footer" ha posizione fixed. L'ho messo qui per comodità. */}
           <div className="feedFooter">
             <i className="fa-solid fa-house fa-1x"></i>
-            <i className="fa-solid fa-feather fa-1x" onClick={handleWriteSquealButton}></i>
-            <i className="fa-solid fa-magnifying-glass fa-1x" onClick={handleSearchButton}></i>
+            <i
+              className="fa-solid fa-feather fa-1x"
+              onClick={handleWriteSquealButton}
+            ></i>
+            <i
+              className="fa-solid fa-magnifying-glass fa-1x"
+              onClick={handleSearchButton}
+            ></i>
           </div>
           <div className="feed">
             {squeals.map((squeal, index) => (
@@ -276,7 +307,12 @@ const Feed = () => {
                     {squeal.bodyImage && (
                       <img src={squeal.bodyImage} alt="bodyImage" />
                     )}
-                     {squeal.mapLocation && (<div  id={`map-${squeal._id}`} style={{ height: '200px', width: '100%' }}></div>)}
+                    {squeal.mapLocation && (
+                      <div
+                        id={`map-${squeal._id}`}
+                        style={{ height: "200px", width: "100%" }}
+                      ></div>
+                    )}
                   </div>
                   <div className="post-reactions">
                     <div className="post-comments">
@@ -318,13 +354,15 @@ const Feed = () => {
                         {squeal.emoticonNum.bad}
                       </span>
                     </div>
-                    {squeal.category!=='private' && <div className="post-impressions">
-                      <i className="fa-regular fa-eye"></i>
-                      <span className="post-impressions-number">
-                        {" "}
-                        {squeal.impression}
-                      </span>
-                    </div>}
+                    {squeal.category !== "private" && (
+                      <div className="post-impressions">
+                        <i className="fa-regular fa-eye"></i>
+                        <span className="post-impressions-number">
+                          {" "}
+                          {squeal.impression}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
