@@ -36,6 +36,7 @@ const Feed = () => {
   const username = accountData.username;
   const refs = useRef([]);
   const [registeredImpressions, setRegisteredImpressions] = useState(new Set());
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     // Effettua una richiesta GET al server per ottenere i gli squeals filtrati per username (ricevo solo gli squeals con "username" tra i destinatari)
@@ -223,10 +224,22 @@ const Feed = () => {
     <div id="feedBody">
       <div>
         <div className="feedContainer">
+          <div className={`sidebar ${sidebarOpen ? "open" : ""}`}>
+           <ul className="top-list">
+            <li><i className="fa-solid fa-arrow-left" onClick={()=>setSidebarOpen(false)}></i></li>
+            <li><i className="fa-solid fa-user"></i> Profile</li>
+            <li><i className="fa-solid fa-address-book"></i> Manager</li>
+            <li><i className="fa-solid fa-gear"></i> Settings</li>
+          </ul>
+          <ul className="bottom-list">
+            <li><i className="fa-solid fa-trash"></i> Delete account</li>
+            <li><i className="fa-solid fa-right-from-bracket"></i> Log out</li>
+          </ul>
+          </div>
           <div className="feedHeader-container">
             <div className="feedHeader">
               <img id="feedCondor-icon" src={condorIcon} alt="Condor Icon" />
-              <i className="fa-solid fa-user"></i>
+              <i className="fa-solid fa-user" onClick={()=>setSidebarOpen(true)}></i>
             </div>
           </div>
           {/* L'item "footer" ha posizione fixed. L'ho messo qui per comodità. */}
