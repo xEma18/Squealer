@@ -10,6 +10,69 @@
   /* margin-left: 2rem; */
 }
 
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vh;
+  height: 100vh;
+  background-color: #000;
+  opacity: 0.5;
+  z-index: 9998;
+}
+
+.pop-up {
+  position: absolute;
+  left: calc(50% - 10rem);
+  top: calc(50vh - 20rem);
+
+  width: 20rem;
+  height: 10rem;
+
+  background-color: #fbfbfb;
+
+  padding: 2rem;
+
+  border: 3px solid var(--secondary-color);
+  border-radius: 20px;
+
+  z-index: 9999;
+}
+
+.pop-up p {
+  text-align: center;
+  font-size: 1.3rem;
+}
+
+.pop-up div {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  margin-top: 1.5rem;
+}
+
+.pop-up div button {
+  font-size: 1.1rem;
+  font-weight: bolder;
+  color: #fbfbfb;
+
+  padding: 0.5rem 1rem;
+
+  text-align: center;
+
+  background-color: var(--secondary-color);
+
+  border-radius: 20px;
+  border: 2px solid var(--secondary-color);
+
+  transition: 0.3s all;
+}
+
+.pop-up div button:active {
+  transform: scale(0.9);
+}
+
 .sidebar {
   position: fixed;
   display: flex;

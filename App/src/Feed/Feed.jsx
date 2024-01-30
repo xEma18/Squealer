@@ -37,6 +37,7 @@ const Feed = () => {
   const refs = useRef([]);
   const [registeredImpressions, setRegisteredImpressions] = useState(new Set());
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [popupOpen, setPopupOpen] = useState(false);
 
   useEffect(() => {
     // Effettua una richiesta GET al server per ottenere i gli squeals filtrati per username (ricevo solo gli squeals con "username" tra i destinatari)
@@ -57,6 +58,23 @@ const Feed = () => {
         console.error("Errore nel caricamento degli squeals:", error)
       );
   }, [username]); // Il secondo parametro vuoto [] indicherebbe che useEffect verrà eseguito solo una volta alla creazione del componente, ho messo "username", così useffect viene eseguito ogni volta che cambia username (quindi ogni volta chen accedo al feed con un account diverso)
+
+  const handleDeleteAccount = function () {
+    setPopupOpen(true);
+    setSidebarOpen(false);
+  };
+
+  const handleNoDelete = function () {
+    setPopupOpen(false);
+  };
+
+  const handleYesDelete = function () {
+    setPopupOpen(false);
+    // Logica per cancellare un account
+    // ...
+    // ...
+    // ...
+  };
 
   const handleEmoticonGood = async (squeal) => {
     // Uso un'espressione regolare per verificare se l'username è nel formato "guest_x". Se "username" soddisfa il pattern, allora isGuest sarà true
@@ -233,7 +251,10 @@ const Feed = () => {
     //header
     <div id="feedBody">
       <div>
-        <div className="feedContainer">
+        <div className={`feedContainer ${popupOpen ? "not-scrollable" : ""}`}>
+          {popupOpen && (
+            <PopUp handleYes={handleYesDelete} handleNo={handleNoDelete} />
+          )}
           <div className={`sidebar ${sidebarOpen ? "open" : ""}`}>
             <ul className="top-list">
               <li>
@@ -250,7 +271,7 @@ const Feed = () => {
               </li>
             </ul>
             <ul className="bottom-list">
-              <li>
+              <li onClick={handleDeleteAccount}>
                 <i className="fa-solid fa-trash"></i> Delete account
               </li>
               <li>
@@ -373,5 +394,20 @@ const Feed = () => {
     </div>
   );
 };
+
+function PopUp({ handleYes, handleNo }) {
+  return (
+    <>
+      <div className="overlay"></div>
+      <div className="pop-up">
+        <p>Are you sure about it?</p>
+        <div>
+          <button onClick={handleYes}>Yes</button>
+          <button onClick={handleNo}>No</button>
+        </div>
+      </div>
+    </>
+  );
+}
 
 export default Feed;
