@@ -626,6 +626,45 @@ app.get('/getUserActivity/:username', async (req, res) => {
   }
 });
 
+app.post('/deleteAccount', async (req, res) => {
+  try {
+    const username = req.body.username;
+
+    const userSqueals = await SquealModel.findSquealsByUsername(username);
+    for (let squeal of userSqueals) {
+      await SquealModel.findByIdAndDelete(squeal._id);
+    }
+
+    // 2. Eliminare i commenti e le reazioni dell'utente dagli squeal di altri utenti
+    const allSqueals = await SquealModel.find(); 
+    for (let squeal of allSqueals) {
+      const filteredComments = squeal.comments.filter(comment => comment.mittente !== username); //la funzione filter restituisce un array con tutti gli elementi che soddisfano la condizione
+      if (squeal.comments.length !== filteredComments.length) { // Se sono stati rimossi dei commenti
+        squeal.comments = filteredComments;
+        squeal.commentsNum = filteredComments.length;
+      }
+
+      ['verygood', 'good', 'bad', 'verybad'].forEach(emotion => {
+        const index = squeal.emoticonGivenBy[emotion].indexOf(username); //calcolo l'index dell'utente nell'array delle reazioni (se non presente, indexOf restituisce -1)
+        if (index !== -1) {
+          squeal.emoticonGivenBy[emotion].splice(index, 1); //splice rimuove un numero di elementi a partire dall'index specificato )in questoc aso rimuove 1 elemento a partire da index
+          squeal.emoticonNum[emotion] -= 1;
+        }
+      });
+
+      await squeal.save();
+    }
+
+    await UserModel.deleteOne({ username });
+
+    res.status(200).json({ message: 'Account eliminato con successo' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore interno del server' });
+  }
+});
+
+
 app.listen(3001, ()=>{
     console.log("Server is running")
 })

@@ -62,18 +62,24 @@ const Feed = () => {
   const handleDeleteAccount = function () {
     setPopupOpen(true);
     setSidebarOpen(false);
-  };
+};
+
 
   const handleNoDelete = function () {
     setPopupOpen(false);
   };
 
-  const handleYesDelete = function () {
+  const handleYesDelete = async function () {
     setPopupOpen(false);
-    // Logica per cancellare un account
-    // ...
-    // ...
-    // ...
+    try {
+      const response = await axios.post(`http://localhost:3001/deleteAccount`, {
+          username: username,
+      });
+    } catch (error) {
+      console.error("Errore nel gestire l'eliminazione dell'account:", error);
+    }
+    sessionStorage.removeItem("accountData");
+    navigate("/");
   };
 
   const handleEmoticonGood = async (squeal) => {
@@ -126,7 +132,7 @@ const Feed = () => {
         });
         setSqueals(updatedSqueals);
       } catch (error) {
-        console.error("Errore nel gestire il like:", error);
+        console.error("Errore nel gestire il dislike:", error);
       }
     }
   };
@@ -150,7 +156,7 @@ const Feed = () => {
       setSqueals(updatedSqueals);
       setRegisteredImpressions((prevSet) => new Set([...prevSet, squealId])); // Aggiorna l'elenco delle impressioni registrate
     } catch (error) {
-      console.error("Errore nel gestire il like:", error);
+      console.error("Errore nel registrare l'impression:", error);
     }
   };
 
@@ -247,6 +253,12 @@ const Feed = () => {
       navigate("/Feed/WriteSqueal");
     }
   };
+
+
+  const handleLogOut = () => {
+    sessionStorage.removeItem("accountData");
+    navigate("/");
+  };
   return (
     //header
     <div id="feedBody">
@@ -274,7 +286,7 @@ const Feed = () => {
               <li onClick={handleDeleteAccount}>
                 <i className="fa-solid fa-trash"></i> Delete account
               </li>
-              <li>
+              <li onClick={handleLogOut}>
                 <i className="fa-solid fa-right-from-bracket"></i> Log out
               </li>
             </ul>
