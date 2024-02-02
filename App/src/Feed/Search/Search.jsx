@@ -4,7 +4,7 @@ import axios from "axios";
 
 // Componenti ausiliari per organizzare la visualizzazione
 const UserItem = ({ user }) => (
-    <Link to={`/user/${user.username}`} className="item">
+    <Link to={`/user/${user.username}`}>
         <div className="item" key={user.username}>
             <div className="item-pic">
                 <img src={user.image} alt="Profile picture" />
@@ -23,19 +23,21 @@ const UserItem = ({ user }) => (
 );
 
 const ChannelItem = ({ channel }) => (
-    <div className="item" key={channel.name}>
-        <div className="item-pic">
-            <img src={channel.profilePic} alt="Profile picture" />
-        </div>
-        <div className="item-body">
-            <div className="item-namedate">
-                <span className="item-username">{channel.name}</span>
+    <Link to={`/channel/${channel.name}`}>
+        <div className="item" key={channel.name}>
+            <div className="item-pic">
+                <img src={channel.profilePic} alt="Profile picture" />
             </div>
-            <div className="item-description">
-                {channel.description}
+            <div className="item-body">
+                <div className="item-namedate">
+                    <span className="item-username">{channel.name}</span>
+                </div>
+                <div className="item-description">
+                    {channel.description}
+                </div>
             </div>
         </div>
-    </div>
+    </Link>
 );
 
 const KeywordItem = ({ keywordObj }) => (

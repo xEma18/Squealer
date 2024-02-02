@@ -664,6 +664,20 @@ app.post('/deleteAccount', async (req, res) => {
   }
 });
 
+app.get('/getChannelByChannelName/:channelName', async (req, res) => {
+  try {
+      const channelName = req.params.channelName;
+      const channel = await ChannelModel.findChannelByName(channelName);
+      if (!channel) {
+          return res.status(404).json({ error: 'Canale non trovato' });
+      }
+      res.status(200).json(channel);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Errore interno del server' });
+  }
+});
+
 
 app.listen(3001, ()=>{
     console.log("Server is running")
