@@ -40,30 +40,48 @@ const Feed = () => {
   const [popupOpen, setPopupOpen] = useState(false);
 
   useEffect(() => {
-    // Effettua una richiesta GET al server per ottenere i gli squeals filtrati per username (ricevo solo gli squeals con "username" tra i destinatari)
-    fetch("http://localhost:3001/squealsToUser", {
-      method: "POST", //Da capire se get o post
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username: username.split("_")[0] }), //nel caso in cui l'utente sia un guest, username è del tipo @guest_1, quindi splitto la stringa e prendo solo la prima parte, se nella stringa non ci sono "_" non cambia nulla
-    })
-      .then((response) => response.json())
-      .then((data) => {
+    // // Effettua una richiesta GET al server per ottenere i gli squeals filtrati per username (ricevo solo gli squeals con "username" tra i destinatari)
+    // fetch("http://localhost:3001/squealsToUser", {
+    //   method: "POST", //Da capire se get o post
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({ username: username.split("_")[0] }), //nel caso in cui l'utente sia un guest, username è del tipo @guest_1, quindi splitto la stringa e prendo solo la prima parte, se nella stringa non ci sono "_" non cambia nulla
+    // })
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     setSqueals(data);
+    //     // Inizializza refs per i nuovi squeals
+    //     refs.current = data.map((_, i) => refs.current[i] || React.createRef());
+    //   })
+    //   .catch((error) =>
+    //     console.error("Errore nel caricamento degli squeals:", error)
+    //   );
+
+    async function getSqueals() {
+      try {
+        const res = await fetch("http://localhost:3001/squealsToUser", {
+          method: "POST", //Da capire se get o post
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username: username.split("_")[0] }), //nel caso in cui l'utente sia un guest, username è del tipo @guest_1, quindi splitto la stringa e prendo solo la prima parte, se nella stringa non ci sono "_" non cambia nulla
+        });
+
+        const data = await res.json();
         setSqueals(data);
-        // Inizializza refs per i nuovi squeals
         refs.current = data.map((_, i) => refs.current[i] || React.createRef());
-      })
-      .catch((error) =>
-        console.error("Errore nel caricamento degli squeals:", error)
-      );
+      } catch (e) {
+        console.error("Errore nel caricamento degli squeals", e.message);
+      }
+    }
+    getSqueals();
   }, [username]); // Il secondo parametro vuoto [] indicherebbe che useEffect verrà eseguito solo una volta alla creazione del componente, ho messo "username", così useffect viene eseguito ogni volta che cambia username (quindi ogni volta chen accedo al feed con un account diverso)
 
   const handleDeleteAccount = function () {
     setPopupOpen(true);
     setSidebarOpen(false);
-};
-
+  };
 
   const handleNoDelete = function () {
     setPopupOpen(false);
@@ -73,7 +91,7 @@ const Feed = () => {
     setPopupOpen(false);
     try {
       const response = await axios.post(`http://localhost:3001/deleteAccount`, {
-          username: username,
+        username: username,
       });
     } catch (error) {
       console.error("Errore nel gestire l'eliminazione dell'account:", error);
@@ -254,11 +272,11 @@ const Feed = () => {
     }
   };
 
-
   const handleLogOut = () => {
     sessionStorage.removeItem("accountData");
     navigate("/");
   };
+
   return (
     //header
     <div id="feedBody">
@@ -267,140 +285,35 @@ const Feed = () => {
           {popupOpen && (
             <PopUp handleYes={handleYesDelete} handleNo={handleNoDelete} />
           )}
-          <div className={`sidebar ${sidebarOpen ? "open" : ""}`}>
-            <ul className="top-list">
-              <li>
-                <i
-                  className="fa-solid fa-arrow-left"
-                  onClick={() => setSidebarOpen(false)}
-                ></i>
-              </li>
-              <li>
-                <i className="fa-solid fa-user"></i> Profile
-              </li>
-              <li>
-                <i className="fa-solid fa-address-book"></i> Manager
-              </li>
-            </ul>
-            <ul className="bottom-list">
-              <li onClick={handleDeleteAccount}>
-                <i className="fa-solid fa-trash"></i> Delete account
-              </li>
-              <li onClick={handleLogOut}>
-                <i className="fa-solid fa-right-from-bracket"></i> Log out
-              </li>
-            </ul>
-          </div>
-          <div className="feedHeader-container">
-            <div className="feedHeader">
-              <img id="feedCondor-icon" src={condorIcon} alt="Condor Icon" />
-              <i
-                className="fa-solid fa-user"
-                onClick={() => setSidebarOpen(true)}
-              ></i>
-            </div>
-          </div>
+
+          <SideBar
+            sidebarOpen={sidebarOpen}
+            setSidebarOpen={setSidebarOpen}
+            onDeleteAccount={handleDeleteAccount}
+            onLogOut={handleLogOut}
+          />
+
+          <Header setSidebarOpen={setSidebarOpen} />
+
           {/* L'item "footer" ha posizione fixed. L'ho messo qui per comodità. */}
-          <div className="feedFooter">
-            <i className="fa-solid fa-house fa-1x"></i>
-            <i
-              className="fa-solid fa-feather fa-1x"
-              onClick={handleWriteSquealButton}
-            ></i>
-            <i
-              className="fa-solid fa-magnifying-glass fa-1x"
-              onClick={handleSearchButton}
-            ></i>
-          </div>
-          <div className="feed">
+          <Footer
+            onWriteSquealButton={handleWriteSquealButton}
+            onSearchButton={handleSearchButton}
+          />
+
+          <FeedList>
             {squeals.map((squeal, index) => (
-              <div
-                className="user-post"
+              <Squeal
+                squeal={squeal}
+                index={index}
+                refs={refs}
+                onEmoticonGood={handleEmoticonGood}
+                onEmoticonBad={handleEmoticonBad}
+                renderTextWithLinks={renderTextWithLinks}
                 key={squeal._id}
-                ref={refs.current[index]}
-                data-squeal-id={squeal._id}
-              >
-                <div className="profile-pic">
-                  <img src={squeal.profilePic} alt="Profile Picture" />
-                </div>
-                <div className="post-body">
-                  <div className="post-namedate">
-                    <span className="post-username">{squeal.mittente} </span>
-                    <i className="fa-solid fa-feather"></i>
-                    <span className="post-date">
-                      {" "}
-                      {new Date(squeal.date).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </span>
-                  </div>
-                  <div className="post-content">
-                    {renderTextWithLinks(squeal.text)}
-                    {squeal.bodyImage && (
-                      <img src={squeal.bodyImage} alt="bodyImage" />
-                    )}
-                    {squeal.mapLocation && (
-                      <div
-                        id={`map-${squeal._id}`}
-                        style={{ height: "200px", width: "100%" }}
-                      ></div>
-                    )}
-                  </div>
-                  <div className="post-reactions">
-                    <div className="post-comments">
-                      <i className="fa-regular fa-comment"></i>
-                      <span className="post-comments-number">
-                        {" "}
-                        {squeal.commentsNum}
-                      </span>
-                    </div>
-                    <div
-                      className="post-likes"
-                      onClick={() => handleEmoticonGood(squeal)}
-                    >
-                      <i
-                        className={` ${
-                          squeal.emoticonGivenBy.good.includes(username)
-                            ? "fa-solid fa-thumbs-up"
-                            : "fa-regular fa-thumbs-up"
-                        }`}
-                      ></i>
-                      <span className="post-likes-number">
-                        {" "}
-                        {squeal.emoticonNum.good}
-                      </span>
-                    </div>
-                    <div
-                      className="post-dislikes"
-                      onClick={() => handleEmoticonBad(squeal)}
-                    >
-                      <i
-                        className={` ${
-                          squeal.emoticonGivenBy.bad.includes(username)
-                            ? "fa-solid fa-thumbs-down"
-                            : "fa-regular fa-thumbs-down"
-                        }`}
-                      ></i>
-                      <span className="post-dislikes-number">
-                        {" "}
-                        {squeal.emoticonNum.bad}
-                      </span>
-                    </div>
-                    {squeal.category !== "private" && (
-                      <div className="post-impressions">
-                        <i className="fa-regular fa-eye"></i>
-                        <span className="post-impressions-number">
-                          {" "}
-                          {squeal.impression}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
+              />
             ))}
-          </div>
+          </FeedList>
         </div>
       </div>
     </div>
@@ -419,6 +332,155 @@ function PopUp({ handleYes, handleNo }) {
         </div>
       </div>
     </>
+  );
+}
+
+function SideBar({ sidebarOpen, setSidebarOpen, onDeleteAccount, onLogOut }) {
+  return (
+    <div className={`sidebar ${sidebarOpen ? "open" : ""}`}>
+      <ul className="top-list">
+        <li>
+          <i
+            className="fa-solid fa-arrow-left"
+            onClick={() => setSidebarOpen(false)}
+          ></i>
+        </li>
+        <li>
+          <i className="fa-solid fa-user"></i> Profile
+        </li>
+        <li>
+          <i className="fa-solid fa-address-book"></i> Manager
+        </li>
+      </ul>
+      <ul className="bottom-list">
+        <li onClick={onDeleteAccount}>
+          <i className="fa-solid fa-trash"></i> Delete account
+        </li>
+        <li onClick={onLogOut}>
+          <i className="fa-solid fa-right-from-bracket"></i> Log out
+        </li>
+      </ul>
+    </div>
+  );
+}
+
+function Header({ setSidebarOpen }) {
+  return (
+    <div className="feedHeader-container">
+      <div className="feedHeader">
+        <img id="feedCondor-icon" src={condorIcon} alt="Condor Icon" />
+        <i
+          className="fa-solid fa-user"
+          onClick={() => setSidebarOpen(true)}
+        ></i>
+      </div>
+    </div>
+  );
+}
+
+function Footer({ onWriteSquealButton, onSearchButton }) {
+  return (
+    <div className="feedFooter">
+      <i className="fa-solid fa-house fa-1x"></i>
+      <i
+        className="fa-solid fa-feather fa-1x"
+        onClick={onWriteSquealButton}
+      ></i>
+      <i
+        className="fa-solid fa-magnifying-glass fa-1x"
+        onClick={onSearchButton}
+      ></i>
+    </div>
+  );
+}
+
+function FeedList({ children }) {
+  return <div className="feed">{children}</div>;
+}
+
+function Squeal({
+  refs,
+  squeal,
+  index,
+  onEmoticonGood,
+  onEmoticonBad,
+  renderTextWithLinks,
+}) {
+  return (
+    <div
+      className="user-post"
+      key={squeal._id}
+      ref={refs.current[index]}
+      data-squeal-id={squeal._id}
+    >
+      <div className="profile-pic">
+        <img src={squeal.profilePic} alt="Profile Picture" />
+      </div>
+      <div className="post-body">
+        <div className="post-namedate">
+          <span className="post-username">{squeal.mittente} </span>
+          <i className="fa-solid fa-feather"></i>
+          <span className="post-date">
+            {" "}
+            {new Date(squeal.date).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            })}
+          </span>
+        </div>
+        <div className="post-content">
+          {renderTextWithLinks(squeal.text)}
+          {squeal.bodyImage && <img src={squeal.bodyImage} alt="bodyImage" />}
+          {squeal.mapLocation && (
+            <div
+              id={`map-${squeal._id}`}
+              style={{ height: "200px", width: "100%" }}
+            ></div>
+          )}
+        </div>
+        <div className="post-reactions">
+          <div className="post-comments">
+            <i className="fa-regular fa-comment"></i>
+            <span className="post-comments-number"> {squeal.commentsNum}</span>
+          </div>
+          <div className="post-likes" onClick={() => onEmoticonGood(squeal)}>
+            <i
+              className={` ${
+                squeal.emoticonGivenBy.good.includes(username)
+                  ? "fa-solid fa-thumbs-up"
+                  : "fa-regular fa-thumbs-up"
+              }`}
+            ></i>
+            <span className="post-likes-number">
+              {" "}
+              {squeal.emoticonNum.good}
+            </span>
+          </div>
+          <div className="post-dislikes" onClick={() => onEmoticonBad(squeal)}>
+            <i
+              className={` ${
+                squeal.emoticonGivenBy.bad.includes(username)
+                  ? "fa-solid fa-thumbs-down"
+                  : "fa-regular fa-thumbs-down"
+              }`}
+            ></i>
+            <span className="post-dislikes-number">
+              {" "}
+              {squeal.emoticonNum.bad}
+            </span>
+          </div>
+          {squeal.category !== "private" && (
+            <div className="post-impressions">
+              <i className="fa-regular fa-eye"></i>
+              <span className="post-impressions-number">
+                {" "}
+                {squeal.impression}
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 
