@@ -5,12 +5,129 @@
 
 body {
   overflow: scroll;
+  position: relative;
+}
+
+.not-scrollable {
+  height: 100vh;
+  overflow: hidden;
 }
 
 #condor-icon {
   height: 2.5rem;
   /* margin-top: 0.5rem; */
   /* margin-left: 2rem; */
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vh;
+  height: 100vh;
+  background-color: #000;
+  opacity: 0.5;
+  z-index: 9998;
+}
+
+.pop-up {
+  position: absolute;
+  left: calc(50% - 10rem);
+  top: calc(50vh - 20rem);
+
+  width: 20rem;
+  height: 10rem;
+
+  background-color: #fbfbfb;
+
+  padding: 2rem;
+
+  border: 3px solid var(--secondary-color);
+  border-radius: 20px;
+
+  z-index: 9999;
+}
+
+.pop-up p {
+  text-align: center;
+  font-size: 1.3rem;
+}
+
+.pop-up div {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  margin-top: 1.5rem;
+}
+
+.pop-up div button {
+  font-size: 1.1rem;
+  font-weight: bolder;
+  color: #fbfbfb;
+
+  padding: 0.5rem 1rem;
+
+  text-align: center;
+
+  background-color: var(--secondary-color);
+
+  border-radius: 20px;
+  border: 2px solid var(--secondary-color);
+
+  transition: 0.3s all;
+}
+
+.pop-up div button:active {
+  transform: scale(0.9);
+}
+
+.sidebar {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  width: 100%;
+  height: 100vh;
+
+  padding: 1rem 0rem;
+
+  background-color: #fbfbfb;
+
+  transform: translateX(100%);
+
+  z-index: 1;
+}
+
+.sidebar.open {
+  transform: translateX(50%);
+}
+
+.sidebar i {
+  color: var(--secondary-color);
+  margin-right: 0.7rem;
+}
+
+.sidebar i.fa-arrow-left {
+  color: #000;
+  font-size: 1.3rem;
+}
+
+.top-list,
+.bottom-list {
+  list-style: none;
+  text-decoration: none;
+}
+
+.top-list li,
+.bottom-list li {
+  padding: 1rem;
+
+  font-size: 1.2rem;
+  font-weight: bolder;
+
+  color: var(--primary-color);
 }
 
 .container {
@@ -346,26 +463,6 @@ h {
   object-fit: cover;
 }
 
-/* .profile-header #follow-btn {
-  grid-column-start: 4;
-  grid-row-start: 2;
-  justify-self: center;
-  align-self: center;
-
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: var(--secondary-color);
-
-  border: 2px solid var(--secondary-color);
-  border-radius: 9999px;
-
-  padding: 0rem 0.8rem;
-}
-
-.profile-header #follow-btn i {
-  margin-left: 0.3rem;
-} */
-
 .item-header .username,
 .item-header .channel-name {
   font-weight: bold;
@@ -380,7 +477,7 @@ h {
   color: var(--secondary-color);
 }
 
-.item-description {
+.item-presentation .item-description {
   padding: 0 1.5rem;
 }
 
@@ -446,4 +543,69 @@ h {
 .item-squeals .user-post {
   padding-left: 0;
   padding-right: 0;
+}
+
+/* SMM Styling */
+/* Built upon user profile styling */
+.go-back + h2 {
+  padding: 0 1.5rem 1rem 1.5rem;
+}
+
+.smm-list h2 {
+  padding: 0 1.5rem;
+}
+
+.smm-presentation {
+  margin-bottom: 5rem;
+}
+
+.smm-header {
+  grid-template-columns: repeat(2, 1fr) 0.7fr auto;
+}
+
+.smm-header #toggle-btn {
+  grid-column-start: 4;
+  grid-row-start: 2;
+  justify-self: center;
+  align-self: center;
+
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--secondary-color);
+
+  border: 2px solid var(--secondary-color);
+  border-radius: 9999px;
+
+  padding: 0rem 0.9rem;
+}
+
+.smm-header #toggle-btn i {
+  margin-left: 0.3rem;
+}
+
+.smm-item {
+  display: flex;
+  border-bottom: 1px solid rgb(221, 220, 220);
+  align-items: center;
+  padding: 1rem 1.5rem;
+}
+
+.smm-item .item {
+  flex: 8;
+  border: none;
+  gap: 0.4rem;
+  padding: 0;
+}
+
+.smm-item #select-smm-btn {
+  flex: 1;
+  /* border: 2px solid var(--secondary-color); */
+  border-radius: 9999px;
+
+  font-weight: bold;
+
+  padding: 0.3rem 0.8rem;
+
+  color: #fbfbfb;
+  background-color: var(--secondary-color);
 }

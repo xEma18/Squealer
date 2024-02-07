@@ -10,11 +10,11 @@ const ChannelSchema = new mongoose.Schema({
     status: String,
     postNum: [String],
     popolarity: String,
+    profilePic: String,
 });
 
 // Aggiungi la funzione statica dopo la definizione del modello
 ChannelSchema.statics.findChannelByName = async function (name) {
-    console.log("nome canale trovato",name);
     try {
         const channel = await this.findOne({ name: name });
             return channel;

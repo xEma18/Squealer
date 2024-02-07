@@ -9,6 +9,9 @@ import Login from "./Login/Login.jsx";
 import Feed from "./Feed/Feed.jsx";
 import WriteSqueal from "./Feed/writeSqueal/writeSqueal.jsx";
 import CommentsList from "./Feed/comments/CommentsList.jsx";
+import Search from "./Feed/Search/Search.jsx";
+import UserProfile from './Feed/Search/UserProfile.jsx';
+import ChannelProfile from './Feed/Search/ChannelProfile.jsx';
 
 const App = () => {
   // Stati per memorizzare i dati della registrazione raccolti in SignUp1, SignUp2, SignUp3
@@ -68,6 +71,12 @@ const App = () => {
         <Route path="/Feed" element={<Feed />} />
         <Route path="/Feed/WriteSqueal" element={<WriteSqueal />} />
         <Route path="/Feed/comments/CommentsList" element={<CommentsList />} />
+        <Route path="/Feed/Search" element={<Search />} />
+        <Route path="/user/:username" element={<UserProfile />} />
+        <Route path="/channel/:channelName" element={<ChannelProfile />} />
+        
+
+
       </Routes>
     </Router>
   );

@@ -119,7 +119,7 @@ app.post('/getUserImageAndCharLeft', async (req, res) => {
     console.log(req.body)
     const username = req.body.username;
     const user = await UserModel.findOne({ username: username }).select('image caratteriGiornalieri caratteriSettimanali caratteriMensili caratteriGiornalieriUsati caratteriMensiliUsati caratteriSettimanaliUsati');
-    console.log(user);
+    
 
     if (user) {
       res.status(200).json(user);
@@ -519,6 +519,166 @@ app.post('/editChannelDescription', async (req, res)=>{
       }
   });
   
+
+  //APi che dà profile pic from username
+  app.post('/profilePicByUsername', async (req, res) => {
+    try {
+        const user = await UserModel.findByUsername(req.body.username);
+        if (!user) {
+            return res.status(404).json({ error: 'Utente non trovato' });
+        }
+        res.status(200).json({ image: user.image });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Errore interno del server' });
+    }
+  });
+
+
+  app.post('/search', async (req, res) => {
+    try {
+        const searchTerm = req.body.searchTerm;
+        let users = [], channels = [], keywordCounts = {}; 
+        const loggedUser = req.body.username;
+
+        if (searchTerm.startsWith('@')) {
+            // Ricerca per utenti
+            users = await UserModel.find({ username: new RegExp(searchTerm, 'i') }); // i = case insensitive (maiuscole/minuscole non fanno differenza)
+        
+          } else if (searchTerm.startsWith('§')) {
+            // Ricerca per canali
+            channels = await ChannelModel.find({ name: new RegExp(searchTerm, 'i') });
+
+          } else if (searchTerm.startsWith('#')) {
+              const regex = new RegExp(searchTerm.slice(1), 'i'); // Rimuove '#' e prepara la regex
+              const squeals = await SquealModel.find({ 
+                text: regex,
+                $or: [{ destinatari: loggedUser }, { destinatari: '@everyone' }]
+              });
+              squeals.forEach(squeal => {
+              const words = squeal.text.match(/#\w+/g); // Trova tutte le parole che iniziano con '#'
+                if (words) {
+                    words.forEach(word => {
+                        if (regex.test(word)) { // Aggiungi solo se corrisponde al termine di ricerca specifico
+                            keywordCounts[word]= (keywordCounts[word] || 0) + 1;
+                        }
+                    });
+                }
+            });
+        }
+
+         // Converti l'oggetto keywordCounts in un array di oggetti (per poterlo scorrere nel frontend)
+         let keywordsArray = Object.keys(keywordCounts).map(key => {
+          return { keyword: key, count: keywordCounts[key] };
+      });
+
+        res.json({ users, channels, keywords:keywordsArray});
+    } catch (error) {
+        console.error('Errore durante la ricerca:', error);
+        res.status(500).send('Si è verificato un errore durante la ricerca');
+    }
+});
+
+//Api per ottenere, dato username, tutti i dati dell'utente (username è come query) const response = await axios.get(`http://localhost:3001/getUserByUsername/${username}`);
+app.get('/getUserByUsername/:username', async (req, res) => {
+  try {
+      const username = req.params.username;
+      console.log('parametro username:', username)
+      const user = await UserModel.findByUsername(username);
+      
+      if (!user) {
+          return res.status(404).json({ error: 'Utente non trovato' });
+      }
+      res.status(200).json(user);
+      console.log(user);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Errore interno del server' });
+  }
+});
+
+//Api per ottenere squeal con mittente uno username dato come query
+app.get('/getSquealsBySender/:username', async (req, res) => {
+  try {
+      const username = req.params.username;
+      const squeals = await SquealModel.findSquealsByUsername(username);
+      res.status(200).json(squeals);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Errore interno del server' });
+  }
+});
+
+//api per ottenere numero di squeal pubblicati da un utente, somma totale numero di likes e dislikes dei suoi post
+app.get('/getUserActivity/:username', async (req, res) => {
+  try {
+      const username = req.params.username;
+      const squeals = await SquealModel.findSquealsByUsername(username);
+      let likes = 0;
+      let dislikes = 0;
+      squeals.forEach(squeal => {
+        likes += squeal.emoticonNum.good;
+        dislikes += squeal.emoticonNum.bad;
+      });
+      res.status(200).json({ squeals: squeals.length, likes, dislikes });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Errore interno del server' });
+  }
+});
+
+app.post('/deleteAccount', async (req, res) => {
+  try {
+    const username = req.body.username;
+
+    const userSqueals = await SquealModel.findSquealsByUsername(username);
+    for (let squeal of userSqueals) {
+      await SquealModel.findByIdAndDelete(squeal._id);
+    }
+
+    // 2. Eliminare i commenti e le reazioni dell'utente dagli squeal di altri utenti
+    const allSqueals = await SquealModel.find(); 
+    for (let squeal of allSqueals) {
+      const filteredComments = squeal.comments.filter(comment => comment.mittente !== username); //la funzione filter restituisce un array con tutti gli elementi che soddisfano la condizione
+      if (squeal.comments.length !== filteredComments.length) { // Se sono stati rimossi dei commenti
+        squeal.comments = filteredComments;
+        squeal.commentsNum = filteredComments.length;
+      }
+
+      ['verygood', 'good', 'bad', 'verybad'].forEach(emotion => {
+        const index = squeal.emoticonGivenBy[emotion].indexOf(username); //calcolo l'index dell'utente nell'array delle reazioni (se non presente, indexOf restituisce -1)
+        if (index !== -1) {
+          squeal.emoticonGivenBy[emotion].splice(index, 1); //splice rimuove un numero di elementi a partire dall'index specificato )in questoc aso rimuove 1 elemento a partire da index
+          squeal.emoticonNum[emotion] -= 1;
+        }
+      });
+
+      await squeal.save();
+    }
+
+    await UserModel.deleteOne({ username });
+
+    res.status(200).json({ message: 'Account eliminato con successo' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore interno del server' });
+  }
+});
+
+app.get('/getChannelByChannelName/:channelName', async (req, res) => {
+  try {
+      const channelName = req.params.channelName;
+      const channel = await ChannelModel.findChannelByName(channelName);
+      if (!channel) {
+          return res.status(404).json({ error: 'Canale non trovato' });
+      }
+      res.status(200).json(channel);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Errore interno del server' });
+  }
+});
+
 
 app.listen(3001, ()=>{
     console.log("Server is running")
