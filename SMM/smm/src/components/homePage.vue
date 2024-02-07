@@ -5,37 +5,39 @@
       <nav class="navbar is-fixed-top is-black" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <a class="navbar-item" href="#">
-          <h3 class="title has-text-grey-lighter">SMM DASHBOARD</h3>
+          <h3 class="title has-text-grey-lighter is-size-5-mobile">SMM DASHBOARD</h3>
         </a>
-        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-          <span aria-hidden="true">
-          </span>
-          <span aria-hidden="true">
-          </span>
+
+        <!-- Elementi fissi per essere mostrati nella navbar mobile e non nel burger-->
+    <div class="navbar-custom">
+      <a href="#" class="navbar-item has-text-grey-lighter is-size-7-mobile">
+        VIP's Squealers
+      </a>
+      <a class="navbar-item has-text-grey-lighter is-size-7-mobile">
+        Write a Squeal
+      </a>
+    </div>
+
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" @click="toggleBurgerMenu">
+          <i class="fas fa-lg fa-solid fa-font"></i>
         </a>
       </div>
 
-      <div id="navbarBasicExample" class="navbar-menu">
-        <div class="navbar-start">
-          <a href="#" class="navbar-item">
-            VIP's Squeal
-          </a>
-          <a href="#" class="navbar-item">
-            Write a Squeal 
-          </a>
+    <div id="navbarBasicExample" class="navbar-menu" :class="{ 'is-active': isBurgerMenuActive }">
+        <div class="navbar-end">
+          <div class="navbar-item">
+          <b>Daily chars:</b> &nbsp;{{ dailyCharsLeft }}
+          </div>
+          <div class="navbar-item">
+            <b>Weekly chars:</b> &nbsp;{{ weeklyCharsLeft }}
+          </div>
+          <div class="navbar-item">
+            <b>Monthly chars:</b> &nbsp;{{ monthlyCharsLeft }}
+          </div>
         </div>
-      </div>
-
-      <div class="navbar-dropdown">
-          <a class="navbar-item">
-            VIP's Squeal
-          </a>
-          <a class="navbar-item">
-            Write a Squeal 
-          </a>
-      </div>
-      </nav>
-    </section>
+    </div>
+</nav>
+</section>
 
     <!-- Sezione Filtri -->
     <section id="filters">
@@ -73,6 +75,10 @@ export default {
   data() {
     return {
       squeals: [], // Array per memorizzare i dati degli squeal
+      isBurgerMenuActive: false,
+      dailyCharsLeft: 0,
+      weeklyCharsLeft: 0,
+      monthlyCharsLeft: 0
     };
   },
   async mounted() {
@@ -85,6 +91,30 @@ export default {
     } catch (error) {
       console.error('Errore durante il recupero degli squeal:', error);
     }
+
+    try {
+        const response = await fetch('http://localhost:3001/getUserImageAndCharLeft', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            // Rendere dinamico col nome del manager
+            body: JSON.stringify({ username: "@jacques" })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const UserData = await response.json();
+        this.dailyCharsLeft = UserData.caratteriGiornalieri;
+        this.weeklyCharsLeft = UserData.caratteriSettimanali;
+        this.monthlyCharsLeft = UserData.caratteriMensili;
+        
+    } catch (error) {
+        console.error('Errore durante il recupero dei dati utente:', error);
+    }
+
   },
   computed: {
     squealsWithSpaces() {
@@ -99,14 +129,31 @@ export default {
     // Logica per gestire la modifica della card
     console.log('Modificando la card numero:', cardIndex);
     // Qui puoi chiamare altre funzioni o logiche specifiche per la modifica
-  }
-  }
-};
+    },
+    toggleBurgerMenu() {
+      this.isBurgerMenuActive = !this.isBurgerMenuActive;
+    }
+    }
+  };
 </script>
 
 <style scoped>
 .navbar{
-  height: 4rem;
+  height: 3rem;
+}
+.navbar-burger {
+  align-self: center;
+  top: 0.8rem;
+}
+.navbar-brand {
+  display: flex;
+  align-items: center; 
+  height: 100%;
+}
+.navbar-custom {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem; 
 }
 
 #body {
@@ -115,7 +162,7 @@ export default {
 }
 
 #squeal {
-  margin: 80px; /* Aggiunge un margine intorno al body */
+  margin: 80px;
 }
 
 #scrolling-wrapper-flexbox {
