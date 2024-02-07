@@ -30,32 +30,46 @@
       </nav>
     
 <!-- Filtri -->
-    <section id="filters">
-        <div class="container-fluid filters">
-          <div class="row d-flex justify-content-center">
-            <div class="col-6 border mt-4">
-              <!-- Form per filtri utenti -->
-              <h5 class="mt-3 fw-bold text-center">Filtri:</h5>
-              <label for="name-filter">Nome:</label>
-              <input type="text" id="name-filter">
-              <label for="type-filter">Tipo:</label>
-              <select id="type-filter">
-                  <option value="Tutti">Tutti</option>
-                    <option value="Basic">Utente Basic</option>
-                    <option value="VIP">Utente VIP</option>
-              </select>
-              <label for="popolarita-filter">Popolarità:</label>
-              <select id="popolarita-filter">
-                <option value="Qualsiasi">Qualsiasi</option>
-                  <option value="Bassa">Bassa</option>
-                  <option value="Media">Media</option>
-                  <option value="Alta">Alta</option>
-              </select>    
-              <button type="button" class="ms-2 mb-2 btn btn-outline-success" id="apply-filter">Applica</button>
-            </div>   
+<section id="filters">
+  <div class="container-fluid filters">
+    <div class="row d-flex justify-content-center">
+      <div class="col-md-6 border mt-4"> <!-- Modifica questa classe per definire la larghezza della colonna -->
+        <!-- Form per filtri utenti -->
+        <h5 class="mt-3 fw-bold text-center">Filtri:</h5>
+
+        <div class="row mb-3">
+          <div class="col"> <!-- Dividi la riga in due colonne -->
+            <label for="name-filter">Nome:</label>
+            <input class="form-control" type="text" id="name-filter">
+          </div>
+          <div class="col"> <!-- Dividi la riga in due colonne -->
+            <label for="type-filter">Tipo:</label>
+            <select class="form-select" id="type-filter">
+              <option value="Tutti">Tutti</option>
+              <option value="Basic">Utente Basic</option>
+              <option value="VIP">Utente VIP</option>
+            </select>
           </div>
         </div>
-    </section>
+
+        <div class="row mb-3">
+          <div class="col"> <!-- Dividi la riga in due colonne -->
+            <label for="popolarita-filter">Popolarità:</label>
+            <select class="form-select" id="popolarita-filter">
+              <option value="Qualsiasi">Qualsiasi</option>
+              <option value="Bassa">Bassa</option>
+              <option value="Media">Media</option>
+              <option value="Alta">Alta</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="button" class="ms-2 mb-2 btn btn-outline-success" id="apply-filter">Applica</button>
+      </div>
+    </div>
+  </div>
+</section>
+
     
 
 <!-- Utenti -->

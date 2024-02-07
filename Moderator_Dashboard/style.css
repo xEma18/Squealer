@@ -136,6 +136,7 @@ outline-offset: 3px;
 }
 
 .popup {
+    position: relative;
     background: white;
     padding: 100px;
     border-radius: 8px;

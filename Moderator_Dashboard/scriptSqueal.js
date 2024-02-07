@@ -85,7 +85,7 @@ function updateSqueal(squeal) {
                 <div class="card-body">
                     <!-- Mittente -->
                     <div class="d-flex justify-content-between">
-                        <h4 class="card-title fw-bold" id="mittente">@${squeal[i].mittente}</h5>
+                        <h4 class="card-title fw-bold" id="mittente">${squeal[i].mittente}</h5>
                         <span class="justify-content-end" id="date">${squealDate}</span>
                     </div>
                     <!-- Destinatari -->
@@ -96,8 +96,8 @@ function updateSqueal(squeal) {
                     <!-- Pulsante Modifica -->
                     <div class="container-fluid">
                     <div class="row">
-                      <div class="col-6 d-flex justify-content-center">
-                        <button type="button" class="btn btn-primary" id="modificaBtn">Modifica Squeal</button>
+                      <div class="col-6 d-flex justify-content-center" id="modifyBtnFather">
+                        <button type="button" class="btn btn-primary" id="modificaBtn" style="height:70%;">Modifica Squeal</button>
                       </div>
                       <div class="col-6 d-flex justify-content-center" id="emoticons">
                       <!-- Emoticons for reazioni -->
@@ -193,11 +193,12 @@ const card = document.getElementById(cardId);
 // Prendo tutti i campi della card
 const modificaBtn = card.querySelector("#modificaBtn");
 const destinatari = card.querySelector("#destinatari");
+const modifyBtnFather = card.querySelector("#modifyBtnFather")
+
 const mittente = squeal[cardNumber].mittente;
-console.log(destinatari);
- 
+
 // Rendi invisibile il pulsante modifica
- modificaBtn.style.display = "none";
+modifyBtnFather.removeChild(modificaBtn);
 
 // Mostra il pulsante "salva modifiche"
 const cardBody = card.querySelector(".card-body");
@@ -205,7 +206,9 @@ const saveChangesBtn = document.createElement("button");
 saveChangesBtn.classList.add("btn");
 saveChangesBtn.classList.add("btn-primary");
 saveChangesBtn.innerText = "Salva Modifiche";
-cardBody.appendChild(saveChangesBtn);
+saveChangesBtn.style = "height:70%;"
+modifyBtnFather.appendChild(saveChangesBtn);
+
 
 /*Abilita la modifica dei campi*/
 
@@ -213,14 +216,14 @@ cardBody.appendChild(saveChangesBtn);
 
 const addButton = document.createElement('button');
 addButton.type = 'button';
-addButton.classList.add('btn', 'add-button', 'fw-bold');
+addButton.classList.add('btn', 'add-button', 'fw-bold', 'text-success');
 addButton.innerText = '+';
 
 // Aggiungi un pulsante "-" dimamicamente 
 
 const remButton = document.createElement('button');
 remButton.type = 'button';
-remButton.classList.add('btn', 'rem-button', 'fw-bold');
+remButton.classList.add('btn', 'rem-button', 'fw-bold', 'text-danger');
 remButton.innerText = '-';
 
 //Array dei destinatari che si vogliono aggiungere 
@@ -259,19 +262,21 @@ remButton.addEventListener('click', () => {
     // Aggiungo il contenuto della finestra di sovraimpressione
     overlay.innerHTML = `
     <div class="popup">
+        <span id="closeNewChannelOverlay" class="close">&times;</span>
         <div class="row-3">
-            <div class="fw-bold">Destinatari già presenti:</div>
+            <div class="fw-bold">Receivers already in:</div>
             <span>${destinatari.innerText}</span>
         </div>
         <div class="row mb-4">
-            <div class="fw-bold">Destinatari che vuoi rimuovere:</div>
+            <div class="mt-2 fw-bold">Receivers you want remove:</div>
             <span id="destinatariRimossi"></span>
         </div>
         <div class="row-3">
-            <label for="nuovoDestinatario">Destinatario da rimuovere:</label>
-            <input type="text" id="nuovoDestinatario">
-            <button id="rimuoviDestinatario">Rimuovi</button>
-            <button id="chiudiFinestra">Chiudi</button>
+            <label for="nuovoDestinatario">Receivers to remove:</label>
+            <input class="form-control" type="text" id="nuovoDestinatario">
+        </div>
+        <div class="text-center">
+            <button class="mt-4 btn btn-danger"id="rimuoviDestinatario">Rimuovi</button>
         </div>
     </div>
     `;
@@ -281,7 +286,7 @@ remButton.addEventListener('click', () => {
 
    
     const rimuoviDestinatarioButton = overlay.querySelector("#rimuoviDestinatario");
-    const chiudiFinestraButton = overlay.querySelector("#chiudiFinestra");
+    const chiudiFinestraButton = overlay.querySelector("#closeNewChannelOverlay");
     const destinatariRimossiDiv = overlay.querySelector("#destinatariRimossi");
 
     // Aggiungo un gestore di eventi al pulsante "Aggiungi" della finestra pop-up
@@ -335,7 +340,7 @@ remButton.addEventListener('click', () => {
             window.removeEventListener('keydown', handleEscapeKey);
         }
     }
-    //Chiudi la scheda con il pulsante chiudi
+    //Chiudi la scheda con il pulsante x
     chiudiFinestraButton.addEventListener('click', () => {
          //Converto il div destinatari in array 
          let nomi = destinatari.textContent.split(',');
@@ -375,19 +380,21 @@ addButton.addEventListener('click', () => {
     // Aggiungi il contenuto della finestra di sovraimpressione
     overlay.innerHTML = `
     <div class="popup">
+        <span id="closeNewChannelOverlay" class="close">&times;</span>
         <div class="row-3">
-            <div class="fw-bold">Destinatari già presenti:</div>
+            <div class="fw-bold">Receivers already in:</div>
             <span>${destinatari.innerText}</span>
         </div>
         <div class="row mb-4">
-            <div class="fw-bold">Destinatari che vuoi aggiungere:</div>
+            <div class="mt-2 fw-bold">Receivers to add:</div>
             <span id="destinatariAggiunti"></span>
         </div>
         <div class="row-3">
-            <label for="nuovoDestinatario">Nuovo Destinatario:</label>
-            <input type="text" id="nuovoDestinatario">
-            <button id="aggiungiDestinatario">Aggiungi</button>
-            <button id="chiudiFinestra">Chiudi</button>
+            <label for="nuovoDestinatario" aria-label="Username">New Receiver:</label>
+            <input class="form-control" type="text" id="nuovoDestinatario">
+        </div>
+        <div class="text-center">
+        <button class="mt-4 btn btn-success" id="aggiungiDestinatario">Add</button>
         </div>
     </div>
     `;
@@ -397,7 +404,7 @@ addButton.addEventListener('click', () => {
 
     // Aggiungo un gestore di eventi al pulsante "Aggiungi" della finestra pop-up
     const aggiungiDestinatarioButton = overlay.querySelector("#aggiungiDestinatario");
-    const chiudiFinestraButton = overlay.querySelector("#chiudiFinestra");
+    const chiudiFinestraButton = overlay.querySelector("#closeNewChannelOverlay");
     const destinatariAggiuntiDiv = overlay.querySelector("#destinatariAggiunti");
 
     
@@ -469,10 +476,12 @@ addButton.addEventListener('click', () => {
 });
 
 saveChangesBtn.addEventListener('click',async () =>{
-    cardBody.removeChild(saveChangesBtn);
+    modifyBtnFather.removeChild(saveChangesBtn);
     destinatari.removeChild(addButton);
     destinatari.removeChild(remButton);
-    modificaBtn.style.display = 'inline-block'
+
+    modifyBtnFather.appendChild(modificaBtn);
+
     if(addFlag){
     console.log(readytoAdd);
     addFlag = false;
