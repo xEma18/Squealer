@@ -1,5 +1,6 @@
 /*Fetch degli squeal*/ 
-let squeal; //Array con gli squeal
+let squeal = []; //Array con gli squeal
+let OriginalDest = [];//Campo dei destinatari originale
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -58,71 +59,64 @@ function filtraSqueal(sender, receiver, date) {
 }
 
 function updateSqueal(squeal) {
-    // Prendo l'elemento con le card
     const container = document.querySelector('#wrapper');
-    // Resetto il wrapper da eventuali card rimaste
-    container.innerHTML = "";
-    // Itero sugli squeal creando una card per squeal
-    const dest = []; 
+    container.innerHTML = ""; // Resetto il wrapper
+
     const aggiungiSpazio = () => {
-        for (let i = 0; i < squeal.length; i++) {
-            const squealCopy = { ...squeal[i] }; // Creo una copia dell'oggetto squeal[i]
-            squealCopy.destinatari = squealCopy.destinatari.map(dest => "&nbsp;" + dest );
-            dest.push(squealCopy);
-        }
-        return dest;
+        return squeal.map(squealItem => {
+            const destinatari = squealItem.destinatari.join(", "); // Unisco i destinatari con una virgola
+            const MAX_LENGTH = 30; // Numero massimo di caratteri
+            // Se la lunghezza dei destinatari supera il massimo consentito, tronca e aggiungi ellissi
+            if (destinatari.length > MAX_LENGTH) {
+                let shortened = destinatari.substring(0, MAX_LENGTH - 3); // Tronca la stringa per fare spazio ai puntini
+                const lastComma = shortened.lastIndexOf(","); // Trova l'ultima virgola per evitare di tagliare a metà un nome
+                if (lastComma > 0) {
+                    shortened = shortened.substring(0, lastComma);
+                }
+                squealItem.destinatariTruncated = shortened + "..."; // Aggiunge i puntini
+            } else {
+                squealItem.destinatariTruncated = destinatari; // Usa la stringa completa se non supera il limite
+            }
+            return squealItem;
+        });
     };
+
     const squealConSpazi = aggiungiSpazio();
 
-    console.log(squeal[0].destinatari.length);
-    for(let i=0; i<squeal.length; i++){
-            // Converti in stringa ISO la data dello squeal
-            const date = squeal[i].date
-            // Estrai solo la parte della data
-            const squealDate = date.split('T')[0];
-            container.innerHTML +=`
+    for(let i = 0; i < squeal.length; i++){
+        const squealDate = squeal[i].date.split('T')[0]; // Estrai solo la parte della data
+        OriginalDest[i] = squeal[i].destinatari; // Salvo il campo destinatari originale da usare nell'overlay
+        container.innerHTML += `
             <div class="card ms-1" id="card-${i}">
                 <div class="card-body">
-                    <!-- Mittente -->
                     <div class="d-flex justify-content-between">
-                        <h4 class="card-title fw-bold" id="mittente">${squeal[i].mittente}</h5>
-                        <span class="justify-content-end" id="date">${squealDate}</span>
+                        <h4 class="card-title fw-bold">${squeal[i].mittente}</h4>
+                        <span class="justify-content-end">${squealDate}</span>
                     </div>
-                    <!-- Destinatari -->
                     <h6 class="fw-bold">Destinatari:</h6>
-                    <h6 class="card-subtitle mb-2" id="destinatari">${squealConSpazi[i].destinatari} </h6>                    
-                    <!-- Contenuto -->
-                    <p id="text">${squeal[i].text}</p>
-                    <!-- Pulsante Modifica -->
+                    <h6 class="card-subtitle mb-2" id="destinatari">${squealConSpazi[i].destinatariTruncated}</h6>
+                    <p>${squeal[i].text}</p>
                     <div class="container-fluid">
-                    <div class="row">
-                      <div class="col-6 d-flex justify-content-center" id="modifyBtnFather">
-                        <button type="button" class="btn btn-primary" id="modificaBtn" style="height:70%;">Modifica Squeal</button>
-                      </div>
-                      <div class="col-6 d-flex justify-content-center" id="emoticons">
-                      <!-- Emoticons for reazioni -->
-                      <div class="text-center">
-                        <span class="material-icons reaction" id="verygood">
-                            sentiment_very_satisfied
-                        </span>
-                        <span class="material-icons reaction" id="good">
-                            sentiment_satisfied_alt
-                        </span>
-                        <span class="material-icons reaction" id="bad">
-                            sentiment_dissatisfied
-                        </span>
-                        <span class="material-icons reaction" id="verybad">
-                            sentiment_very_dissatisfied
-                        </span>
-                        <span>Impression: ${squeal[i].impression}</span>
-                      </div>
-                      </div>
+                        <div class="row-6">
+                            <div class="col-12 d-flex justify-content-start" id="emoticons">
+                                <div class="text-center">
+                                    <span class="material-symbols-outlined">thumb_up</span>
+                                    <span class="ms-2 material-symbols-outlined">thumb_down</span>
+                                    <span class="ms-3">Impression: ${squeal[i].impression}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row-6">
+                            <div class="col-12 d-flex justify-content-center" id="modifyBtnFather">
+                                <button type="button" class="btn btn-primary" id="modificaBtn" style="height:40%;">Modifica Squeal</button>
+                            </div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-            </div>`
+            </div>`;
     }
 }
+
 
 // Prendo il box che contiene i bottoni
 const parentElement = document.getElementById("BtnBox");
@@ -209,6 +203,14 @@ saveChangesBtn.innerText = "Salva Modifiche";
 saveChangesBtn.style = "height:70%;"
 modifyBtnFather.appendChild(saveChangesBtn);
 
+// Mostra il pulsante "annulla" per annullare le modifiche
+const annullaBtn = document.createElement("button");
+annullaBtn.classList.add("btn");
+annullaBtn.classList.add("btn-warning");
+annullaBtn.classList.add("ms-3");
+annullaBtn.innerText = "Annulla";
+annullaBtn.style = "height:70%;"
+modifyBtnFather.appendChild(annullaBtn); 
 
 /*Abilita la modifica dei campi*/
 
@@ -248,8 +250,10 @@ destinatari.appendChild(remButton);
 // Aggiungi un gestore di eventi al pulsante -
 remButton.addEventListener('click', () => {
     //Rimuovo i bottoni - e + dal div destinatari
+    
     destinatari.removeChild(remButton);
     destinatari.removeChild(addButton);
+    
     remFlag = true;
 
     //
@@ -265,7 +269,7 @@ remButton.addEventListener('click', () => {
         <span id="closeNewChannelOverlay" class="close">&times;</span>
         <div class="row-3">
             <div class="fw-bold">Receivers already in:</div>
-            <span>${destinatari.innerText}</span>
+            <span>${squeal[cardNumber].destinatari}</span>
         </div>
         <div class="row mb-4">
             <div class="mt-2 fw-bold">Receivers you want remove:</div>
@@ -376,14 +380,14 @@ addButton.addEventListener('click', () => {
     // Crea la finestra di sovraimpressione
     const overlay = document.createElement('div');
     overlay.classList.add('overlay-add');
-
+    console.log(OriginalDest[cardNumber])
     // Aggiungi il contenuto della finestra di sovraimpressione
     overlay.innerHTML = `
     <div class="popup">
         <span id="closeNewChannelOverlay" class="close">&times;</span>
         <div class="row-3">
             <div class="fw-bold">Receivers already in:</div>
-            <span>${destinatari.innerText}</span>
+            <span>${squeal[cardNumber].destinatari}</span>
         </div>
         <div class="row mb-4">
             <div class="mt-2 fw-bold">Receivers to add:</div>
@@ -407,50 +411,56 @@ addButton.addEventListener('click', () => {
     const chiudiFinestraButton = overlay.querySelector("#closeNewChannelOverlay");
     const destinatariAggiuntiDiv = overlay.querySelector("#destinatariAggiunti");
 
-    
     aggiungiDestinatarioButton.addEventListener('click', async () => {
         // Ottengo il nuovo destinatario
         nuovoDestinatario = overlay.querySelector("#nuovoDestinatario").value;
-
+    
         // Pulisco il campo input
         overlay.querySelector("#nuovoDestinatario").value = "";
-
-        // Chiamata API per ottenere la lista degli utenti
+    
         try {
-            const response = await fetch('http://localhost:3001/users');
-            if (!response.ok) {
-                console.log("Errore nella risposta da parte del database")
-            } else {
-                const userList = await response.json();
-                // Verifica se il nuovo destinatario è presente nella lista degli utenti e se non è l'utente stesso
-                if (userList.some(user => user.username === nuovoDestinatario)) {
-                    if (nuovoDestinatario != mittente){
+            // Chiamata API per ottenere la lista degli utenti
+            const responseUsers = await fetch('http://localhost:3001/users');
+            const userList = responseUsers.ok ? await responseUsers.json() : null;
+    
+            // Chiamata API per ottenere la lista dei canali
+            const responseChannels = await fetch('http://localhost:3001/channels');
+            const channelList = responseChannels.ok ? await responseChannels.json() : null;
+    
+            if (userList && channelList) {
+                // Verifica se il nuovo destinatario è presente nella lista degli utenti e nei canali
+                const isUserValid = userList.some(user => user.username === nuovoDestinatario);
+                const isChannelValid = channelList.some(channel => channel.name === nuovoDestinatario);
+    
+                if (isUserValid || isChannelValid) {
+                    if (nuovoDestinatario !== mittente) {
                         if (!destinatari.innerHTML.includes(nuovoDestinatario)) {
                             arrayNuoviUtenti.push(nuovoDestinatario);
-                            destinatariAggiuntiDiv.innerHTML += `${nuovoDestinatario}`;
+                            destinatariAggiuntiDiv.innerHTML += `${nuovoDestinatario} `;
+                        } else {
+                            alert("L'utente è già presente fra i destinatari");
                         }
-                        else {
-                            alert("L'utente è già presente fra i destinatari")
-                        }
-                    }
-                    else {
+                    } else {
                         alert("Non puoi inserire come destinatario l'utente stesso");
                     }
                 } else {
-                    alert("Utente non trovato nel database!");
+                    alert("Destinatario non trovato nel database!");
                 }
+            } else {
+                console.log("Errore nella risposta da parte del database");
             }
         } catch (error) {
-            console.error('Errore durante il recupero degli utenti:', error);
+            console.error('Errore durante il recupero dei dati:', error);
         }
     });
+    
 
     //Chiudi la scheda con il tasto esc
     function handleEscapeKey(event) {
         if (event.key === "Escape") {
             window.removeEventListener('keydown', handleEscapeKey);
             for(let i = 0; i<arrayNuoviUtenti.length; i++){
-                destinatari.textContent += `${arrayNuoviUtenti[i]},`
+                //destinatari.textContent += `${arrayNuoviUtenti[i]},`
                 readytoAdd[i] = arrayNuoviUtenti[i];
             }
             // Azzera arrayNuoviUtenti per ulteriori modifiche
@@ -463,7 +473,7 @@ addButton.addEventListener('click', () => {
     //Chiudi la scheda con il pulsante chiudi
     chiudiFinestraButton.addEventListener('click', () => {
         for(let i = 0; i<arrayNuoviUtenti.length; i++){
-            destinatari.textContent += `${arrayNuoviUtenti[i]},`
+            //destinatari.textContent += `${arrayNuoviUtenti[i]},`
             readytoAdd[i] = arrayNuoviUtenti[i];
         }
         // Azzera arrayNuoviUtenti per ulteriori modifiche
@@ -475,13 +485,19 @@ addButton.addEventListener('click', () => {
     });
 });
 
+// Funzione quando clicco il tasto salva modifiche
 saveChangesBtn.addEventListener('click',async () =>{
+
+    // Rimuovo i pulsanti 
     modifyBtnFather.removeChild(saveChangesBtn);
+    modifyBtnFather.removeChild(annullaBtn);
     destinatari.removeChild(addButton);
     destinatari.removeChild(remButton);
 
+    // Aggiungo il pulsante modifica
     modifyBtnFather.appendChild(modificaBtn);
 
+    // Controllo il flag per capire che API chiamare 
     if(addFlag){
     console.log(readytoAdd);
     addFlag = false;
@@ -536,7 +552,39 @@ saveChangesBtn.addEventListener('click',async () =>{
         }
     }
 });
+
+// Funzione quando clicco il tasto annulla
+annullaBtn.addEventListener('click',async () =>{
+
+    // Rimuovo i pulsanti 
+    modifyBtnFather.removeChild(saveChangesBtn);
+    modifyBtnFather.removeChild(annullaBtn);
+    destinatari.removeChild(addButton);
+    destinatari.removeChild(remButton);
+
+    // Aggiungo il pulsante modifica
+    modifyBtnFather.appendChild(modificaBtn);
+
+    // Annullo le modifiche apportate al campo destinatari
+    // Faccio una richiesta API a squeals per ricaricare lo squeal senza le modifiche provvisorie
+    try {
+        const response = await fetch('http://localhost:3001/squeals');
+        if (!response.ok) {
+            // ... (gestione degli errori)
+        } else {
+            // Aggiorna la lista degli squeal dopo la modifica
+            const updatedSquealResponse = await fetch('http://localhost:3001/squeals');
+            squeals = await updatedSquealResponse.json();
+            updateSqueal(squeals);
+            console.log(squeals);
+        }
+    } catch (error) {
+        console.error('Errore durante il recupero degli squeal:', error);
+    }
+})
+
 }
+
 
 
 
