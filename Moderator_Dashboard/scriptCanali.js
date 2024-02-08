@@ -76,8 +76,8 @@ function updateChannels(channel) {
                     <div class="container-fluid">
                     <div class="row d-flex justify-content-center">
                       <div class="col-12 d-flex justify-content-center">
-                        <button type="button" class="btn btn-warning" id="modifyBtn">Modify Channel</button>
-                        <button type="button" class="ms-4 btn btn-info" id="viewBtn">View Squeals</button>
+                        <button type="button" class="btn btn-dark" id="modifyBtn">Modify Channel</button>
+                        <button type="button" class="ms-4 btn btn-secondary" id="viewBtn">View Squeals</button>
                       </div>
                     </div>
                   </div>
@@ -199,8 +199,8 @@ function updateSqueal(squeal) {
     
 }
 
-    // Eventlistener per quando aggiungo lo squeal (tasto remove squeal)
-    async function removeSqueal(squealId,channelName) {
+// Rimozione squeal dal canale (tasto remove squeal)
+async function removeSqueal(squealId,channelName) {
         console.log("Sto per eliminare lo squeal:",squealId)
         try {
             const response = await fetch('http://localhost:3001/removeSqueal', {
@@ -235,7 +235,7 @@ function updateSqueal(squeal) {
             } catch (error) {
               console.error('Errore:', error);
             }
-    }
+}
 
 async function addSquealToChannel(squealId, channelName) {
     try {
@@ -256,8 +256,9 @@ async function addSquealToChannel(squealId, channelName) {
     }
 }
 
+// Creazione nuovo squeal per il canale
 async function handlePostClick(overlay,cardNumber,channelId) {
-    // Prendo i campi che mi servono per il nuovo squeal
+    // Prendo i campi che mi servono per il nuovo squeal f
     let postText = overlay.querySelector("#postText").value;
     let actualDate = new Date();
     
@@ -392,7 +393,7 @@ async function ViewButton(cardId,cardNumber) {
     postNewSqueal.addEventListener('click', currentPostHandler);
 }
 
-// Eventlistener per quando elimino lo squeal
+// Mostro l'overlay del nuovo canale
 document.getElementById("addChannelButton").addEventListener("click", function() {
     document.getElementById("newChannelOverlay").style.display = "block";
 });
@@ -429,8 +430,8 @@ viewBtn.style.display = "none";
 const cardBody = card.querySelector(".card-body");
 const saveChangesBtn = document.createElement("button");
 saveChangesBtn.classList.add("btn");
-saveChangesBtn.classList.add("btn-primary");
-saveChangesBtn.innerText = "Salva Modifiche";
+saveChangesBtn.classList.add("btn-success");
+saveChangesBtn.innerText = "Save changes";
 cardBody.appendChild(saveChangesBtn);
 
 /*Abilita la modifica dei campi*/
@@ -444,7 +445,7 @@ const removeChannelBtn = document.createElement("button");
 removeChannelBtn.classList.add("btn");
 removeChannelBtn.classList.add("btn-danger");
 removeChannelBtn.classList.add("mx-3");
-removeChannelBtn.innerText = "Rimuovi Canale";
+removeChannelBtn.innerText = "Remove Channel";
 removeChannelBtn.id = "removeBtn";
 cardBody.appendChild(removeChannelBtn);
 
@@ -496,13 +497,21 @@ saveChangesBtn.addEventListener('click',async () =>{
 
 }
   
-// Eventlistener per quando mando i dati del form al server
+// Creazione nuovo canale
 document.getElementById("newChannelForm").addEventListener("submit", async function(e) {
     e.preventDefault();
     const name = document.getElementById("newChannelName").value;
     const type = document.getElementById("newChannelType").value;
     const description = document.getElementById("newChannelDescription").value;
-  
+    const creators = ["Moderator"]; 
+    const followers = 0;
+    const listofSqueals = [];
+    const status = "Aperto"; //TODO
+    const postNum = 0;
+    const popolarity = ""; //TODO
+    const profilePic = ""; //TODO
+
+
     // Chiamata API per salvare il nuovo canale
     try {
       const response = await fetch('http://localhost:3001/addChannel', {
@@ -510,7 +519,7 @@ document.getElementById("newChannelForm").addEventListener("submit", async funct
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, type, description }),
+        body: JSON.stringify({ name, type, description, creators, followers, listofSqueals, status, postNum, popolarity, profilePic}),
       });
   
       if (response.ok) {
@@ -559,23 +568,6 @@ async function RemoveChannel(cardId, cardNumber) {
         console.error('Errore durante la rimozione del canale:', error);
     }
 }
-/*
-// Attach click event listeners to each emoticon
-document.getElementById('verygood').addEventListener('click', function () {
-    selectEmoticon('verygood');
-});
 
-document.getElementById('good').addEventListener('click', function () {
-    selectEmoticon('good');
-});
-
-document.getElementById('bad').addEventListener('click', function () {
-    selectEmoticon('bad');
-});
-
-document.getElementById('verybad').addEventListener('click', function () {
-    selectEmoticon('verybad');
-});
-*/
 
 

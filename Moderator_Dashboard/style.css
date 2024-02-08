@@ -94,21 +94,6 @@ outline-offset: 3px;
     cursor:pointer;
 }
 
-.material-icons.verygood {
-    color: #00ff00; /* Verde acceso */
-}
-
-.material-icons.good {
-    color: #80ff80; /* Verde più chiaro */
-}
-
-.material-icons.bad {
-    color: #ff8080; /* Rosso più chiaro */
-}
-
-.material-icons.verybad {
-    color: #ff0000; /* Rosso acceso */
-}
 
 /* Aggiungi questi stili al tuo foglio di stile CSS o nella sezione di stile della tua pagina HTML */
 .overlay-add{

@@ -492,6 +492,7 @@ app.post('/editChannelDescription', async (req, res)=>{
           name: req.body.name,
           type: req.body.type,
           description: req.body.description,
+          
         });
         await newChannel.save();
         res.status(201).json(newChannel);

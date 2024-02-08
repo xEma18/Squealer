@@ -93,7 +93,7 @@ function updateSqueal(squeal) {
                         <h4 class="card-title fw-bold">${squeal[i].mittente}</h4>
                         <span class="justify-content-end">${squealDate}</span>
                     </div>
-                    <h6 class="fw-bold">Destinatari:</h6>
+                    <h6 class="fw-bold">Receivers:</h6>
                     <h6 class="card-subtitle mb-2" id="destinatari">${squealConSpazi[i].destinatariTruncated}</h6>
                     <p>${squeal[i].text}</p>
                     <div class="container-fluid">
@@ -108,7 +108,7 @@ function updateSqueal(squeal) {
                         </div>
                         <div class="row-6">
                             <div class="col-12 d-flex justify-content-center" id="modifyBtnFather">
-                                <button type="button" class="btn btn-primary" id="modificaBtn" style="height:40%;">Modifica Squeal</button>
+                                <button type="button" class="btn btn-dark" id="modificaBtn" style="height:40%;">Modify Squeal</button>
                             </div>
                         </div>
                     </div>
@@ -198,7 +198,7 @@ modifyBtnFather.removeChild(modificaBtn);
 const cardBody = card.querySelector(".card-body");
 const saveChangesBtn = document.createElement("button");
 saveChangesBtn.classList.add("btn");
-saveChangesBtn.classList.add("btn-primary");
+saveChangesBtn.classList.add("btn-success");
 saveChangesBtn.innerText = "Salva Modifiche";
 saveChangesBtn.style = "height:70%;"
 modifyBtnFather.appendChild(saveChangesBtn);
