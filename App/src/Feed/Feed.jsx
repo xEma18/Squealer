@@ -405,6 +405,7 @@ function Squeal({
   onEmoticonGood,
   onEmoticonBad,
   renderTextWithLinks,
+  username,
 }) {
   return (
     <div

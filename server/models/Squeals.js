@@ -60,6 +60,19 @@ SquealSchema.statics.findSquealsByUsername = async function (username) {
     }
 };
 
+SquealSchema.statics.findPublicSquealsBySender = async function (username) {
+    try {
+        const squeals = await this.find({ 
+            mittente: username,
+            destinatari: "@everyone" // Filtra per gli squeals pubblici
+        }).sort({ 'date': -1 }); // Ordinati per data decrescente
+        return squeals;
+    } catch (error) {
+        console.error('Errore durante la ricerca degli squeals pubblici:', error);
+        throw error;
+    }
+};
+
 //Funzione che ritorna gli squeals che hanno come destinatario un utente specifico + tutti quelli pubblici (destinatario = "@everyone")
 SquealSchema.statics.findSquealsToUser = async function (username) {
     try {

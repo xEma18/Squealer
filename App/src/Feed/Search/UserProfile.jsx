@@ -26,7 +26,7 @@ const UserProfile = () => {
 
     const fetchUserSqueals = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/getSquealsBySender/${username}`);
+            const response = await axios.get(`http://localhost:3001/getPublicSquealsBySender/${username}`);
             setUserSqueals(response.data);
         } catch (error) {
             console.error('Errore durante il recupero degli squeals dell\'utente:', error);

@@ -11,7 +11,7 @@ const ChannelProfile = () => {
 
     useEffect(() => {
         fetchUserData();
-        fetchUserSqueals();
+        fetchUserPublicSqueals();
         fetchUserActivity();
     }, [channelName]);
 
@@ -24,9 +24,9 @@ const ChannelProfile = () => {
         }
     };
 
-    const fetchUserSqueals = async () => {
+    const fetchUserPublicSqueals = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/getSquealsBySender/${channelName}`);
+            const response = await axios.get(`http://localhost:3001/getPublicSquealsBySender/${channelName}`);
             setUserSqueals(response.data);
         } catch (error) {
             console.error('Errore durante il recupero degli squeals dell\'utente:', error);

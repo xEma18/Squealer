@@ -599,10 +599,10 @@ app.get('/getUserByUsername/:username', async (req, res) => {
 });
 
 //Api per ottenere squeal con mittente uno username dato come query
-app.get('/getSquealsBySender/:username', async (req, res) => {
+app.get('/getPublicSquealsBySender/:username', async (req, res) => {
   try {
       const username = req.params.username;
-      const squeals = await SquealModel.findSquealsByUsername(username);
+      const squeals = await SquealModel.findPublicSquealsBySender(username);
       res.status(200).json(squeals);
   } catch (error) {
       console.error(error);
