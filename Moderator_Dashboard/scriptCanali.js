@@ -70,7 +70,7 @@ function updateChannels(channel) {
                     <!-- Numero di squeal e follower -->
                     <h6 class="card-subtitle mb-3" id="squealNum"><span class="fw-bold">Squeal:</span> </span>${channel[i].postNum} <span class="fw-bold">Follower:</span> 21244 <span class="justify-content-end fw-bold" id="popolarity">Popolarity:</span>${isOfficial(channel[i]) ? 'Nothing' : channel[i].popolarity}</h6>                    
                     <!-- Contenuto -->
-                    <h6 class="fw-bold">Descrizione canale:</h6>
+                    <h6 class="fw-bold">Channel description:</h6>
                     <p id="description">${channel[i].description}</p>
                     <!-- Pulsante Modifica -->
                     <div class="container-fluid">
@@ -147,45 +147,40 @@ function updateSqueal(squeal) {
             // Estrai solo la parte della data
             const squealDate = date.split('T')[0];
             
+            let textToShow = squeal[i].text;
+        
+            // Verifica se il testo supera i 330 caratteri e troncalo se necessario
+            if (textToShow.length > 330) {
+            textToShow = textToShow.substring(0, 330) + "..."; // Tronca il testo e aggiungi i tre puntini
+            }
+
             container.innerHTML +=`
             <div class="card ms-1" id="card-${squeal[i]._id}">
-                <div class="card-body">
-                    <!-- Mittente -->
-                    <div class="d-flex justify-content-between">
-                        <h4 class="card-title fw-bold" id="mittente">@${squeal[i].mittente}</h5>
-                        <span class="justify-content-end" id="date">${squealDate}</span>
-                    </div>
-                    <!-- Destinatari -->
-                    <h6 class="fw-bold">Destinatari:</h6>
-                    <h6 class="card-subtitle mb-2" id="destinatari">${squealConSpazi[i].destinatari} </h6>                    
-                    <!-- Contenuto -->
-                    <p id="text">${squeal[i].text}</p>
-                    <!-- Pulsante Modifica -->
-                    <div class="container-fluid">
-                    <div class="row">
-                      <div class="col-6 d-flex justify-content-center" id="emoticons">
-                      <!-- Emoticons for reazioni -->
-                      <div class="text-center">
-                        <span class="material-icons reaction" id="verygood">
-                            sentiment_very_satisfied
-                        </span>
-                        <span class="material-icons reaction" id="good">
-                            sentiment_satisfied_alt
-                        </span>
-                        <span class="material-icons reaction" id="bad">
-                            sentiment_dissatisfied
-                        </span>
-                        <span class="material-icons reaction" id="verybad">
-                            sentiment_very_dissatisfied
-                        </span>
-                        <span>Impression: ${squeal[i].impression}</span>
-                        <!-- Pulsante Elimina Squeal -->
-                        <button type="button" class="btn btn-danger" id="removeSquealBtn-${i}">Remove Squeal</button>
-                      </div>
-                      </div>
-                    </div>
-                  </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h4 class="card-title fw-bold">${squeal[i].mittente}</h4>
+                    <span class="justify-content-end">${squealDate}</span>
                 </div>
+                <h6 class="fw-bold">Receivers:</h6>
+                <h6 class="card-subtitle mb-2" id="destinatari">${squealConSpazi[i].destinatari}</h6>
+                <p>${textToShow}</p>
+                <div class="container-fluid">
+                    <div class="row-6">
+                        <div class="col-12 d-flex justify-content-start" id="emoticons">
+                            <div class="text-center">
+                                <span class="material-symbols-outlined">thumb_up</span>
+                                <span class="ms-2 material-symbols-outlined">thumb_down</span>
+                                <span class="ms-3">Impression: ${squeal[i].impression}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row-6">
+                        <div class="col-12 d-flex justify-content-center" id="modifyBtnFather">
+                        <button type="button" class="btn btn-danger" id="removeSquealBtn-${i}">Remove Squeal</button>
+                        </div>
+                    </div>
+                </div>
+            </div>                          
             </div>`
             // Dopo aver aggiunto tutte le card, impostiamo gli event listener sui pulsanti
             let buttonSelected = document.querySelector(`#removeSquealBtn-${i}`);
@@ -343,6 +338,7 @@ async function handlePostClick(overlay,cardNumber,channelId) {
 
 let currentPostHandler; // Variabile globale per tenere traccia del gestore attuale
 
+// Mostrare gli squeal del canale
 async function ViewButton(cardId,cardNumber) {
     console.log("ViewButton")
     // Capisco che card è stata selezioinata 
@@ -377,7 +373,7 @@ async function ViewButton(cardId,cardNumber) {
         console.log("Prendo gli squeal del canale")
         const response = await fetch(`http://localhost:3001/squealsByChannel?channelId=${channelId}`);
         const squealsForChannel = await response.json();
-        // Aggiorna le card con i dati degli utenti
+        // Aggiorna le card con gli squeal del canale
         updateSqueal(squealsForChannel);
     } catch (error) {
         console.error('Errore durante il recupero degli squeal del canale:', error);

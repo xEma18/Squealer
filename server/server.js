@@ -358,7 +358,7 @@ app.post('/addRecv', async (req, res)=>{
   console.log("body: "+req.body.mittente);
   try{
     //Cerco lo squeal da modificare
-    const squeal = await SquealModel.findSquealByUsername(req.body.mittente);
+    const squeal = await SquealModel.findSquealById(req.body.idSqueal);
         if (squeal !== null) {
             // Aggiorna il campo destinatari con i nuovi utenti aggiunti
             squeal.destinatari = squeal.destinatari.concat(req.body.destinatari);
