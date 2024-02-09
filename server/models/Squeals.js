@@ -100,5 +100,20 @@ SquealSchema.statics.findSquealsToUser = async function (username) {
     }
 };
 
+//trova squeals tramite keyword (case insensitive)
+SquealSchema.statics.findPublicSquealsByKeyword = async function (keyword) {
+    try {
+        const squeals = await this.find({
+            text: { $regex: new RegExp(keyword, 'i') }, 
+            destinatari: '@everyone' 
+        }).sort({ 'date': -1 }); 
+        return squeals;
+    } catch (error) {
+        console.error('Errore durante la ricerca degli squeals:', error);
+        throw error;
+    }
+};
+
+
 const SquealModel = mongoose.model("squeals", SquealSchema, "squeals");
 module.exports = SquealModel;

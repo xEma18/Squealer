@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
 import L from 'leaflet'; 
+import BackButton from './components/BackButton';
 
 const ChannelProfile = () => {
     const { channelName } = useParams();
@@ -67,14 +68,6 @@ const ChannelProfile = () => {
             L.marker([squeal.mapLocation.lat, squeal.mapLocation.lng]).addTo(map).bindPopup('Sei qui!');
         }
     };
-
-    const RenderBackButton = () => (
-        <Link to="/Feed/Search">
-            <div className="go-back">
-                <span><i className="fa-solid fa-arrow-left"></i> Search</span>
-            </div>
-        </Link>
-    );
 
     const UserPresentation = () => {
         
@@ -161,7 +154,7 @@ const ChannelProfile = () => {
 
     return (
         <div>
-            <RenderBackButton />
+            <BackButton />
             <UserPresentation />
             <UserSqueals />
         </div>
