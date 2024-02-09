@@ -60,7 +60,7 @@ function updateCards(users) {
     container.innerHTML = "";
     // Itero sugli utenti creando una card per utente
     for(let i=0; i<users.length; i++){
-        if (users[i].status === "Attivo") {
+        if (users[i].status === "Active") {
             container.innerHTML +=`
             <div class="card ms-1" id="card-${i}">
                 <div class="card-body">
@@ -71,21 +71,21 @@ function updateCards(users) {
                     <h6><span class="fw-bold">Caratteri Giornalieri:</span><span class="caratteriGiornalieri"> ${users[i].caratteriGiornalieri}</span></h6>
                     <h6><span class="fw-bold">Caratteri Settimanali:</span><span class="caratteriSettimanali"> ${users[i].caratteriSettimanali}</span></h6>
                     <h6><span class="fw-bold">Caratteri Mensili:</span><span class="caratteriMensili"> ${users[i].caratteriMensili}</span></h6>
-                    <button class="btn btn-primary" id="modificaBtn">Modifica</button>
+                    <button class="btn btn-dark" id="modificaBtn">Modify</button>
                 </div>
             </div>`
-        } else if(users[i].status === "Bloccato"){
+        } else if(users[i].status === "Blocked"){
             container.innerHTML +=`
             <div class="card ms-1" id="card-${i}">
                 <div class="card-body">
                     <h4 class="nomeECognome card-title fw-bold ">${users[i].name} ${users[i].lastname} <span class="fw-light small">(${users[i].username})<span></h4>
                     <h5 class="card-subtitle mb-3 text-danger" id="status">${users[i].status}</h5>
-                    <h6><span class="fw-bold">Tipo utente:</span><span class="tipoUtente"> ${users[i].tipoUtente}</span></h6>
-                    <h6><span class="fw-bold">Popolarità:</span><span class="popolarita"> ${users[i].popolarita}</span></h6>
-                    <h6><span class="fw-bold">Caratteri Giornalieri:</span><span class="caratteriGiornalieri"> ${users[i].caratteriGiornalieri}</span></h6>
-                    <h6><span class="fw-bold">Caratteri Settimanali:</span><span class="caratteriSettimanali"> ${users[i].caratteriSettimanali}</span></h6>
-                    <h6><span class="fw-bold">Caratteri Mensili:</span><span class="caratteriMensili"> ${users[i].caratteriMensili}</span></h6>
-                    <button class="btn btn-primary" id="modificaBtn">Modifica</button>
+                    <h6><span class="fw-bold">User Type:</span><span class="tipoUtente"> ${users[i].tipoUtente}</span></h6>
+                    <h6><span class="fw-bold">Popolarity:</span><span class="popolarita"> ${users[i].popolarita}</span></h6>
+                    <h6><span class="fw-bold">Daily chars:</span><span class="caratteriGiornalieri"> ${users[i].caratteriGiornalieri}</span></h6>
+                    <h6><span class="fw-bold">Weekly chars:</span><span class="caratteriSettimanali"> ${users[i].caratteriSettimanali}</span></h6>
+                    <h6><span class="fw-bold">Monthly chars:</span><span class="caratteriMensili"> ${users[i].caratteriMensili}</span></h6>
+                    <button class="btn btn-dark" id="modificaBtn">Modify</button>
                 </div>
             </div>`
             
@@ -161,20 +161,20 @@ async function ModifyButton(cardId,cardNumber) {
     
     // Abilita la modifica dei campi
     
-    if((users[cardNumber].status) === "Attivo"){
+    if((users[cardNumber].status) === "Active"){
         statusUtente.classList.remove("text-success");
         statusUtente.innerHTML = `<span>Status:</span>
         <select class="form-select" id="status-choice">
-            <option value="Attivo" selected="selected">Attivo</option>
-            <option value="Bloccato">Bloccato</option>
+            <option value="Active" selected="selected">Active</option>
+            <option value="Blocked">Blocked</option>
         </select>`; 
         } 
-    else if((users[cardNumber].status === "Bloccato")) {
+    else if((users[cardNumber].status === "Blocked")) {
          statusUtente.classList.remove("text-danger");
          statusUtente.innerHTML =`<span>Status:</span>
         <select class="form-select" id="status-choice">
-            <option value="Attivo">Attivo</option>
-            <option value="Bloccato" selected="selected">Bloccato</option>
+            <option value="Active">Active</option>
+            <option value="Blocked" selected="selected">Blocked</option>
         </select>`; 
         }
 
@@ -203,28 +203,28 @@ async function ModifyButton(cardId,cardNumber) {
             </select>`;
         }
 
-    if((users[cardNumber].popolarita) == "Alta"){
+    if((users[cardNumber].popolarita) == "High"){
     popolaritaField.innerHTML =  `<span class="fw-bold">Popolarità:</span>
     <select class="form-select" aria-label="Popolarity high selected" id="popolaritaInput">
-        <option value="Alta" selected="selected">Alta</option>
-        <option value="Media">Media</option>
-        <option value="Bassa">Bassa</option>
+        <option value="Alta" selected="selected">High</option>
+        <option value="Media">Medium</option>
+        <option value="Bassa">Low</option>
     </select>`; 
     } 
-    else if((users[cardNumber].popolarita) == "Media"){
+    else if((users[cardNumber].popolarita) == "Medium"){
         popolaritaField.innerHTML =  `<span class="fw-bold">Popolarità:</span>
         <select class="form-select" aria-label="Popolarity medium selected" id="popolaritaInput">
-            <option value="Alta">Alta</option>
-            <option value="Media" selected="selected">Media</option>
-            <option value="Bassa">Bassa</option>
+            <option value="Alta">High</option>
+            <option value="Media" selected="selected">Medium</option>
+            <option value="Bassa">Low</option>
         </select>`; 
     }
         else {
             popolaritaField.innerHTML =  `<span class="fw-bold">Popolarità:</span>
         <select class="form-select" aria-label="Popolarity low selected" id="popolaritaInput">
-            <option value="Alta">Alta</option>
-            <option value="Media"</option>
-            <option value="Bassa" selected="selected">Bassa</option>
+            <option value="Alta">High</option>
+            <option value="Media">Medium</option>
+            <option value="Bassa" selected="selected">Low</option>
         </select>`; 
         }
     caratteriGiornalieriField.innerHTML = `<span class="fw-bold">Caratteri Giornalieri:</span> <input class="form-control" type="number" id="caratteriGiornalieriInput" value="${users[cardNumber].caratteriGiornalieri}">`;
@@ -283,7 +283,7 @@ async function ModifyButton(cardId,cardNumber) {
         }
 
         // Aggiorna i campi con i nuovi valori
-        if(nuovoStatus === "Attivo"){
+        if(nuovoStatus === "Active"){
             statusUtente.innerHTML =  `<h5 class="card-subtitle text-success mb-3" id="status">${nuovoStatus}</h5>`
         }
         else {

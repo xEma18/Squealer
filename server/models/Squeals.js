@@ -13,16 +13,12 @@ const SquealSchema = new mongoose.Schema({
         profilePic: String,
     }],
     emoticonNum: {
-        verygood: Number,
         good: Number,
         bad: Number,
-        verybad: Number,
     },
     emoticonGivenBy:{
-        verygood:[String],
         good:[String],
         bad:[String],
-        verybad:[String],
     },
     impression: Number,
     impressionGivenBy: [String],
@@ -43,6 +39,17 @@ SquealSchema.statics.findSquealByUsername = async function (username) {
         const squeal = await this.findOne({ mittente: username });
             console.log("squeal:", squeal);
             return squeal;
+    } catch (error) {
+        console.error('Errore durante la ricerca degli squeals:', error);
+        throw error;
+    }
+};
+
+SquealSchema.statics.findSquealById = async function (id) {
+    try {
+        const squeal = await this.findOne({ _id: id });
+        console.log("squeal:", squeal);
+        return squeal;
     } catch (error) {
         console.error('Errore durante la ricerca degli squeals:', error);
         throw error;
