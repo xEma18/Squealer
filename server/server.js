@@ -1,10 +1,12 @@
-const express=require('express')
-const mongoose=require('mongoose')
-const cors=require('cors')
-const UserModel= require('./models/Users')
-const SquealModel= require('./models/Squeals')
-const ChannelModel= require('./models/Channels')
-const CounterModel= require('./models/Counters')
+const express=require('express');
+const mongoose=require('mongoose');
+const cors=require('cors');
+const cron = require('node-cron');
+const UserModel= require('./models/Users');
+const SquealModel= require('./models/Squeals');
+const ChannelModel= require('./models/Channels');
+const CounterModel= require('./models/Counters');
+
 const app=express()
 
 app.use(cors()) //enable to use cors
@@ -16,6 +18,26 @@ app.use(express.urlencoded({ extended: true, limit: '20mb' })); // Imposta il li
 
 mongoose.connect("mongodb://127.0.0.1:27017/Squealer", { useNewUrlParser: true, useUnifiedTopology: true });
 
+// Funzioni di azzeramento
+async function resetDailyCounters() {
+  await UserModel.updateMany({}, { caratteriGiornalieriUsati: 0 });
+  console.log('Caratteri giornalieri azzerati per tutti gli utenti.');
+}
+
+async function resetWeeklyCounters() {
+  await UserModel.updateMany({}, { caratteriSettimanaliUsati: 0 });
+  console.log('Caratteri settimanali azzerati per tutti gli utenti.');
+}
+
+async function resetMonthlyCounters() {
+  await UserModel.updateMany({}, { caratteriMensiliUsati: 0 });
+  console.log('Caratteri mensili azzerati per tutti gli utenti.');
+}
+
+// Pianificazione dell'azzeramento
+cron.schedule('0 0 * * *', resetDailyCounters); // Esegue ogni giorno a mezzanotte
+cron.schedule('0 0 * * 1', resetWeeklyCounters); // Esegue ogni lunedì a mezzanotte
+cron.schedule('0 0 1 * *', resetMonthlyCounters); // Esegue il primo giorno di ogni mese a mezzanotte
 
 //API per inviare al database i dati dell' utente in fase di registrazione 
 app.post('/signup', async (req, res) => {
