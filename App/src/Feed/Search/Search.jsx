@@ -41,17 +41,19 @@ const ChannelItem = ({ channel }) => (
 );
 
 const KeywordItem = ({ keywordObj }) => (
-    <div className="item" key={keywordObj.keyword}>
-        <div className="item-pic">
-            <img src="https://plus.unsplash.com/premium_photo-1681487872232-fa622a6dd59e?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Profile picture" />
-        </div>
-        <div className="item-body">
-            <div className="item-namedate">
-                <span className="item-username">{keywordObj.keyword}</span>
+    <Link to={`/keyword/${keywordObj.keyword.substring(1)}`}>
+        <div className="item" key={keywordObj.keyword}>
+            <div className="item-pic">
+                <img src="https://plus.unsplash.com/premium_photo-1681487872232-fa622a6dd59e?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Profile picture" />
             </div>
-            <div className="item-description">{keywordObj.count} squeals</div>
+            <div className="item-body">
+                <div className="item-namedate">
+                    <span className="item-username">{keywordObj.keyword}</span>
+                </div>
+                <div className="item-description">{keywordObj.count} squeals</div>
+            </div>
         </div>
-    </div>
+    </Link>
 );
 
 const Search = () => {

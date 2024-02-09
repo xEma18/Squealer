@@ -1,10 +1,12 @@
-const express=require('express')
-const mongoose=require('mongoose')
-const cors=require('cors')
-const UserModel= require('./models/Users')
-const SquealModel= require('./models/Squeals')
-const ChannelModel= require('./models/Channels')
-const CounterModel= require('./models/Counters')
+const express=require('express');
+const mongoose=require('mongoose');
+const cors=require('cors');
+const cron = require('node-cron');
+const UserModel= require('./models/Users');
+const SquealModel= require('./models/Squeals');
+const ChannelModel= require('./models/Channels');
+const CounterModel= require('./models/Counters');
+
 const app=express()
 
 app.use(cors()) //enable to use cors
@@ -16,6 +18,26 @@ app.use(express.urlencoded({ extended: true, limit: '20mb' })); // Imposta il li
 
 mongoose.connect("mongodb://127.0.0.1:27017/Squealer", { useNewUrlParser: true, useUnifiedTopology: true });
 
+// Funzioni di azzeramento
+async function resetDailyCounters() {
+  await UserModel.updateMany({}, { caratteriGiornalieriUsati: 0 });
+  console.log('Caratteri giornalieri azzerati per tutti gli utenti.');
+}
+
+async function resetWeeklyCounters() {
+  await UserModel.updateMany({}, { caratteriSettimanaliUsati: 0 });
+  console.log('Caratteri settimanali azzerati per tutti gli utenti.');
+}
+
+async function resetMonthlyCounters() {
+  await UserModel.updateMany({}, { caratteriMensiliUsati: 0 });
+  console.log('Caratteri mensili azzerati per tutti gli utenti.');
+}
+
+// Pianificazione dell'azzeramento
+cron.schedule('0 0 * * *', resetDailyCounters); // Esegue ogni giorno a mezzanotte
+cron.schedule('0 0 * * 1', resetWeeklyCounters); // Esegue ogni lunedì a mezzanotte
+cron.schedule('0 0 1 * *', resetMonthlyCounters); // Esegue il primo giorno di ogni mese a mezzanotte
 
 //API per inviare al database i dati dell' utente in fase di registrazione 
 app.post('/signup', async (req, res) => {
@@ -116,7 +138,6 @@ app.post('/squealsToUser', async (req, res) => {
 
 app.post('/getUserImageAndCharLeft', async (req, res) => {
   try {
-    console.log(req.body)
     const username = req.body.username;
     const user = await UserModel.findOne({ username: username }).select('image caratteriGiornalieri caratteriSettimanali caratteriMensili caratteriGiornalieriUsati caratteriMensiliUsati caratteriSettimanaliUsati');
     
@@ -599,10 +620,10 @@ app.get('/getUserByUsername/:username', async (req, res) => {
 });
 
 //Api per ottenere squeal con mittente uno username dato come query
-app.get('/getSquealsBySender/:username', async (req, res) => {
+app.get('/getPublicSquealsBySender/:username', async (req, res) => {
   try {
       const username = req.params.username;
-      const squeals = await SquealModel.findSquealsByUsername(username);
+      const squeals = await SquealModel.findPublicSquealsBySender(username);
       res.status(200).json(squeals);
   } catch (error) {
       console.error(error);
@@ -674,6 +695,17 @@ app.get('/getChannelByChannelName/:channelName', async (req, res) => {
           return res.status(404).json({ error: 'Canale non trovato' });
       }
       res.status(200).json(channel);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Errore interno del server' });
+  }
+});
+
+app.get('/getPublicSquealsByKeyword/:keyword', async (req, res) => {
+  try {
+      const keyword = req.params.keyword;
+      const squeals = await SquealModel.findPublicSquealsByKeyword(keyword);
+      res.status(200).json(squeals);
   } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Errore interno del server' });

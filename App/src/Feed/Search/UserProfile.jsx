@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
 import L from 'leaflet'; 
+import BackButton from './components/BackButton';
 
 const UserProfile = () => {
     const { username } = useParams();
@@ -26,7 +27,7 @@ const UserProfile = () => {
 
     const fetchUserSqueals = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/getSquealsBySender/${username}`);
+            const response = await axios.get(`http://localhost:3001/getPublicSquealsBySender/${username}`);
             setUserSqueals(response.data);
         } catch (error) {
             console.error('Errore durante il recupero degli squeals dell\'utente:', error);
@@ -68,13 +69,6 @@ const UserProfile = () => {
         }
     };
 
-    const RenderBackButton = () => (
-        <Link to="/Feed/Search">
-            <div className="go-back">
-                <span><i className="fa-solid fa-arrow-left"></i> Search</span>
-            </div>
-        </Link>
-    );
 
     const UserPresentation = () => {
         const formattedDate = userData ? `${userData.day}/${userData.month}/${userData.year}` : '';
@@ -161,7 +155,7 @@ const UserProfile = () => {
 
     return (
         <div>
-            <RenderBackButton />
+            <BackButton />
             <UserPresentation />
             <UserSqueals />
         </div>
