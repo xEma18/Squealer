@@ -311,6 +311,7 @@ const Feed = () => {
                 onEmoticonBad={handleEmoticonBad}
                 renderTextWithLinks={renderTextWithLinks}
                 key={squeal._id}
+                username={username}
               />
             ))}
           </FeedList>
