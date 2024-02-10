@@ -155,7 +155,7 @@ p {
 
 #recipients-list {
   width: 100%;
-  height: 10rem;
+  height: 4rem;
 
   padding: 0 1rem;
 
@@ -172,4 +172,42 @@ p {
   justify-content: flex-start;
   gap:2%;
   padding:2%;
+}
+
+.automaticMessages {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 1rem 1.5rem;
+}
+
+.automaticMessages #temporizzato {
+  color: #dbb77c;
+  /* background-color: #fbfbfb; */
+  font-weight: bold;
+  border: 2px solid #dbb77c;
+  border-radius: 9999px;
+  padding: 0.3rem 0.8rem;
+  margin-right: 0.01rem;
+}
+
+#input-temp {
+  border: 1px solid #949797;
+  border-radius: 9999px;
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  color: #333;
+  outline: none;
+  width: 15%
+}
+
+#repetition-parameters{
+  display: flex;
+  flex-direction: row;
+  width:100%;
+  margin-top: 5%;
+}
+
+#repetition-parameters p{
+  margin-top: 3%;
 }

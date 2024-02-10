@@ -326,6 +326,20 @@ const handlePostSqueal = async () => {
                     <div className="subtitle" style={{width:'60%'}}>Who is it for?</div>
                 <p>Add your recipients, each one separated by a space.</p>
                 <textarea id="recipients-list" placeholder="@foo §foo §BAR" onChange={(e)=>handleRecipientsChange(e)}></textarea>
+
+                <div className="automaticMessages">
+                    <div id="temporizzato" onClick={handlePostSqueal}>Temporizzato</div>
+                    <div id="repetition-parameters">
+                        <p>Repeat </p>
+                        <input id="input-temp" type="number" placeholder=""  />
+                        <p> times, every </p>
+                        <input id="input-temp" type="number" placeholder=""  />
+                        <p> min </p>
+                    </div>
+                </div>
+                
+
+            
                 
             </div>
         );
