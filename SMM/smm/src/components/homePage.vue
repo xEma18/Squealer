@@ -107,9 +107,9 @@ export default {
         }
 
         const UserData = await response.json();
-        this.dailyCharsLeft = UserData.caratteriGiornalieri;
-        this.weeklyCharsLeft = UserData.caratteriSettimanali;
-        this.monthlyCharsLeft = UserData.caratteriMensili;
+        this.dailyCharsLeft = UserData.caratteriGiornalieri - UserData.caratteriGiornalieriUsati;
+        this.weeklyCharsLeft = UserData.caratteriSettimanali - UserData.caratteriSettimanaliUsati;
+        this.monthlyCharsLeft = UserData.caratteriMensili - UserData.caratteriMensiliUsati;
         
     } catch (error) {
         console.error('Errore durante il recupero dei dati utente:', error);

@@ -16,20 +16,20 @@ const SquealSchema = new mongoose.Schema({
         good: Number,
         bad: Number,
     },
-    emoticonGivenBy:{
+    emoticonGivenBy:{ // Per quando si esce e si rientra sull'app
         good:[String],
         bad:[String],
     },
     impression: Number,
     impressionGivenBy: [String],
-    profilePic: String,
-    bodyImage: String,
-    mapLocation: {
+    profilePic: String, // Foto che si carica in fase di registrazione (si converte in base64)
+    bodyImage: String, // Immagine che si carica quando si pubblica squeal con immagine  //TODO
+    mapLocation: { //TODO
         lat: Number, // Latitudine
-        lng: Number, // Longitudine
+        lng: Number, // Longitudine 
         zoom: Number // Livello di Zoom
     },
-    category: String,
+    category: String, // Popular, Controversial, Impopular, Private, Public (se non ha reazioni e non è pubblico)
 });
 
 

@@ -111,13 +111,15 @@ function updateSqueal(squeal) {
           <div>
             <div class="d-flex justify-content-between" id="emoticons">
               <div class="d-flex">
-                <span class="material-symbols-outlined" >thumb_up</span> <span id="likeSpan">${squeal[i].emoticonNum.like}</span>
-                <span class="ms-2 material-symbols-outlined" >thumb_down</span> <span id="dislikeSpan">${squeal[i].emoticonNum.dislike}</span>
-                <span class="ms-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                    <path
-                      d="M15 12c0 1.657-1.343 3-3 3s-3-1.343-3-3c0-.199.02-.393.057-.581 1.474.541 2.927-.882 2.405-2.371.174-.03.354-.048.538-.048 1.657 0 3 1.344 3 3zm-2.985-7c-7.569 0-12.015 6.551-12.015 6.551s4.835 7.449 12.015 7.449c7.733 0 11.985-7.449 11.985-7.449s-4.291-6.551-11.985-6.551zm-.015 12c-2.761 0-5-2.238-5-5 0-2.761 2.239-5 5-5 2.762 0 5 2.239 5 5 0 2.762-2.238 5-5 5z">
-                    </path>
-                  </svg> ${squeal[i].impression}</span>
+                <span class="material-symbols-outlined" >thumb_up</span> <span id="likeSpan-${i}">${squeal[i].emoticonNum.good}</span>
+                <span class="ms-2 material-symbols-outlined" >thumb_down</span> <span id="dislikeSpan-${i}">${squeal[i].emoticonNum.bad}</span>
+                <span id="impressionSpan" class="ms-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <path
+                        d="M15 12c0 1.657-1.343 3-3 3s-3-1.343-3-3c0-.199.02-.393.057-.581 1.474.541 2.927-.882 2.405-2.371.174-.03.354-.048.538-.048 1.657 0 3 1.344 3 3zm-2.985-7c-7.569 0-12.015 6.551-12.015 6.551s4.835 7.449 12.015 7.449c7.733 0 11.985-7.449 11.985-7.449s-4.291-6.551-11.985-6.551zm-.015 12c-2.761 0-5-2.238-5-5 0-2.761 2.239-5 5-5 2.762 0 5 2.239 5 5 0 2.762-2.238 5-5 5z">
+                        </path>
+                    </svg> ${squeal[i].impression}
+                </span>
               </div>
               <div class="d-flex justify-content-between" id="modifyBtnFather">
                 <button type="button" class="btn btn-dark" id="modificaBtn">Modify Squeal</button>
@@ -158,29 +160,10 @@ function getCardNumber(cardId) {
 }
 
 
-/*Gestione emoticon*/
-
-function selectEmoticon(emoticonId) {
-    // Get the clicked emoticon
-    var clickedEmoticon = document.getElementById(emoticonId);
-
-    // Check if the clicked emoticon is already selected
-    var isAlreadySelected = clickedEmoticon.classList.contains('selected');
-
-    // Deselect all emoticons
-    document.querySelectorAll('.material-icons').forEach(function (icon) {
-        icon.classList.remove('selected', 'verygood', 'good', 'bad', 'verybad');
-    });
-
-    // If the clicked emoticon was not already selected, select it
-    if (!isAlreadySelected) {
-        clickedEmoticon.classList.add('selected');
-    }
-}
-
 // Aggiungi un gestore di eventi al pulsante "Modifica"
 async function ModifyButton(cardId, cardNumber) {
-    /*
+    
+    // Fondamentale per evitare di poter modificare due card contemporaneamente 
     try {
         const response = await fetch('http://localhost:3001/squeals');
         if (!response.ok) {
@@ -188,14 +171,14 @@ async function ModifyButton(cardId, cardNumber) {
         } else {
             // Aggiorna la lista degli squeal dopo la modifica
             const updatedSquealResponse = await fetch('http://localhost:3001/squeals');
-            squeals = await updatedSquealResponse.json();
-            updateSqueal(squeals);
-            console.log(squeals);
+            squeal = await updatedSquealResponse.json();
+            updateSqueal(squeal);
+            console.log(squeal);
         }
     } catch (error) {
         console.error('Errore durante il recupero degli squeal:', error);
     }
-    */
+    
 
     // Seleziono il testo della card che sto modificando e lo mostro per intero 
     let textAll = document.querySelector(`#squealText-${cardNumber}`);
@@ -229,29 +212,33 @@ async function ModifyButton(cardId, cardNumber) {
     annullaBtn.innerText = "Annulla";
     modifyBtnFather.appendChild(annullaBtn);
 
+    // Disabilita impression per fare spazio (tanto non è modificabile)
+    impressionSpan = document.getElementById('impressionSpan');
+    impressionSpan.innerHTML = "";
     /*Abilita la modifica dei campi*/
 
     // Aggiungi un pulsante "+" dinamicamente
 
     const addButton = document.createElement('button');
     addButton.type = 'button';
-    addButton.classList.add('btn', 'add-button', 'fw-bold', 'text-success','p-0');
+    addButton.classList.add('btn', 'add-button', 'fw-bold', 'text-success', 'p-0');
     addButton.innerText = '+';
 
     // Aggiungi un pulsante "-" dimamicamente 
 
     const remButton = document.createElement('button');
     remButton.type = 'button';
-    remButton.classList.add('btn', 'rem-button', 'fw-bold', 'text-danger', 'p-0');
+    remButton.classList.add('btn', 'rem-button', 'fw-bold', 'text-danger', 'p-0', 'ms-4');
     remButton.innerText = '-';
 
     // Modifica delle reazioni 
-    const likeSpan = document.getElementById('likeSpan')
-    const dislikeSpan = document.getElementById('dislikeSpan')
+    const likeSpan = document.getElementById(`likeSpan-${cardNumber}`)
+    const dislikeSpan = document.getElementById(`dislikeSpan-${cardNumber}`)
     const dislike = dislikeSpan.innerHTML;
-    const likes = likeSpan.innerHTML;
-    likeSpan.innerHTML = `<input id='likeInput' type="number" class="form-control" value="${likes}">`
-    dislikeSpan.innerHTML  = `<input id='dislikeInput' type="number" class="form-control" value="${dislike}">`
+    let likes = likeSpan.innerHTML;
+    likeSpan.innerHTML = `<input id='likeInput' type="number" class="form-control" value="${likes}" min="0">`
+    dislikeSpan.innerHTML = `<input id='dislikeInput' type="number" class="form-control" value="${dislike}" min="0">`
+    emoticonFlag = true;
 
     //Array dei destinatari che si vogliono aggiungere 
     const arrayNuoviUtenti = [];
@@ -336,6 +323,7 @@ async function ModifyButton(cardId, cardNumber) {
                     if (destinatari.innerHTML.includes(nuovoDestinatario)) {
                         arrayUsersToRemove.push(nuovoDestinatario);
                         destinatariRimossiDiv.innerHTML += `${nuovoDestinatario}`;
+                        modifyR = true;
                     }
                     else {
                         alert("L'utente non è presente fra i destinatari")
@@ -344,6 +332,7 @@ async function ModifyButton(cardId, cardNumber) {
             } catch (error) {
                 console.error('Errore durante il recupero degli utenti:', error);
             }
+           
         });
 
         //Chiudi la scheda con il tasto esc
@@ -391,6 +380,10 @@ async function ModifyButton(cardId, cardNumber) {
         });
     });
 
+    console.log(squeal[cardNumber].destinatari);
+    let destinatariAdd = squeal[cardNumber].destinatari;
+    let modifyA = false;
+ 
 
     // Aggiungi un gestore di eventi al pulsante +
     addButton.addEventListener('click', () => {
@@ -406,23 +399,24 @@ async function ModifyButton(cardId, cardNumber) {
         const overlay = document.createElement('div');
         overlay.classList.add('overlay-add');
 
+
         // Aggiungi il contenuto della finestra di sovraimpressione
         overlay.innerHTML = `
-    <div class="popup">
-        <span id="closeNewChannelOverlay" class="close">&times;</span>
-        <div class="row-3 mb-3">
-            <div class="fw-bold">Receivers:</div>
-            <span class="text-break" id="destinatariPopup">${squeal[cardNumber].destinatari}</span>
+        <div class="popup">
+            <span id="closeNewChannelOverlay" class="close">&times;</span>
+            <div class="row-3 mb-3">
+                <div class="fw-bold">Receivers:</div>
+                <span class="text-break" id="destinatariPopup">${destinatariAdd}</span>
+            </div>
+            <div class="row-3">
+                <label for="nuovoDestinatario" aria-label="Username">New Receiver:</label>
+                <input class="form-control" type="text" id="nuovoDestinatario">
+            </div>
+            <div class="text-center">
+            <button class="mt-4 btn btn-success" id="aggiungiDestinatario">Add</button>
+            </div>
         </div>
-        <div class="row-3">
-            <label for="nuovoDestinatario" aria-label="Username">New Receiver:</label>
-            <input class="form-control" type="text" id="nuovoDestinatario">
-        </div>
-        <div class="text-center">
-        <button class="mt-4 btn btn-success" id="aggiungiDestinatario">Add</button>
-        </div>
-    </div>
-    `;
+        `;
 
         // Aggiungo la finestra di sovraimpressione al body
         document.body.appendChild(overlay);
@@ -451,12 +445,13 @@ async function ModifyButton(cardId, cardNumber) {
                 // Verifica se il nuovo destinatario è presente nella lista degli utenti e nei canali
                 const isUserValid = userList.some(user => user.username === nuovoDestinatario);
                 const isChannelValid = channelList.some(channel => channel.name === nuovoDestinatario);
-                
+
                 if (isUserValid || isChannelValid) {
                     if (nuovoDestinatario !== mittente) {
                         if (!destinatari.innerHTML.includes(nuovoDestinatario)) {
                             arrayNuoviUtenti.push(nuovoDestinatario);
                             destinatariDiv.innerHTML += `, ${nuovoDestinatario} `;
+                            modifyA= true;
                             // Se è un canale valido, invia una richiesta all'API per aggiungere lo squeal al canale
                             if (isChannelValid) {
                                 const squealId = squeal[cardNumber]._id;
@@ -482,6 +477,9 @@ async function ModifyButton(cardId, cardNumber) {
                 }
             } catch (error) {
                 console.error('Errore durante il recupero dei dati:', error);
+            }
+            if(modifyA){
+                destinatariAdd += ` ${nuovoDestinatario}`;
             }
         });
 
@@ -525,11 +523,17 @@ async function ModifyButton(cardId, cardNumber) {
         destinatari.parentElement.removeChild(addButton);
         destinatari.parentElement.removeChild(remButton);
 
+        good = document.getElementById('likeInput').value;
+        bad = document.getElementById('dislikeInput').value;
+        console.log(good)
+
+        likeSpan.outerHTML = `<span id="likeSpan-${cardNumber}">${good}</span> `
+        dislikeSpan.innerHTML =`<span id="dislikeSpan-${cardNumber}">${bad}</span>`
         // Aggiungo il pulsante modifica
         modifyBtnFather.appendChild(modificaBtn);
 
         // Controllo il flag per capire che API chiamare 
-        if (addFlag) {
+        if (addFlag || emoticonFlag) {
             console.log(readytoAdd);
             addFlag = false;
             // Chiamata POST all'API per aggiornare i valori nel database
@@ -542,7 +546,8 @@ async function ModifyButton(cardId, cardNumber) {
                     body: JSON.stringify({
                         mittente: mittente,
                         destinatari: readytoAdd,
-                        idSqueal: squeal._id, //TODO devo passare un objectid non una stringa dashgjhdgajsh objectid(asdgashdghas) //TODO
+                        idSqueal: squeal[cardNumber]._id,
+                        emoticonNum: [good,bad] //TODO serve una funzione checkpopularity in modo che aggiornando le reazioni si aggiorni anche la popolarità dello squeal 
                     }),
                 });
                 if (!response.ok) {
@@ -568,6 +573,8 @@ async function ModifyButton(cardId, cardNumber) {
                     body: JSON.stringify({
                         mittente: mittente,
                         destinatari: readytoRemove,
+                        idSqueal: squeal[cardNumber]._id,
+                        emoticon: [good,bad]
                     }),
                 });
                 if (!response.ok) {
@@ -597,9 +604,9 @@ async function ModifyButton(cardId, cardNumber) {
             } else {
                 // Aggiorna la lista degli squeal dopo la modifica
                 const updatedSquealResponse = await fetch('http://localhost:3001/squeals');
-                squeals = await updatedSquealResponse.json();
-                updateSqueal(squeals);
-                console.log(squeals);
+                squeal = await updatedSquealResponse.json();
+                updateSqueal(squeal);
+                console.log(squeal);
             }
         } catch (error) {
             console.error('Errore durante il recupero degli squeal:', error);

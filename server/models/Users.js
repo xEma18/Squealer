@@ -6,22 +6,21 @@ const UserSchema=new mongoose.Schema({
     day:Number,
     month:Number,
     year:Number,
-    proCheck:Boolean,
     username:String,
     email:String,
     password:String,
     image:String,
     description:String,
-    tipoUtente:String,
+    tipoUtente:String, // Standard, VIP, SMM
     popolarita:String,
-    caratteriGiornalieri:Number,
+    caratteriGiornalieri:Number, // Totali
     caratteriSettimanali:Number,
     caratteriMensili:Number,
-    caratteriGiornalieriUsati:Number,
+    caratteriGiornalieriUsati:Number, // Usati
     caratteriSettimanaliUsati:Number,
     caratteriMensiliUsati:Number,
-    status:String,
-
+    status:String, // TODO (quando blocco l'utente setto a 0 caratteri giornalieri mensili e settimanali)
+    subscriptions:[String]
 })
 
 UserSchema.statics.findByCredentials=async function(username, password){

@@ -1,15 +1,12 @@
 const mongoose = require('mongoose');
 
 const ChannelSchema = new mongoose.Schema({
-    type: String,
+    type: String, // official, unofficial
     creators: [String], 
-    name: String,
+    name: String, 
     description: String,
-    followers: Number,
     listofSqueals: [String],
-    status: String,
-    postNum: [String],
-    popolarity: String,
+    postNum: [String], 
     profilePic: String,
 });
 

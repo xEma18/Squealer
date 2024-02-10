@@ -297,9 +297,9 @@ app.post('/editUser', async (req, res)=>{
             // Aggiorna i campi dell'utente con i nuovi valori
             user.tipoUtente = req.body.tipoUtente;
             user.popolarita = req.body.popolarita;
-            user.caratteriGiornalieri = req.body.caratteriGiornalieri;
-            user.caratteriSettimanali = req.body.caratteriSettimanali;
-            user.caratteriMensili = req.body.caratteriMensili;
+            user.caratteriGiornalieriUsati = req.body.caratteriGiornalieriUsati 
+            user.caratteriSettimanaliUsati = req.body.caratteriSettimanali;
+            user.caratteriMensiliUsati = req.body.caratteriMensili;
             user.status = req.body.status;   
             // Salva le modifiche nel database
             await user.save();
@@ -353,9 +353,10 @@ app.post('/removeSqueal', async (req, res) => {
 });
 
 
-//API per aggiungere i destinatari di uno specifico squeal (di cui ho username del mittente)
+//API per aggiungere i destinatari e le reazioni di uno specifico squeal (di cui ho username del mittente)
 app.post('/addRecv', async (req, res)=>{
-  console.log("body: "+req.body.mittente);
+  console.log("body: "+req.body.idSqueal);
+  console.log("emoticonNum"+req.body.emoticonNum.good)
   try{
     //Cerco lo squeal da modificare
     const squeal = await SquealModel.findSquealById(req.body.idSqueal);
@@ -363,8 +364,22 @@ app.post('/addRecv', async (req, res)=>{
             // Aggiorna il campo destinatari con i nuovi utenti aggiunti
             squeal.destinatari = squeal.destinatari.concat(req.body.destinatari);
             console.log("destinatari aggiornati: "+squeal.destinatari);
+            squeal.emoticonNum.good = req.body.emoticonNum[0];
+            squeal.emoticonNum.bad = req.body.emoticonNum[1];
+            console.log("like aggiornati: " + squeal.emoticonNum[0]);
+
+            if(squeal.category!=='private'){ 
+              if(squeal.emoticonNum.good > 0.25*squeal.impression && squeal.emoticonNum.bad > 0.25*squeal.impression){
+                squeal.category="Controversial"
+              }
+              else if(squeal.emoticonNum.good > 0.25*squeal.impression){
+                squeal.category="Popular"
+              }
+            }
+
             // Salva le modifiche nel database
             await squeal.save();
+      
             // Invia una risposta di successo
             res.status(200).json({ message: 'Modifiche allo Squeal apportate con successo nel database' });
         } else {
@@ -439,7 +454,7 @@ app.post('/editChannelDescription', async (req, res)=>{
     }
 });
 
-    // API per aggiungere uno squeal dalla lista squeal canale
+    // API per aggiungere uno squeal nella lista squeal canale (Manuel)
     app.post('/editChannelSqueal', async (req, res) => {
   try {
       console.log("editChannelSqueal")

@@ -258,14 +258,15 @@ async function handlePostClick(overlay,cardNumber,channelId) {
     let actualDate = new Date();
     
     const squealData = {
-        mittente: "Squeal Moderator",
+        mittente: "fvMod",
         destinatari: [`${channel[cardNumber].name}`],
         text: `${postText}`,
         date: actualDate,
         impression: 0,
-        profilePic: null,
-        bodyImage: null,
+        profilePic: "",
+        bodyImage: "", 
     };
+    
     //Aggiunta nuovo squeal al database
     try {
         console.log("Aggiungo nuovo squeal")
@@ -436,6 +437,7 @@ description.innerHTML = `<div class="row d-flex mt-4 post-area">
                                 <textarea id="textarea">${channel[cardNumber].description}</textarea>
                             </div>
                         </div>`
+
 // Mostra il pulsante "Rimuovi Canale"
 const removeChannelBtn = document.createElement("button");
 removeChannelBtn.classList.add("btn");
@@ -499,13 +501,10 @@ document.getElementById("newChannelForm").addEventListener("submit", async funct
     const name = document.getElementById("newChannelName").value;
     const type = document.getElementById("newChannelType").value;
     const description = document.getElementById("newChannelDescription").value;
-    const creators = ["Moderator"]; 
-    const followers = 0;
+    const creators = ["fvMod"]; 
     const listofSqueals = [];
-    const status = "Aperto"; //TODO
     const postNum = 0;
-    const popolarity = ""; //TODO
-    const profilePic = ""; //TODO
+    const profilePic = ""; 
 
 
     // Chiamata API per salvare il nuovo canale
@@ -515,7 +514,7 @@ document.getElementById("newChannelForm").addEventListener("submit", async funct
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, type, description, creators, followers, listofSqueals, status, postNum, popolarity, profilePic}),
+        body: JSON.stringify({ name, type, description, creators, listofSqueals, postNum, profilePic}),
       });
   
       if (response.ok) {

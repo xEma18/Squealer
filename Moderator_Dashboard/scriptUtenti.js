@@ -68,9 +68,9 @@ function updateCards(users) {
                     <h5 class="card-subtitle mb-3 text-success" id="status">${users[i].status}</h5>
                     <h6><span class="fw-bold">Tipo utente:</span><span class="tipoUtente"> ${users[i].tipoUtente}</span></h6>
                     <h6><span class="fw-bold">Popolarità:</span><span class="popolarita"> ${users[i].popolarita}</span></h6>
-                    <h6><span class="fw-bold">Caratteri Giornalieri:</span><span class="caratteriGiornalieri"> ${users[i].caratteriGiornalieri}</span></h6>
-                    <h6><span class="fw-bold">Caratteri Settimanali:</span><span class="caratteriSettimanali"> ${users[i].caratteriSettimanali}</span></h6>
-                    <h6><span class="fw-bold">Caratteri Mensili:</span><span class="caratteriMensili"> ${users[i].caratteriMensili}</span></h6>
+                    <h6><span class="fw-bold">Caratteri Giornalieri Usati:</span><span class="caratteriGiornalieri"> ${users[i].caratteriGiornalieriUsati} / ${users[i].caratteriGiornalieri} </span></h6>
+                    <h6><span class="fw-bold">Caratteri Settimanali Usati:</span><span class="caratteriSettimanali"> ${users[i].caratteriSettimanali}</span></h6>
+                    <h6><span class="fw-bold">Caratteri Mensili Usati:</span><span class="caratteriMensili"> ${users[i].caratteriMensili}</span></h6>
                     <button class="btn btn-dark" id="modificaBtn">Modify</button>
                 </div>
             </div>`
@@ -82,7 +82,7 @@ function updateCards(users) {
                     <h5 class="card-subtitle mb-3 text-danger" id="status">${users[i].status}</h5>
                     <h6><span class="fw-bold">User Type:</span><span class="tipoUtente"> ${users[i].tipoUtente}</span></h6>
                     <h6><span class="fw-bold">Popolarity:</span><span class="popolarita"> ${users[i].popolarita}</span></h6>
-                    <h6><span class="fw-bold">Daily chars:</span><span class="caratteriGiornalieri"> ${users[i].caratteriGiornalieri}</span></h6>
+                    <h6><span class="fw-bold">Daily chars:</span><span class="caratteriGiornalieri"> ${users[i].caratteriGiornalieri - users[i].caratteriGiornalieriUsati}</span></h6>
                     <h6><span class="fw-bold">Weekly chars:</span><span class="caratteriSettimanali"> ${users[i].caratteriSettimanali}</span></h6>
                     <h6><span class="fw-bold">Monthly chars:</span><span class="caratteriMensili"> ${users[i].caratteriMensili}</span></h6>
                     <button class="btn btn-dark" id="modificaBtn">Modify</button>
@@ -227,9 +227,9 @@ async function ModifyButton(cardId,cardNumber) {
             <option value="Bassa" selected="selected">Low</option>
         </select>`; 
         }
-    caratteriGiornalieriField.innerHTML = `<span class="fw-bold">Caratteri Giornalieri:</span> <input class="form-control" type="number" id="caratteriGiornalieriInput" value="${users[cardNumber].caratteriGiornalieri}">`;
-    caratteriSettimanaliField.innerHTML = `<span class="fw-bold">Caratteri Settimanali:</span> <input class="form-control"type="number" id="caratteriSettimanaliInput" value="${users[cardNumber].caratteriSettimanali}">`;
-    caratteriMensiliField.innerHTML = `<span class="fw-bold">Caratteri Mensili:</span> <input class="form-control" type="number" id="caratteriMensiliInput" value="${users[cardNumber].caratteriMensili}">`;
+    caratteriGiornalieriField.innerHTML = `<span class="fw-bold">Caratteri Giornalieri:</span> <input class="form-control" type="number" id="caratteriGiornalieriInput" value="${users[cardNumber].caratteriGiornalieriUsati}">`;
+    caratteriSettimanaliField.innerHTML = `<span class="fw-bold">Caratteri Settimanali:</span> <input class="form-control"type="number" id="caratteriSettimanaliInput" value="${users[cardNumber].caratteriSettimanaliUsati}">`;
+    caratteriMensiliField.innerHTML = `<span class="fw-bold">Caratteri Mensili:</span> <input class="form-control" type="number" id="caratteriMensiliInput" value="${users[cardNumber].caratteriMensiliUsati}">`;
 
 
     // Aggiungi il pulsante "Salva Modifiche"
