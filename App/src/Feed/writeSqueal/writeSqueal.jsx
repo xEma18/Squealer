@@ -28,6 +28,10 @@ const WriteSqueal = () => {
     const [noDailyCharsLeft, setNoDailyCharsLeft] = useState(false);
     const [noWeeklyCharsLeft, setNoWeeklyCharsLeft] = useState(false);
     const [noMonthlyCharsLeft, setNoMonthlyCharsLeft] = useState(false);
+    const [intervalloInvio, setIntervalloInvio] = useState(0); // In minuti
+    const [numeroInvii, setNumeroInvii] = useState(0);
+    const [isTemporizzato, setIsTemporizzato] = useState(false); // Stato per il pulsante Temporizzato
+
 
     //ottenere i dati dell'utente loggato (immagine profilo, numero caratteri rimanenti)
     useEffect(() => {
@@ -120,6 +124,13 @@ const handleRecipientsChange = (e) => {
         setPublicMode(containsPublicModeTrigger);
 }
 
+const toggleTemporizzato = () => {
+    setIsTemporizzato(!isTemporizzato); // Inverte lo stato di isTemporizzato
+};
+
+
+
+
 const handlePostSqueal = async () => {
 
     const newSqueal = {
@@ -149,12 +160,25 @@ const handlePostSqueal = async () => {
 
     };
 
-        //api che salva il post nel db
+    if(isTemporizzato){
+        const requestBody = {
+            squeal: newSqueal,
+            intervalloInvio: intervalloInvio, // In minuti
+            numeroInvii: numeroInvii
+        };
+        //non uso try perchè non posso aspettare la risposta
+        axios.post(`http://localhost:3001/scheduleSqueal`, requestBody)
+        .catch(error => {
+            console.error('Errore durante la programmazione dello squeal:', error);
+        });
+    }
+    else{
         try {
             const response = await axios.post(`http://localhost:3001/postSqueal`, newSqueal );
         } catch (error) {
             console.error('Errore durante il salvataggio del post:', error);
         }
+    }
 
         if(publicMode){
             let newDailyCharsUsed;
@@ -259,6 +283,7 @@ const handlePostSqueal = async () => {
                     onChange={handleChangeText} 
                     value={text}
                     style={{ marginLeft: '10px' }}
+                    required
                 ></textarea>
             );
         }
@@ -328,14 +353,17 @@ const handlePostSqueal = async () => {
                 <textarea id="recipients-list" placeholder="@foo §foo §BAR" onChange={(e)=>handleRecipientsChange(e)}></textarea>
 
                 <div className="automaticMessages">
-                    <div id="temporizzato" onClick={handlePostSqueal}>Temporizzato</div>
+                    <div id="temporizzato" style={{color: isTemporizzato ? 'green' : 'red', border: `1px solid ${isTemporizzato ? 'green' : 'red'}`}}  onClick={toggleTemporizzato}>Send Timed Message</div>
+                    {isTemporizzato &&
                     <div id="repetition-parameters">
-                        <p>Repeat </p>
-                        <input id="input-temp" type="number" placeholder=""  />
-                        <p> times, every </p>
-                        <input id="input-temp" type="number" placeholder=""  />
+                        <p>Send </p>
+                        <input id="input-temp" type="number" value={numeroInvii} onChange={(e) => setNumeroInvii(e.target.value)} placeholder=""  />
+                        <p> times</p> <p> every </p>
+                        
+
+                        <input id="input-temp" type="number" value={intervalloInvio} onChange={(e) => setIntervalloInvio(e.target.value)} placeholder=""  />
                         <p> min </p>
-                    </div>
+                    </div>}
                 </div>
                 
 

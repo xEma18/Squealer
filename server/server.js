@@ -728,6 +728,49 @@ app.get('/getPublicSquealsByKeyword/:keyword', async (req, res) => {
 });
 
 
+app.post('/scheduleSqueal', (req, res) => {
+  const { squeal, intervalloInvio, numeroInvii } = req.body;
+
+  console.log('Scheduling squeal con i seguenti dettagli:', squeal, intervalloInvio, numeroInvii);
+
+  // Calcola l'espressione cron in base all'intervalloInvio
+  //NB:CRON NON SUPPORTA VALORI DECIMALI, QUINDI INTERVALLOiNVIO DEVE ESSERE UN VALORE INTERO (SE METTO 0.5, MI METTE AUTOMATICAMENTE 1)-> GIUSTIFICAZIONE: NON è CONCESSO SPAMMARE MESSAGGI OGNI POCHI SECONDI 
+  // Ad esempio, per un invio ogni 2 minuti, l'espressione cron sarà "*/2 * * * *"
+  const cronExpression = `*/${intervalloInvio} * * * *`;
+
+  let inviiEffettuati = 0;
+  const task = cron.schedule(cronExpression, async () => {
+      if (inviiEffettuati < numeroInvii) {
+          // Qui dovresti inserire la logica per l'invio effettivo dello squeal.
+           // Logica per l'invio effettivo dello squeal
+           try {
+            // Crea un nuovo documento SquealModel usando i dati dello squeal
+            const newSqueal = new SquealModel({
+                ...squeal,
+                // Assicurati di aggiungere/aggiornare qualsiasi campo necessario qui
+                postedAt: new Date(), // Aggiunge la data corrente per ogni invio
+            });
+
+            // Salva lo squeal nel database
+            await newSqueal.save();
+
+          inviiEffettuati++;
+        } catch (error) {
+          console.error('Errore durante il salvataggio dello squeal:', error);
+          // Considera di fermare il task se l'invio fallisce ripetutamente
+      }
+      } else {
+          console.log('Tutti gli invii programmati sono stati completati.');
+          task.stop();
+      }
+  }, {
+      scheduled: true
+  });
+
+  res.json({ message: 'Squeal programmato con successo.' });
+});
+
+
 app.listen(3001, ()=>{
     console.log("Server is running")
 })

@@ -194,11 +194,11 @@ p {
 #input-temp {
   border: 1px solid #949797;
   border-radius: 9999px;
-  padding: 0.5rem 1.5rem;
+  padding: 0.3rem 1.0rem;
   font-size: 1rem;
   color: #333;
   outline: none;
-  width: 18%;
+  width: 15%;
   height: 10%;
 }
 
@@ -212,3 +212,4 @@ p {
 #repetition-parameters p{
   margin-top: 3%;
 }
+
