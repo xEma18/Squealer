@@ -444,9 +444,11 @@ app.post("/editEmoticonMD", async (req, res) => {
       }
       await squeal.save();
       // Invia una risposta di successo
-      res.status(200).json({
-        message: "Modifiche allo Squeal apportate con successo nel database",
-      });
+      res
+        .status(200)
+        .json({
+          message: "Modifiche allo Squeal apportate con successo nel database",
+        });
     } else {
       // Invia una risposta con errore se l'utente non è stato trovato
       res.status(404).json({ message: "Squeal non trovato nel database" });
@@ -866,6 +868,9 @@ app.post("/scheduleSqueal", (req, res) => {
           await newSqueal.save();
 
           inviiEffettuati++;
+          console.log(
+            `Squeal programmato inviato - Invio numero ${inviiEffettuati} di ${numeroInvii}`
+          );
         } catch (error) {
           console.error("Errore durante il salvataggio dello squeal:", error);
           // Considera di fermare il task se l'invio fallisce ripetutamente

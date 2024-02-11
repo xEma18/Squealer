@@ -29,7 +29,7 @@ const WriteSqueal = () => {
     const [noWeeklyCharsLeft, setNoWeeklyCharsLeft] = useState(false);
     const [noMonthlyCharsLeft, setNoMonthlyCharsLeft] = useState(false);
     const [intervalloInvio, setIntervalloInvio] = useState(0); // In minuti
-    const [numeroInvii, setNumeroInvii] = useState(0);
+    const [numeroInvii, setNumeroInvii] = useState(1);
     const [isTemporizzato, setIsTemporizzato] = useState(false); // Stato per il pulsante Temporizzato
 
 
@@ -50,12 +50,12 @@ const WriteSqueal = () => {
 
 
 const handleChangeText = (e) => {
-    if(e.target.value.length+userData.caratteriGiornalieriUsati > userData.caratteriGiornalieri) {
+    if((e.target.value.length*numeroInvii)+userData.caratteriGiornalieriUsati > userData.caratteriGiornalieri) {
         setNoDailyCharsLeft(true);
-        if(e.target.value.length+userData.caratteriSettimanaliUsati > userData.caratteriSettimanali) {
+        if((e.target.value.length*numeroInvii)+userData.caratteriSettimanaliUsati > userData.caratteriSettimanali) {
             setNoWeeklyCharsLeft(true);
         }
-        if(e.target.value.length+userData.caratteriMensiliUsati > userData.caratteriMensili) {
+        if((e.target.value.length*numeroInvii)+userData.caratteriMensiliUsati > userData.caratteriMensili) {
             setNoMonthlyCharsLeft(true);
         }
         return;
@@ -156,7 +156,7 @@ const handlePostSqueal = async () => {
         date: new Date(),
         profilePic: userData.image,
         mapLocation: showMap ? mapInfo : null,
-        category: publicMode ? "public" : "private",
+        category: publicMode ? "Public" : "Private",
 
     };
 
@@ -171,28 +171,33 @@ const handlePostSqueal = async () => {
         .catch(error => {
             console.error('Errore durante la programmazione dello squeal:', error);
         });
+        updateCharsLeft(numeroInvii);
     }
     else{
         try {
             const response = await axios.post(`http://localhost:3001/postSqueal`, newSqueal );
+            updateCharsLeft(1);
         } catch (error) {
             console.error('Errore durante il salvataggio del post:', error);
         }
     }
+        navigate('/Feed');
+    }
 
+    const updateCharsLeft=async (times) => {
         if(publicMode){
             let newDailyCharsUsed;
             let newWeeklyCharsUsed;
             let newMonthlyCharsUsed;
             if(image || showMap){
-                newDailyCharsUsed = userData.caratteriGiornalieriUsati + 125;
-                newWeeklyCharsUsed = userData.caratteriSettimanaliUsati + 125;
-                newMonthlyCharsUsed = userData.caratteriMensiliUsati + 125;
+                newDailyCharsUsed = userData.caratteriGiornalieriUsati + (times*125);
+                newWeeklyCharsUsed = userData.caratteriSettimanaliUsati + (times*125);
+                newMonthlyCharsUsed = userData.caratteriMensiliUsati + (times*125);
             }
             else{
-                newDailyCharsUsed = userData.caratteriGiornalieriUsati + text.length;
-                newWeeklyCharsUsed = userData.caratteriSettimanaliUsati + text.length;
-                newMonthlyCharsUsed = userData.caratteriMensiliUsati + text.length;
+                newDailyCharsUsed = userData.caratteriGiornalieriUsati + (times*text.length);
+                newWeeklyCharsUsed = userData.caratteriSettimanaliUsati + (times*text.length);
+                newMonthlyCharsUsed = userData.caratteriMensiliUsati + (times*text.length);
             }
             //api che aggiorna i caratteri rimanenti
             try {
@@ -205,7 +210,6 @@ const handlePostSqueal = async () => {
                 console.error('Errore durante l\'aggiornamento dei caratteri rimanenti:', error);
             }
         }
-        navigate('/Feed');
     }
 
 
@@ -289,7 +293,13 @@ const handlePostSqueal = async () => {
         }
     };
     
-
+    const handleNumeroInviiChange = (e) => {
+        if(text.length*parseInt(e.target.value)+userData.caratteriGiornalieriUsati > userData.caratteriGiornalieri) {
+            alert("Non hai abbastanza caratteri rimanenti per inviare il messaggio così tante volte");
+            return;
+        }
+        setNumeroInvii(e.target.value);
+    }
 
 
 
@@ -333,17 +343,17 @@ const handlePostSqueal = async () => {
                     
                     <div className="characterUsed">
                         <div>Daily characters used </div>
-                        <div className={noDailyCharsLeft? "word-counterRed":"word-counter"}>{text.length+userData.caratteriGiornalieriUsati}/{userData.caratteriGiornalieri}</div>
+                        <div className={noDailyCharsLeft? "word-counterRed":"word-counter"}>{(text.length*numeroInvii)+userData.caratteriGiornalieriUsati}/{userData.caratteriGiornalieri}</div>
                     </div>
 
                     <div className="characterUsed">
                         <div>Weekly characters used </div>
-                        <div className={noWeeklyCharsLeft? "word-counterRed":"word-counter"}>{text.length+userData.caratteriSettimanaliUsati}/{userData.caratteriSettimanali}</div>
+                        <div className={noWeeklyCharsLeft? "word-counterRed":"word-counter"}>{(text.length*numeroInvii)+userData.caratteriSettimanaliUsati}/{userData.caratteriSettimanali}</div>
                     </div>
 
                     <div className="characterUsed">
                         <div>Monthly characters used </div>
-                        <div className={noMonthlyCharsLeft? "word-counterRed":"word-counter"}>{text.length+userData.caratteriMensiliUsati}/{userData.caratteriMensili}</div>
+                        <div className={noMonthlyCharsLeft? "word-counterRed":"word-counter"}>{(text.length*numeroInvii)+userData.caratteriMensiliUsati}/{userData.caratteriMensili}</div>
                     </div>
                 </div>}
                 {publicMode &&<div id="buy-char" className="inactive">Not enough? Buy it!</div>}
@@ -357,7 +367,7 @@ const handlePostSqueal = async () => {
                     {isTemporizzato &&
                     <div id="repetition-parameters">
                         <p>Send </p>
-                        <input id="input-temp" type="number" value={numeroInvii} onChange={(e) => setNumeroInvii(e.target.value)} placeholder=""  />
+                        <input id="input-temp" type="number" value={numeroInvii} onChange={(e) => handleNumeroInviiChange(e)} placeholder=""  />
                         <p> times</p> <p> every </p>
                         
 
