@@ -163,7 +163,7 @@ app.post('/addEmoticonGood', async (req, res) => {
     squeal.emoticonNum.good += 1;
     squeal.emoticonGivenBy.good.push(req.body.username);
 
-    if (squeal.category !== 'private') {
+    if (squeal.category !== 'Private') {
       if (squeal.emoticonNum.good > 0.25 * squeal.impression && squeal.emoticonNum.bad > 0.25 * squeal.impression) {
         squeal.category = "Controversial"
       }
@@ -191,7 +191,7 @@ app.post('/removeEmoticonGood', async (req, res) => {
     squeal.emoticonNum.good -= 1;
     squeal.emoticonGivenBy.good.pop(req.body.username);
 
-    if (squeal.category !== 'private') {
+    if (squeal.category !== 'Private') {
       if (squeal.emoticonNum.good > 0.25 * squeal.impression && squeal.emoticonNum.bad > 0.25 * squeal.impression) {
         squeal.category = "Controversial"
       }
@@ -364,7 +364,7 @@ app.post('/addRecv', async (req, res) => {
       squeal.destinatari = squeal.destinatari.concat(req.body.destinatari);
       console.log("destinatari aggiornati: " + squeal.destinatari);
 
-      if (squeal.category !== 'private') {
+      if (squeal.category !== 'Private') {
         if (squeal.emoticonNum.good > 0.25 * squeal.impression && squeal.emoticonNum.bad > 0.25 * squeal.impression) {
           squeal.category = "Controversial"
         }
@@ -398,7 +398,7 @@ app.post('/editEmoticonMD', async (req, res) => {
       squeal.emoticonNum.good = req.body.emoticonNum[0];
       squeal.emoticonNum.bad = req.body.emoticonNum[1];
 
-      if (squeal.category !== 'private') {
+      if (squeal.category !== 'Private') {
         if (squeal.emoticonNum.good > 0.25 * squeal.impression && squeal.emoticonNum.bad > 0.25 * squeal.impression) {
           squeal.category = "Controversial"
         }
@@ -762,47 +762,61 @@ app.get('/getPublicSquealsByKeyword/:keyword', async (req, res) => {
 });
 
 
-app.post('/scheduleSqueal', (req, res) => {
+app.post('/scheduleSqueal', async (req, res) => {
   const { squeal, intervalloInvio, numeroInvii } = req.body;
-
   console.log('Scheduling squeal con i seguenti dettagli:', squeal, intervalloInvio, numeroInvii);
 
-  // Calcola l'espressione cron in base all'intervalloInvio
-  //NB:CRON NON SUPPORTA VALORI DECIMALI, QUINDI INTERVALLOiNVIO DEVE ESSERE UN VALORE INTERO (SE METTO 0.5, MI METTE AUTOMATICAMENTE 1)-> GIUSTIFICAZIONE: NON è CONCESSO SPAMMARE MESSAGGI OGNI POCHI SECONDI 
-  // Ad esempio, per un invio ogni 2 minuti, l'espressione cron sarà "*/2 * * * *"
-  const cronExpression = `*/${intervalloInvio} * * * *`;
+  // Invia il primo "squeal" immediatamente
+  if (numeroInvii >= 1) {
+    try {
+      const newSqueal = new SquealModel({
+        ...squeal,
+        postedAt: new Date(), // Imposta la data corrente per l'invio immediato
+      });
+      await newSqueal.save();
+      console.log(`Squeal immediato inviato - Invio numero 1 di ${numeroInvii}`);
+    } catch (error) {
+      console.error('Errore durante il salvataggio dello squeal immediato:', error);
+      return res.status(500).json({ message: 'Errore durante il salvataggio dello squeal immediato.' });
+    }
+  }
 
-  let inviiEffettuati = 0;
-  const task = cron.schedule(cronExpression, async () => {
+  // Verifica se è necessario programmare ulteriori invii
+  if (numeroInvii > 1) {
+    let inviiEffettuati = 1; // Inizia da 1 poiché il primo invio è già stato effettuato
+    const cronExpression = `*/${intervalloInvio} * * * *`;
+    let taskCompletata = false;
+
+    const task = cron.schedule(cronExpression, async () => {
       if (inviiEffettuati < numeroInvii) {
-          // Qui dovresti inserire la logica per l'invio effettivo dello squeal.
-           // Logica per l'invio effettivo dello squeal
-           try {
-            // Crea un nuovo documento SquealModel usando i dati dello squeal
-            const newSqueal = new SquealModel({
-                ...squeal,
-                // Assicurati di aggiungere/aggiornare qualsiasi campo necessario qui
-                postedAt: new Date(), // Aggiunge la data corrente per ogni invio
-            });
-
-            // Salva lo squeal nel database
-            await newSqueal.save();
-
+        try {
+          const newSqueal = new SquealModel({
+            ...squeal,
+            postedAt: new Date(), // Aggiunge la data corrente per ogni invio successivo
+          });
+          await newSqueal.save();
           inviiEffettuati++;
+          console.log(`Squeal programmato inviato - Invio numero ${inviiEffettuati} di ${numeroInvii}`);
         } catch (error) {
-          console.error('Errore durante il salvataggio dello squeal:', error);
-          // Considera di fermare il task se l'invio fallisce ripetutamente
-      }
+          console.error('Errore durante il salvataggio dello squeal programmato:', error);
+          task.stop(); // Considera di fermare il task se l'invio fallisce
+        }
       } else {
+        if (!taskCompletata) {
           console.log('Tutti gli invii programmati sono stati completati.');
           task.stop();
+          taskCompletata = true; // Imposta la task come completata
+        }
       }
-  }, {
+    }, {
       scheduled: true
-  });
+    });
+  }
 
-  res.json({ message: 'Squeal programmato con successo.' });
+  res.json({ message: 'Squeal programmato con successo, primo invio effettuato immediatamente.' });
 });
+
+
 
 
 app.listen(3001, ()=>{
