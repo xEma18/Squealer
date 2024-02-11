@@ -302,7 +302,20 @@ const handlePostSqueal = async () => {
     }
 
 
+        
 
+    const handleRandomImage = async () => {
+        try {
+          const response = await axios.get('http://localhost:3001/randomImage');
+          setImage(response.data.imageUrl);
+          setText(''); // Rimuove il testo se presente
+        } catch (error) {
+          console.error('Errore durante il recupero di un\'immagine casuale:', error);
+        }
+      };
+      
+        const handleRandomNews = async () => {
+        };
 
 
 
@@ -337,6 +350,8 @@ const handlePostSqueal = async () => {
             />
                     <i className="fa-solid fa-video"></i>
                     <i className="fa-solid fa-location-dot" onClick={handleLocationClick}></i>
+                    <div className="randomNewsAndImage" onClick={handleRandomNews}>Random News</div>
+                    <div className="randomNewsAndImage" onClick={handleRandomImage}>Random Image</div>
                 </div>
                 {/* Contiene il char counter e il tasto per comprare se si sfora */}
                 {publicMode && <div className="char-interface">
@@ -363,7 +378,7 @@ const handlePostSqueal = async () => {
                 <textarea id="recipients-list" placeholder="@foo §foo §BAR" onChange={(e)=>handleRecipientsChange(e)}></textarea>
 
                 <div className="automaticMessages">
-                    <div id="temporizzato" style={{color: isTemporizzato ? 'green' : 'red', border: `1px solid ${isTemporizzato ? 'green' : 'red'}`}}  onClick={toggleTemporizzato}>Send Timed Message</div>
+                    <div id="temporizzato" style={{color: isTemporizzato ? 'green' : 'red', border: `2px solid ${isTemporizzato ? 'green' : 'red'}`}}  onClick={toggleTemporizzato}>Send Timed Message</div>
                     {isTemporizzato &&
                     <div id="repetition-parameters">
                         <p>Send </p>

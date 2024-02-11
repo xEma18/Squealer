@@ -6,6 +6,7 @@ const UserModel = require('./models/Users');
 const SquealModel = require('./models/Squeals');
 const ChannelModel = require('./models/Channels');
 const CounterModel = require('./models/Counters');
+const fetch = require('node-fetch');
 
 const app = express()
 
@@ -829,6 +830,18 @@ app.post('/scheduleSqueal', async (req, res) => {
   }
 
   res.json({ message: 'Squeal programmato con successo, primo invio effettuato immediatamente.' });
+});
+
+app.get('/randomImage', async (req, res) => {
+  const accessKey = 'mwL0X9KXKbhFSNH60n-KvzoQY7PhTdXyfYmIXX8vbqc'; // Sostituisci con la tua API key
+  try {
+    const response = await fetch(`https://api.unsplash.com/photos/random?client_id=${accessKey}`);
+    const data = await response.json();
+    res.json({ imageUrl: data.urls.regular });
+  } catch (error) {
+    console.error('Errore durante il recupero di un\'immagine casuale:', error);
+    res.status(500).json({ error: 'Errore interno del server' });
+  }
 });
 
 

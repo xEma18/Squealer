@@ -213,3 +213,12 @@ p {
   margin-top: 3%;
 }
 
+.randomNewsAndImage{
+  color: #dbb77c;
+  font-weight: bold;
+  border: 2px solid #dbb77c;
+  border-radius: 9999px;
+  padding: 0.3rem 0.8rem;
+  margin-right: 0.01rem;
+}
+
