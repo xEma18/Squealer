@@ -44,6 +44,69 @@ cron.schedule("0 0 * * *", resetDailyCounters); // Esegue ogni giorno a mezzanot
 cron.schedule("0 0 * * 1", resetWeeklyCounters); // Esegue ogni lunedì a mezzanotte
 cron.schedule("0 0 1 * *", resetMonthlyCounters); // Esegue il primo giorno di ogni mese a mezzanotte
 
+//funzione per aggiornare popolarità utenti
+async function updatePopularity() {
+  try {
+      // Aggiorna la popolarità degli utenti
+      const users = await UserModel.find(); // Ottieni tutti gli utenti
+      for (const user of users) {
+          const squeals = await SquealModel.find({ mittente: user.username }); // Trova i post di ogni utente
+          let totalLikes = 0;
+          let totalImpressions = 0;
+          squeals.forEach(squeal => {
+              totalLikes += squeal.emoticonNum.good; // Assumo che "good" rappresenti i "likes"
+              totalImpressions += squeal.impression;
+          });
+          const popularity = totalLikes > 0.25 * totalImpressions ? "High" : "Low";
+          user.popolarita = popularity;
+          await user.save();
+      }
+      console.log("Popolarità degli utenti aggiornata.");
+  } catch (error) {
+      console.error("Errore durante l'aggiornamento della popolarità:", error);
+  }
+}
+
+// Pianificazione dell'aggiornamento della popolarità
+cron.schedule("0 0 * * *", async () => {
+  await updatePopularity();
+});
+
+async function updateCharacterQuotas() {
+  const users = await UserModel.find(); 
+  
+  for (let user of users) {
+      const squeals = await SquealModel.find({ mittente: user.username });
+      let popularCount = 0;
+      let unpopularCount = 0;
+
+      squeals.forEach(squeal => {
+          const isPopular = squeal.emoticonNum.good > squeal.impression * 0.25;
+          const isUnpopular = squeal.emoticonNum.bad > squeal.impression * 0.25;
+
+          if (isPopular && !isUnpopular) popularCount++;
+          else if (isUnpopular && !isPopular) unpopularCount++;
+      });
+
+      const initialDailyQuota = user.caratteriGiornalieri;
+      const initialWeeklyQuota = user.caratteriSettimanali;
+      const initialMonthlyQuota = user.caratteriMensili;
+      const increasePercent = Math.floor(popularCount / 10) * 0.01;
+      const decreasePercent = Math.floor(unpopularCount / 3) * 0.01;
+
+      user.caratteriGiornalieri = Math.round(Math.max(initialDailyQuota + initialDailyQuota * (increasePercent - decreasePercent), 0));
+      user.caratteriSettimanali = Math.round(Math.max(initialWeeklyQuota + initialDailyQuota * (increasePercent - decreasePercent), 0));
+      user.caratteriMensili = Math.round(Math.max(initialMonthlyQuota + initialDailyQuota * (increasePercent - decreasePercent), 0));
+
+      await user.save();
+  }
+}
+
+cron.schedule("0 0 * * *", async () => {
+  await updateCharacterQuotas();
+  console.log("Quote caratteri aggiornate per tutti gli utenti.");
+});
+
 //API per inviare al database i dati dell' utente in fase di registrazione
 app.post("/signup", async (req, res) => {
   try {
