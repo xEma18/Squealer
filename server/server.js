@@ -750,6 +750,17 @@ app.get('/getChannelByChannelName/:channelName', async (req, res) => {
   }
 });
 
+app.get('/getPublicSquealsByKeyword/:keyword', async (req, res) => {
+  try {
+    const keyword = req.params.keyword;
+    const squeals = await SquealModel.findPublicSquealsByKeyword(keyword);
+    res.status(200).json(squeals);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore interno del server' });
+  }
+});
+
 app.post('/scheduleSqueal', async (req, res) => {
   const { squeal, intervalloInvio, numeroInvii } = req.body;
   console.log('Scheduling squeal con i seguenti dettagli:', squeal, intervalloInvio, numeroInvii);
