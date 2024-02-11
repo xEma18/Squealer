@@ -156,7 +156,7 @@ const handlePostSqueal = async () => {
         date: new Date(),
         profilePic: userData.image,
         mapLocation: showMap ? mapInfo : null,
-        category: publicMode ? "public" : "private",
+        category: publicMode ? "Public" : "Private",
 
     };
 
