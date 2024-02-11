@@ -750,28 +750,29 @@ app.get('/getChannelByChannelName/:channelName', async (req, res) => {
   }
 });
 
-app.get('/getPublicSquealsByKeyword/:keyword', async (req, res) => {
-  try {
-    const keyword = req.params.keyword;
-    const squeals = await SquealModel.findPublicSquealsByKeyword(keyword);
-    res.status(200).json(squeals);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Errore interno del server' });
-  }
-});
-
-
 app.post('/scheduleSqueal', async (req, res) => {
   const { squeal, intervalloInvio, numeroInvii } = req.body;
   console.log('Scheduling squeal con i seguenti dettagli:', squeal, intervalloInvio, numeroInvii);
 
+  // Funzione per elaborare il testo dello squeal
+  function processSquealText(text, numeroInvio, dataInvio) {
+    const timeString = dataInvio.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+    const dateString = dataInvio.toLocaleDateString('it-IT');
+    return text.replace("{NUM}", numeroInvio)
+               .replace("{TIME}", timeString)
+               .replace("{DATE}", dateString);
+  }
+
   // Invia il primo "squeal" immediatamente
   if (numeroInvii >= 1) {
+    const dataInvio = new Date();
+    const textProcessed = processSquealText(squeal.text, 1, dataInvio); // Sostituzione per il primo invio
+
     try {
       const newSqueal = new SquealModel({
         ...squeal,
-        postedAt: new Date(), // Imposta la data corrente per l'invio immediato
+        text: textProcessed,
+        date: dataInvio, // Imposta la data corrente per l'invio immediato
       });
       await newSqueal.save();
       console.log(`Squeal immediato inviato - Invio numero 1 di ${numeroInvii}`);
@@ -790,9 +791,12 @@ app.post('/scheduleSqueal', async (req, res) => {
     const task = cron.schedule(cronExpression, async () => {
       if (inviiEffettuati < numeroInvii) {
         try {
+          const dataInvio = new Date();
+          const textProcessed = processSquealText(squeal.text, inviiEffettuati + 1, dataInvio);
           const newSqueal = new SquealModel({
             ...squeal,
-            postedAt: new Date(), // Aggiunge la data corrente per ogni invio successivo
+            text: textProcessed,
+            date: dataInvio, // Aggiunge la data corrente per ogni invio successivo
           });
           await newSqueal.save();
           inviiEffettuati++;
