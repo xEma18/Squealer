@@ -1,4 +1,4 @@
-/*Fetch dei canali*/ 
+/*Fetch dei canali*/
 let channel; //Array con i canali
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -30,7 +30,7 @@ function filterChannels(name, type) {
         const channelName = card.querySelector("#name").innerText;
         const channelType = card.getAttribute('data-type');
 
-        const nameMatch = name ===  "" || channelName.toLowerCase().includes(name.toLowerCase());
+        const nameMatch = name === "" || channelName.toLowerCase().includes(name.toLowerCase());
         const typeMatch = type === "Tutti" || channelType === type;
 
         if (nameMatch && typeMatch) {
@@ -42,14 +42,14 @@ function filterChannels(name, type) {
 }
 
 // Verifica se il canale è ufficiale
-function isOfficial(channel){
-    if(channel.type == "official"){
+function isOfficial(channel) {
+    if (channel.type == "official") {
         return true
     }
     else {
         return false
-        }
     }
+}
 
 // Funzione che mostra i canali a schermo
 function updateChannels(channel) {
@@ -58,7 +58,7 @@ function updateChannels(channel) {
     // Resetto il wrapper da eventuali card rimaste
     container.innerHTML = "";
 
-    for(let i=0; i < channel.length; i++){
+    for (let i = 0; i < channel.length; i++) {
         const channelType = isOfficial(channel[i]) ? 'official' : 'unofficial';
         container.innerHTML += `
             <div class="card ms-1" id="card-${i}" data-type="${channelType}">
@@ -88,8 +88,9 @@ function updateChannels(channel) {
 
 // Prendo il box che contiene i bottoni
 const parentElement = document.getElementById("BtnBox");
+let cardNumber;
 
-parentElement.addEventListener("click", function(event) {
+parentElement.addEventListener("click", function (event) {
     if (event.target.id == "modifyBtn") {
         // Verifica se l'elemento di destinazione del clic è un pulsante con l'id "modifyBtn"
         const card = event.target.closest(".card"); // Trova la card padre dell'elemento cliccato
@@ -100,7 +101,7 @@ parentElement.addEventListener("click", function(event) {
             const cardNumber = getCardNumber(cardId);
             // Chiama la funzione di modifica specifica per la card corrispondente
             console.log("numero card:" + cardNumber);
-            ModifyButton(cardId,cardNumber);
+            ModifyButton(cardId, cardNumber);
         }
     } else if (event.target.id == "viewBtn") {
         // Verifica se l'elemento di destinazione del clic è un pulsante con l'id "viewBtn"
@@ -109,11 +110,11 @@ parentElement.addEventListener("click", function(event) {
         if (card) {
             // Ottieni l'id univoco assegnato direttamente alla card
             const cardId = card.id;
-            const cardNumber = getCardNumber(cardId);
+            cardNumber = getCardNumber(cardId);
             // Chiama la funzione di modifica specifica per la card corrispondente
             console.log("numero card:" + cardNumber);
-            ViewButton(cardId,cardNumber);
-    }
+            ViewButton(cardId, cardNumber);
+        }
     }
 });
 
@@ -129,107 +130,112 @@ function updateSqueal(squeal) {
 
     // Resetto il wrapper da eventuali card rimaste
     container.innerHTML = "";
+
     // Itero sugli squeal creando una card per squeal
-    const dest = []; 
+    const dest = [];
     const aggiungiSpazio = () => {
-        for (let i = 0; i < squeal.length; i++) {
-            const squealCopy = { ...squeal[i] }; // Creo una copia dell'oggetto squeal[i]
-            squealCopy.destinatari = squealCopy.destinatari.map(dest => "&nbsp;" + dest );
-            dest.push(squealCopy);
-        }
-        return dest;
+        return squeal.map(squealItem => {
+            const destinatari = squealItem.destinatari.join(", "); // Unisco i destinatari con una virgola
+            const MAX_LENGTH = 30; // Numero massimo di caratteri
+            return squealItem;
+        });
     };
     const squealConSpazi = aggiungiSpazio();
 
-    for(let i=0; i<squeal.length; i++){
-            // Converti in stringa ISO la data dello squeal
-            const date = squeal[i].date
-            // Estrai solo la parte della data
-            const squealDate = date.split('T')[0];
-            
-            let textToShow = squeal[i].text;
-        
-            // Verifica se il testo supera i 330 caratteri e troncalo se necessario
-            if (textToShow.length > 330) {
-            textToShow = textToShow.substring(0, 330) + "..."; // Tronca il testo e aggiungi i tre puntini
-            }
+    for (let i = 0; i < squeal.length; i++) {
+        const squealDate = squeal[i].date.split('T')[0]; // Estrai solo la parte della data
 
-            container.innerHTML +=`
-            <div class="card ms-1" id="card-${squeal[i]._id}">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <h4 class="card-title fw-bold">${squeal[i].mittente}</h4>
-                    <span class="justify-content-end">${squealDate}</span>
-                </div>
-                <h6 class="fw-bold">Receivers:</h6>
-                <h6 class="card-subtitle mb-2" id="destinatari">${squealConSpazi[i].destinatari}</h6>
-                <p>${textToShow}</p>
-                <div class="container-fluid">
-                    <div class="row-6">
-                        <div class="col-12 d-flex justify-content-start" id="emoticons">
-                            <div class="text-center">
-                                <span class="material-symbols-outlined">thumb_up</span>
-                                <span class="ms-2 material-symbols-outlined">thumb_down</span>
-                                <span class="ms-3">Impression: ${squeal[i].impression}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row-6">
-                        <div class="col-12 d-flex justify-content-center" id="modifyBtnFather">
-                        <button type="button" class="btn btn-danger" id="removeSquealBtn-${i}">Remove Squeal</button>
-                        </div>
-                    </div>
-                </div>
-            </div>                          
-            </div>`
-            // Dopo aver aggiunto tutte le card, impostiamo gli event listener sui pulsanti
-            let buttonSelected = document.querySelector(`#removeSquealBtn-${i}`);
-                buttonSelected.addEventListener('click', function() {
-                    const squealId = squeal[i]._id;
-                    console.log(squealId);
-                    removeSqueal(squealId,channel[i].name);
-                });
-            
+        let textToShow = squeal[i].text;
+
+        // Verifica se il testo supera i 330 caratteri e troncalo se necessario
+        if (textToShow.length > 200) {
+            textToShow = textToShow.substring(0, 200) + "..."; // Tronca il testo e aggiungi i tre puntini
+        }
+
+        container.innerHTML += `
+        <div class="card ms-1" id="card-${squeal[i]._id}"> <!-- Assumi una altezza fissa per la card -->
+         <div class="card-body d-flex flex-column">
+           <div class="mb-auto"> <!-- Contenuto della card spinge i bottoni verso il basso -->
+             <div class="d-flex justify-content-between">
+               <h4 class="card-title fw-bold">${squeal[i].mittente}</h4>
+               <span class="justify-content-end">${squealDate}</span>
+             </div>
+             <h6 class="fw-bold">Receivers:</h6>
+             <div class="d-flex align-items-center mb-3">
+               <h6 class="card-subtitle" id="destinatari">${squealConSpazi[i].destinatari}</h6>
+             </div>
+             <p id="squealText-${i}">${textToShow}</p>
+           </div>
+           <!-- I bottoni sono posizionati qui, mantenendo la loro posizione fissa dal basso -->
+           <div>
+             <div class="d-flex justify-content-between" id="emoticons">
+               <div class="d-flex">
+                 <span class="material-symbols-outlined" >thumb_up</span> <span id="likeSpan-${i}">${squeal[i].emoticonNum.good}</span>
+                 <span class="ms-2 material-symbols-outlined" >thumb_down</span> <span id="dislikeSpan-${i}">${squeal[i].emoticonNum.bad}</span>
+                 <span id="impressionSpan" class="ms-3">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                         <path
+                         d="M15 12c0 1.657-1.343 3-3 3s-3-1.343-3-3c0-.199.02-.393.057-.581 1.474.541 2.927-.882 2.405-2.371.174-.03.354-.048.538-.048 1.657 0 3 1.344 3 3zm-2.985-7c-7.569 0-12.015 6.551-12.015 6.551s4.835 7.449 12.015 7.449c7.733 0 11.985-7.449 11.985-7.449s-4.291-6.551-11.985-6.551zm-.015 12c-2.761 0-5-2.238-5-5 0-2.761 2.239-5 5-5 2.762 0 5 2.239 5 5 0 2.762-2.238 5-5 5z">
+                         </path>
+                     </svg> ${squeal[i].impression}
+                 </span>
+               </div>
+               <div class="d-flex justify-content-between" id="removeSquealBtn-${i}">
+                 <button type="button" class="btn btn-danger" id="modificaBtn">Remove Squeal</button>
+               </div>
+             </div>
+           </div>
+         </div>
+       </div>
+         `
+        // Dopo aver aggiunto tutte le card, impostiamo gli event listener sui pulsanti
+        let buttonSelected = document.querySelector(`#removeSquealBtn-${i}`);
+        buttonSelected.addEventListener('click', function () {
+            const squealId = squeal[i]._id;
+            console.log("i",i,"squealId",squealId,"channel name",channel[cardNumber].name);
+            removeSqueal(squealId, channel[cardNumber].name);
+        });
+
     }
-    
+
 }
 
 // Rimozione squeal dal canale (tasto remove squeal)
-async function removeSqueal(squealId,channelName) {
-        console.log("Sto per eliminare lo squeal:",squealId)
-        try {
-            const response = await fetch('http://localhost:3001/removeSqueal', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ _id: squealId }),
-            });
+async function removeSqueal(squealId, channelName) {
+    console.log("Sto per eliminare lo squeal:", squealId)
+    try {
+        const response = await fetch('http://localhost:3001/removeSqueal', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ _id: squealId }),
+        });
 
-            if (response.ok) {
-                document.getElementById(`card-${squealId}`).remove();
-            } else {
-                console.error('Errore durante la rimozione dello squeal');
-            }
-        } catch (error) {
-            console.error('Errore:', error);
+        if (response.ok) {
+            document.getElementById(`card-${squealId}`).remove();
+        } else {
+            console.error('Errore durante la rimozione dello squeal');
         }
-   
-            try{
-              const responseChannel = await fetch('http://localhost:3001/removeSquealFromChannel', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ channelName, squealId }),
-              });
-          
-              if (!responseChannel.ok) {
-                throw new Error('Errore durante la rimozione dello squeal dal canale');
-              }
-            } catch (error) {
-              console.error('Errore:', error);
-            }
+    } catch (error) {
+        console.error('Errore:', error);
+    }
+
+    try {
+        const responseChannel = await fetch('http://localhost:3001/removeSquealFromChannel', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ channelName, squealId }),
+        });
+
+        if (!responseChannel.ok) {
+            throw new Error('Errore durante la rimozione dello squeal dal canale');
+        }
+    } catch (error) {
+        console.error('Errore:', error);
+    }
 }
 
 async function addSquealToChannel(squealId, channelName) {
@@ -252,11 +258,11 @@ async function addSquealToChannel(squealId, channelName) {
 }
 
 // Creazione nuovo squeal per il canale
-async function handlePostClick(overlay,cardNumber,channelId) {
+async function handlePostClick(overlay, cardNumber, channelId) {
     // Prendo i campi che mi servono per il nuovo squeal f
     let postText = overlay.querySelector("#postText").value;
     let actualDate = new Date();
-    
+
     const squealData = {
         mittente: "fvMod",
         destinatari: [`${channel[cardNumber].name}`],
@@ -264,9 +270,31 @@ async function handlePostClick(overlay,cardNumber,channelId) {
         date: actualDate,
         impression: 0,
         profilePic: "",
-        bodyImage: "", 
+        bodyImage: "",
+        commentsNum: 0,
+        comments: [{
+            mittente: "",
+            text: "",
+            date: "",
+            profilePic: "",
+        }],
+        emoticonNum: {
+            good: 0,
+            bad: 0,
+        },
+        emoticonGivenBy: {
+            good: [""],
+            bad: [""],
+        },
+        impressionGivenBy: [""],
+        mapLocation: {
+            lat: "",
+            lng: "",
+            zoom: "",
+        },
+        category: "Public"
     };
-    
+
     //Aggiunta nuovo squeal al database
     try {
         console.log("Aggiungo nuovo squeal")
@@ -282,17 +310,17 @@ async function handlePostClick(overlay,cardNumber,channelId) {
             console.error('Risposta non valida dal server:', response.status);
             throw new Error('Risposta non valida dal server');
         }
-        console.log("stato",response.status)
+        console.log("stato", response.status)
         const newSqueal = await response.json();
-        console.log("squeal aggiunto",newSqueal);
+        console.log("squeal aggiunto", newSqueal);
 
         // Azzero la textarea
         overlay.querySelector("#postText").value = "";
 
         console.log("Cambio l'id nel canale")
         // Aggiungi il nuovo ID dello squeal all'elenco degli squeal del canale
-        await addSquealToChannel(newSqueal._id,channel[cardNumber].name);
-        console.log("Canale aggiornato",channel[cardNumber].name)
+        await addSquealToChannel(newSqueal._id, channel[cardNumber].name);
+        console.log("Canale aggiornato", channel[cardNumber].name)
 
         // Creazione del toast
         const toastHtml = `
@@ -340,18 +368,18 @@ async function handlePostClick(overlay,cardNumber,channelId) {
 let currentPostHandler; // Variabile globale per tenere traccia del gestore attuale
 
 // Mostrare gli squeal del canale
-async function ViewButton(cardId,cardNumber) {
+async function ViewButton(cardId, cardNumber) {
     console.log("ViewButton")
     // Capisco che card è stata selezioinata 
     const card = document.getElementById(cardId);
-    
+
     // Capisco che canale ho selezionato
     const selectedChannel = channel[cardNumber];
-    console.log("canale selezionato: ",selectedChannel)
+    console.log("canale selezionato: ", selectedChannel)
 
     // Prendo l'id del canale
     const channelId = selectedChannel._id;
-    console.log("id canale: ",channel[cardNumber].name)
+    console.log("id canale: ", channel[cardNumber]._id)
 
     // Mostra l'overlay
     const overlay = document.getElementById('squealOverlay');
@@ -361,7 +389,7 @@ async function ViewButton(cardId,cardNumber) {
     console.log(postNewSqueal)
 
     // Aggiungi il gestore dell'evento per chiudere l'overlay
-    document.getElementById('closeOverlay').addEventListener('click', function() {
+    document.getElementById('closeOverlay').addEventListener('click', function () {
         overlay.style.display = 'none';
 
         if (currentPostHandler) {
@@ -379,24 +407,24 @@ async function ViewButton(cardId,cardNumber) {
     } catch (error) {
         console.error('Errore durante il recupero degli squeal del canale:', error);
     }
-    
-     // Assicurati che non ci siano listener precedenti attivi
+
+    // Assicurati che non ci siano listener precedenti attivi
     if (currentPostHandler) {
         postNewSqueal.removeEventListener('click', currentPostHandler);
     }
 
     // Crea un nuovo listener e tieni traccia di esso
-    currentPostHandler = () => handlePostClick(overlay, cardNumber,channelId);
+    currentPostHandler = () => handlePostClick(overlay, cardNumber, channelId);
     postNewSqueal.addEventListener('click', currentPostHandler);
 }
 
 // Mostro l'overlay del nuovo canale
-document.getElementById("addChannelButton").addEventListener("click", function() {
+document.getElementById("addChannelButton").addEventListener("click", function () {
     document.getElementById("newChannelOverlay").style.display = "block";
 });
 
 // Gestore di eventi del pulsante "Modifica"
-async function ModifyButton(cardId,cardNumber) {
+async function ModifyButton(cardId, cardNumber) {
     try {
         const response = await fetch('http://localhost:3001/channels');
         if (!response.ok) {
@@ -411,120 +439,120 @@ async function ModifyButton(cardId,cardNumber) {
         console.error('Errore durante il recupero dei canali:', error);
     }
 
-// Capisco che card è stata selezionata
-const card = document.getElementById(cardId);
+    // Capisco che card è stata selezionata
+    const card = document.getElementById(cardId);
 
-// Prendo tutti i campi della card
-const modifyBtn = card.querySelector("#modifyBtn");
-const viewBtn = card.querySelector("#viewBtn");
-const description = card.querySelector("#description");
+    // Prendo tutti i campi della card
+    const modifyBtn = card.querySelector("#modifyBtn");
+    const viewBtn = card.querySelector("#viewBtn");
+    const description = card.querySelector("#description");
 
-// Rendi invisibile il pulsante modifica
-modifyBtn.style.display = "none";
-viewBtn.style.display = "none";
+    // Rendi invisibile il pulsante modifica
+    modifyBtn.style.display = "none";
+    viewBtn.style.display = "none";
 
-// Mostra il pulsante "salva modifiche"
-const cardBody = card.querySelector(".card-body");
-const saveChangesBtn = document.createElement("button");
-saveChangesBtn.classList.add("btn");
-saveChangesBtn.classList.add("btn-success");
-saveChangesBtn.innerText = "Save changes";
-cardBody.appendChild(saveChangesBtn);
+    // Mostra il pulsante "salva modifiche"
+    const cardBody = card.querySelector(".card-body");
+    const saveChangesBtn = document.createElement("button");
+    saveChangesBtn.classList.add("btn");
+    saveChangesBtn.classList.add("btn-success");
+    saveChangesBtn.innerText = "Save changes";
+    cardBody.appendChild(saveChangesBtn);
 
-/*Abilita la modifica dei campi*/
-description.innerHTML = `<div class="row d-flex mt-4 post-area">
+    /*Abilita la modifica dei campi*/
+    description.innerHTML = `<div class="row d-flex mt-4 post-area">
                             <div class="col d-flex justify-content-center">
                                 <textarea id="textarea">${channel[cardNumber].description}</textarea>
                             </div>
                         </div>`
 
-// Mostra il pulsante "Rimuovi Canale"
-const removeChannelBtn = document.createElement("button");
-removeChannelBtn.classList.add("btn");
-removeChannelBtn.classList.add("btn-danger");
-removeChannelBtn.classList.add("mx-3");
-removeChannelBtn.innerText = "Remove Channel";
-removeChannelBtn.id = "removeBtn";
-cardBody.appendChild(removeChannelBtn);
+    // Mostra il pulsante "Rimuovi Canale"
+    const removeChannelBtn = document.createElement("button");
+    removeChannelBtn.classList.add("btn");
+    removeChannelBtn.classList.add("btn-danger");
+    removeChannelBtn.classList.add("mx-3");
+    removeChannelBtn.innerText = "Remove Channel";
+    removeChannelBtn.id = "removeBtn";
+    cardBody.appendChild(removeChannelBtn);
 
-// Aggiungi l'ascoltatore di eventi per la rimozione del canale
-removeChannelBtn.addEventListener('click', () => {
-    RemoveChannel(cardId, cardNumber);
-});
+    // Aggiungi l'ascoltatore di eventi per la rimozione del canale
+    removeChannelBtn.addEventListener('click', () => {
+        RemoveChannel(cardId, cardNumber);
+    });
 
-saveChangesBtn.addEventListener('click',async () =>{
-    // Gestione pulsanti
-    cardBody.removeChild(saveChangesBtn);
-    cardBody.removeChild(removeChannelBtn);
-    modifyBtn.style.display = 'inline-block';
-    viewBtn.style.display = 'inline-block';
+    saveChangesBtn.addEventListener('click', async () => {
+        // Gestione pulsanti
+        cardBody.removeChild(saveChangesBtn);
+        cardBody.removeChild(removeChannelBtn);
+        modifyBtn.style.display = 'inline-block';
+        viewBtn.style.display = 'inline-block';
 
-    //Prendo la descrizione nuova
-    const newDesc = textarea.value;
-   
-    // Elimino la textarea
-    description.innerHTML =  `<p id="description">${newDesc}</p>`
+        //Prendo la descrizione nuova
+        const newDesc = textarea.value;
 
-    // Chiamata POST all'API per aggiornare i valori nel database
+        // Elimino la textarea
+        description.innerHTML = `<p id="description">${newDesc}</p>`
 
-    try {
-        const response = await fetch('http://localhost:3001/editChannelDescription', { 
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ 
-                name: channel[cardNumber].name,
-                description: newDesc,
-            }),
-        });
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error(`Errore durante la chiamata POST all'API: ${errorData.message}`);
+        // Chiamata POST all'API per aggiornare i valori nel database
+
+        try {
+            const response = await fetch('http://localhost:3001/editChannelDescription', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: channel[cardNumber].name,
+                    description: newDesc,
+                }),
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error(`Errore durante la chiamata POST all'API: ${errorData.message}`);
+            }
+            else {
+                const responseData = await response.json();
+                console.log(responseData.message);
+            }
         }
-        else {
-            const responseData = await response.json();
-            console.log(responseData.message);
-        } 
-    }
-    catch (error) {
-        console.error('Errore durante la chiamata POST all\'API:', error);
-    }
-   
-})
+        catch (error) {
+            console.error('Errore durante la chiamata POST all\'API:', error);
+        }
+
+    })
 
 }
-  
+
 // Creazione nuovo canale
-document.getElementById("newChannelForm").addEventListener("submit", async function(e) {
+document.getElementById("newChannelForm").addEventListener("submit", async function (e) {
     e.preventDefault();
     const name = document.getElementById("newChannelName").value;
     const type = document.getElementById("newChannelType").value;
     const description = document.getElementById("newChannelDescription").value;
-    const creators = ["fvMod"]; 
+    const creators = ["fvMod"];
     const listofSqueals = [];
     const postNum = 0;
-    const profilePic = ""; 
+    const profilePic = "";
 
 
     // Chiamata API per salvare il nuovo canale
     try {
-      const response = await fetch('http://localhost:3001/addChannel', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, type, description, creators, listofSqueals, postNum, profilePic}),
-      });
-  
-      if (response.ok) {
-        // Aggiungi il nuovo canale all'interfaccia utente...
-        document.getElementById("newChannelOverlay").style.display = "none";
-      } else {
-        throw new Error('Errore nella creazione del canale');
-      }
+        const response = await fetch('http://localhost:3001/addChannel', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name, type, description, creators, listofSqueals, postNum, profilePic }),
+        });
+
+        if (response.ok) {
+            // Aggiungi il nuovo canale all'interfaccia utente...
+            document.getElementById("newChannelOverlay").style.display = "none";
+        } else {
+            throw new Error('Errore nella creazione del canale');
+        }
     } catch (error) {
-      console.error('Errore:', error);
+        console.error('Errore:', error);
     }
 
     // Refresha i canali
@@ -536,17 +564,17 @@ document.getElementById("newChannelForm").addEventListener("submit", async funct
     } catch (error) {
         console.error('Errore durante il recupero dei canali:', error);
     }
-  });
-  
+});
+
 // Funzione di chiusura overlay nuovo canale  
-document.getElementById("closeNewChannelOverlay").addEventListener("click", function() {
+document.getElementById("closeNewChannelOverlay").addEventListener("click", function () {
     document.getElementById("newChannelOverlay").style.display = "none";
 });
 
 // Funzione per rimuovere i canali
 async function RemoveChannel(cardId, cardNumber) {
     try {
-        const response = await fetch('http://localhost:3001/removeChannel', { 
+        const response = await fetch('http://localhost:3001/removeChannel', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -65,19 +65,6 @@ function updateSqueal(squeal) {
         return squeal.map(squealItem => {
             const destinatari = squealItem.destinatari.join(", "); // Unisco i destinatari con una virgola
             const MAX_LENGTH = 30; // Numero massimo di caratteri
-            // Se la lunghezza dei destinatari supera il massimo consentito, tronca e aggiungi ellissi
-            /*
-            if (destinatari.length > MAX_LENGTH) {
-                let shortened = destinatari.substring(0, MAX_LENGTH - 3); // Tronca la stringa per fare spazio ai puntini
-                const lastComma = shortened.lastIndexOf(","); // Trova l'ultima virgola per evitare di tagliare a metà un nome
-                if (lastComma > 0) {
-                    shortened = shortened.substring(0, lastComma);
-                }
-                squealItem.destinatariTruncated = shortened + "..."; // Aggiunge i puntini
-            } else {
-                squealItem.destinatariTruncated = destinatari; // Usa la stringa completa se non supera il limite
-            }
-            */
             return squealItem;
         });
     };
@@ -113,7 +100,7 @@ function updateSqueal(squeal) {
               <div class="d-flex">
                 <span class="material-symbols-outlined" >thumb_up</span> <span id="likeSpan-${i}">${squeal[i].emoticonNum.good}</span>
                 <span class="ms-2 material-symbols-outlined" >thumb_down</span> <span id="dislikeSpan-${i}">${squeal[i].emoticonNum.bad}</span>
-                <span id="impressionSpan" class="ms-3">
+                <span id="impressionSpan-${i}" class="ms-3">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                         <path
                         d="M15 12c0 1.657-1.343 3-3 3s-3-1.343-3-3c0-.199.02-.393.057-.581 1.474.541 2.927-.882 2.405-2.371.174-.03.354-.048.538-.048 1.657 0 3 1.344 3 3zm-2.985-7c-7.569 0-12.015 6.551-12.015 6.551s4.835 7.449 12.015 7.449c7.733 0 11.985-7.449 11.985-7.449s-4.291-6.551-11.985-6.551zm-.015 12c-2.761 0-5-2.238-5-5 0-2.761 2.239-5 5-5 2.762 0 5 2.239 5 5 0 2.762-2.238 5-5 5z">
@@ -189,7 +176,7 @@ async function ModifyButton(cardId, cardNumber) {
 
     // Prendo tutti i campi della card
     const modificaBtn = card.querySelector("#modificaBtn");
-    const destinatari = card.querySelector("#destinatari");
+    let destinatari = card.querySelector("#destinatari");
     const modifyBtnFather = card.querySelector("#modifyBtnFather")
     const mittente = squeal[cardNumber].mittente;
 
@@ -213,7 +200,7 @@ async function ModifyButton(cardId, cardNumber) {
     modifyBtnFather.appendChild(annullaBtn);
 
     // Disabilita impression per fare spazio (tanto non è modificabile)
-    impressionSpan = document.getElementById('impressionSpan');
+    impressionSpan = document.getElementById(`impressionSpan-${cardNumber}`);
     impressionSpan.innerHTML = "";
     /*Abilita la modifica dei campi*/
 
@@ -259,6 +246,9 @@ async function ModifyButton(cardId, cardNumber) {
     destinatari.parentElement.appendChild(addButton);
     destinatari.parentElement.appendChild(remButton);
 
+    let destinatariAll = squeal[cardNumber].destinatari;
+    let modifyR = false;
+
     // Aggiungi un gestore di eventi al pulsante -
     remButton.addEventListener('click', () => {
         //Rimuovo i bottoni - e + dal div destinatari
@@ -281,7 +271,7 @@ async function ModifyButton(cardId, cardNumber) {
             <span id="closeNewChannelOverlay" class="close">&times;</span>
             <div class="row-3">
                 <div class="fw-bold">Receivers already in:</div>
-                <span>${squeal[cardNumber].destinatari}</span>
+                <span class="text-break">${destinatariAll}</span>
             </div>
             <div class="row mb-4">
                 <div class="mt-2 fw-bold">Receivers you want remove:</div>
@@ -299,7 +289,6 @@ async function ModifyButton(cardId, cardNumber) {
 
         // Aggiungo la finestra di sovraimpressione al body
         document.body.appendChild(overlay);
-
 
         const rimuoviDestinatarioButton = overlay.querySelector("#rimuoviDestinatario");
         const chiudiFinestraButton = overlay.querySelector("#closeNewChannelOverlay");
@@ -331,6 +320,11 @@ async function ModifyButton(cardId, cardNumber) {
                 }
             } catch (error) {
                 console.error('Errore durante il recupero degli utenti:', error);
+            }
+
+            if (modifyR) {
+                let toRemove = nuovoDestinatario;
+                destinatariAll = destinatariAll.filter(destinatario => destinatario !== toRemove);
             }
            
         });
@@ -370,7 +364,7 @@ async function ModifyButton(cardId, cardNumber) {
             }
             // Aggiorno il contenuto del div 'destinatari'
             destinatari.textContent = nomi.join(', ');
-            console.log(readytoRemove);
+            console.log("readytoremve",readytoRemove);
             // Azzera arrayNuoviUtenti per ulteriori modifiche
             arrayUsersToRemove.length = 0;
             destinatari.parentElement.appendChild(remButton);
@@ -380,7 +374,6 @@ async function ModifyButton(cardId, cardNumber) {
         });
     });
 
-    console.log(squeal[cardNumber].destinatari);
     let destinatariAdd = squeal[cardNumber].destinatari;
     let modifyA = false;
  
@@ -502,7 +495,7 @@ async function ModifyButton(cardId, cardNumber) {
         //Chiudi la scheda con il pulsante chiudi
         chiudiFinestraButton.addEventListener('click', () => {
             for (let i = 0; i < arrayNuoviUtenti.length; i++) {
-                //destinatari.textContent += `, ${arrayNuoviUtenti[i]},`
+                destinatari.textContent += `, ${arrayNuoviUtenti[i]},`
                 readytoAdd[i] = arrayNuoviUtenti[i];
             }
             // Azzera arrayNuoviUtenti per ulteriori modifiche
@@ -516,7 +509,7 @@ async function ModifyButton(cardId, cardNumber) {
 
     // Funzione quando clicco il tasto salva modifiche
     saveChangesBtn.addEventListener('click', async () => {
-
+        console.log("readytoremve",readytoRemove);
         // Rimuovo i pulsanti 
         modifyBtnFather.removeChild(saveChangesBtn);
         modifyBtnFather.removeChild(annullaBtn);
@@ -525,30 +518,60 @@ async function ModifyButton(cardId, cardNumber) {
 
         good = document.getElementById('likeInput').value;
         bad = document.getElementById('dislikeInput').value;
-        console.log(good)
 
         likeSpan.outerHTML = `<span id="likeSpan-${cardNumber}">${good}</span> `
         dislikeSpan.innerHTML =`<span id="dislikeSpan-${cardNumber}">${bad}</span>`
         // Aggiungo il pulsante modifica
         modifyBtnFather.appendChild(modificaBtn);
+        
+        // Controllo se ho modificato le emoticon
+        if (emoticonFlag) {
+            // Chiamata POST all'API per aggiornare i valori nel database
+            const   data = {
+                    mittente: mittente,
+                    idSqueal: squeal[cardNumber]._id,
+                    emoticonNum: [good,bad],
+            }
+            try {
+                const response = await fetch('http://localhost:3001/editEmoticonMD', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error(`Errore durante la chiamata POST all'API: ${errorData.message}`);
+                }
+                else {
+                    const responseData = await response.json();
+                    console.log(responseData.message);
+                }
+            }
+            catch (error) {
+                console.error('Errore durante la chiamata POST all\'API:', error);
+            }
+        }
 
-        // Controllo il flag per capire che API chiamare 
-        if (addFlag || emoticonFlag) {
+        // Verifico il flag per vedere se ho aggiunto oppure rimosso destinatari    
+        if (addFlag) {
             console.log(readytoAdd);
             addFlag = false;
             // Chiamata POST all'API per aggiornare i valori nel database
+            const   data = {
+                    mittente: mittente,
+                    destinatari: readytoAdd,
+                    idSqueal: squeal[cardNumber]._id,
+            }
+
             try {
                 const response = await fetch('http://localhost:3001/addRecv', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        mittente: mittente,
-                        destinatari: readytoAdd,
-                        idSqueal: squeal[cardNumber]._id,
-                        emoticonNum: [good,bad] //TODO serve una funzione checkpopularity in modo che aggiornando le reazioni si aggiorni anche la popolarità dello squeal 
-                    }),
+                    body: JSON.stringify(data),
                 });
                 if (!response.ok) {
                     const errorData = await response.json();
@@ -564,18 +587,20 @@ async function ModifyButton(cardId, cardNumber) {
             }
         } else if (remFlag) {
             remFlag = false;
+            console.log("removing receiver",readytoRemove)
+                const  data = {
+                    mittente: mittente,
+                    destinatari: readytoRemove,
+                    idSqueal: squeal[cardNumber]._id,
+                }
+
             try {
                 const response = await fetch('http://localhost:3001/remRecv', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        mittente: mittente,
-                        destinatari: readytoRemove,
-                        idSqueal: squeal[cardNumber]._id,
-                        emoticon: [good,bad]
-                    }),
+                    body: JSON.stringify(data),
                 });
                 if (!response.ok) {
                     const errorData = await response.json();

@@ -29,7 +29,7 @@ const SquealSchema = new mongoose.Schema({
         lng: Number, // Longitudine 
         zoom: Number // Livello di Zoom
     },
-    category: String, // Popular, Controversial, Impopular, Private, Public (se non ha reazioni e non è pubblico)
+    category: String, // Popular, Controversial, Impopular, Private, Public (se non ha reazioni e non è privato)
 });
 
 
