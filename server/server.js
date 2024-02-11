@@ -1,78 +1,85 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const cron = require('node-cron');
-const UserModel = require('./models/Users');
-const SquealModel = require('./models/Squeals');
-const ChannelModel = require('./models/Channels');
-const CounterModel = require('./models/Counters');
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const cron = require("node-cron");
+const UserModel = require("./models/Users");
+const SquealModel = require("./models/Squeals");
+const ChannelModel = require("./models/Channels");
+const CounterModel = require("./models/Counters");
 
-const app = express()
+const app = express();
 
-app.use(cors()) //enable to use cors
+const uri =
+  "mongodb+srv://emanuele:emanuele@cluster0.dbp6yx6.mongodb.net/?retryWrites=true&w=majority";
+
+app.use(cors()); //enable to use cors
 //allows to convert in json format files I transfer from frontend to server
-app.use(express.json({ limit: '20mb' })); // Imposta il limite a 10 MB
-app.use(express.urlencoded({ extended: true, limit: '20mb' })); // Imposta il limite a 10 MB
+app.use(express.json({ limit: "20mb" })); // Imposta il limite a 10 MB
+app.use(express.urlencoded({ extended: true, limit: "20mb" })); // Imposta il limite a 10 MB
 
-
-
-mongoose.connect("mongodb://127.0.0.1:27017/Squealer", { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect("mongodb://127.0.0.1:27017/Squealer", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 // Funzioni di azzeramento
 async function resetDailyCounters() {
   await UserModel.updateMany({}, { caratteriGiornalieriUsati: 0 });
-  console.log('Caratteri giornalieri azzerati per tutti gli utenti.');
+  console.log("Caratteri giornalieri azzerati per tutti gli utenti.");
 }
 
 async function resetWeeklyCounters() {
   await UserModel.updateMany({}, { caratteriSettimanaliUsati: 0 });
-  console.log('Caratteri settimanali azzerati per tutti gli utenti.');
+  console.log("Caratteri settimanali azzerati per tutti gli utenti.");
 }
 
 async function resetMonthlyCounters() {
   await UserModel.updateMany({}, { caratteriMensiliUsati: 0 });
-  console.log('Caratteri mensili azzerati per tutti gli utenti.');
+  console.log("Caratteri mensili azzerati per tutti gli utenti.");
 }
 
 // Pianificazione dell'azzeramento
-cron.schedule('0 0 * * *', resetDailyCounters); // Esegue ogni giorno a mezzanotte
-cron.schedule('0 0 * * 1', resetWeeklyCounters); // Esegue ogni lunedì a mezzanotte
-cron.schedule('0 0 1 * *', resetMonthlyCounters); // Esegue il primo giorno di ogni mese a mezzanotte
+cron.schedule("0 0 * * *", resetDailyCounters); // Esegue ogni giorno a mezzanotte
+cron.schedule("0 0 * * 1", resetWeeklyCounters); // Esegue ogni lunedì a mezzanotte
+cron.schedule("0 0 1 * *", resetMonthlyCounters); // Esegue il primo giorno di ogni mese a mezzanotte
 
-//API per inviare al database i dati dell' utente in fase di registrazione 
-app.post('/signup', async (req, res) => {
+//API per inviare al database i dati dell' utente in fase di registrazione
+app.post("/signup", async (req, res) => {
   try {
     const newUser = new UserModel(req.body);
     await newUser.save();
     res.status(201).json(newUser);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore durante la registrazione' });
+    res.status(500).json({ error: "Errore durante la registrazione" });
   }
 });
 
 //API per verificare ch ele credenziali inserite siano corrette in fase di login
-app.post('/login', async (req, res) => {
+app.post("/login", async (req, res) => {
   try {
-    const user = await UserModel.findByCredentials(req.body.username, req.body.password);
+    const user = await UserModel.findByCredentials(
+      req.body.username,
+      req.body.password
+    );
     if (user !== null) {
       res.status(200).json(user);
     } else {
-      res.status(401).json({ error: 'Credenziali non valide' }); // Cambiato lo status a 401 per indicare un errore di autenticazione
+      res.status(401).json({ error: "Credenziali non valide" }); // Cambiato lo status a 401 per indicare un errore di autenticazione
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore durante il login' });
-
-
+    res.status(500).json({ error: "Errore durante il login" });
   }
 });
 
 //API per controllare che non ci si registri con username o email già presenti nel database
-app.post('/checkIfUserAndEmailAlreadyRegistered', async (req, res) => {
+app.post("/checkIfUserAndEmailAlreadyRegistered", async (req, res) => {
   const { email, username } = req.body;
 
-  const userExists = await UserModel.findOne({ $or: [{ email }, { username }] });
+  const userExists = await UserModel.findOne({
+    $or: [{ email }, { username }],
+  });
 
   if (userExists) {
     return res.status(200).json({ exists: true });
@@ -82,19 +89,19 @@ app.post('/checkIfUserAndEmailAlreadyRegistered', async (req, res) => {
 });
 
 // API per ottenere la lista degli utenti
-app.get('/users', async (req, res) => {
+app.get("/users", async (req, res) => {
   try {
     const users = await UserModel.find();
     res.status(200).json(users);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore durante il recupero degli utenti' });
+    res.status(500).json({ error: "Errore durante il recupero degli utenti" });
   }
 });
 
-app.get('/generateGuestNumber', async (req, res) => {
+app.get("/generateGuestNumber", async (req, res) => {
   try {
-    const counterName = 'guestCounter';
+    const counterName = "guestCounter";
     const counter = await CounterModel.findOne({ name: counterName });
 
     if (counter) {
@@ -105,98 +112,101 @@ app.get('/generateGuestNumber', async (req, res) => {
       res.status(200).json({ guestNumber: currentValue });
     } else {
       // Il contatore esiste per forza, ma per sicurezza gestisco anche il caso in cui non esista
-      res.status(404).json({ error: 'Contatore non trovato' });
+      res.status(404).json({ error: "Contatore non trovato" });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore interno del server' });
+    res.status(500).json({ error: "Errore interno del server" });
   }
 });
 
-
 // API per ottenere la lista degli squeal
-app.get('/squeals', async (req, res) => {
+app.get("/squeals", async (req, res) => {
   try {
     const squeals = await SquealModel.find();
     res.status(200).json(squeals);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore durante il recupero degli squeal' });
+    res.status(500).json({ error: "Errore durante il recupero degli squeal" });
   }
 });
 
 //API per ottenere gli Squeals che hanno come destinatario un utente specifico + tutti gli squeal "pubblici" (@everyone) se username !="guest"
-app.post('/squealsToUser', async (req, res) => {
+app.post("/squealsToUser", async (req, res) => {
   try {
     const squeals = await SquealModel.findSquealsToUser(req.body.username);
     res.status(200).json(squeals);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore durante il recupero degli squeals all\'utente' });
+    res
+      .status(500)
+      .json({ error: "Errore durante il recupero degli squeals all'utente" });
   }
 });
 
-app.post('/getUserImageAndCharLeft', async (req, res) => {
+app.post("/getUserImageAndCharLeft", async (req, res) => {
   try {
     const username = req.body.username;
-    const user = await UserModel.findOne({ username: username }).select('image caratteriGiornalieri caratteriSettimanali caratteriMensili caratteriGiornalieriUsati caratteriMensiliUsati caratteriSettimanaliUsati');
-
+    const user = await UserModel.findOne({ username: username }).select(
+      "image caratteriGiornalieri caratteriSettimanali caratteriMensili caratteriGiornalieriUsati caratteriMensiliUsati caratteriSettimanaliUsati"
+    );
 
     if (user) {
       res.status(200).json(user);
     } else {
-      res.status(404).json({ message: 'Utente non trovato' });
+      res.status(404).json({ message: "Utente non trovato" });
     }
   } catch (error) {
-    console.error('Errore durante la ricerca dell utente:', error);
-    res.status(500).json({ message: 'Errore interno del server' });
+    console.error("Errore durante la ricerca dell utente:", error);
+    res.status(500).json({ message: "Errore interno del server" });
   }
 });
 
-
-app.post('/addEmoticonGood', async (req, res) => {
+app.post("/addEmoticonGood", async (req, res) => {
   try {
     const squeal = await SquealModel.findById(req.body._id);
     if (!squeal) {
-      return res.status(404).json({ error: 'Squeal non trovato' });
+      return res.status(404).json({ error: "Squeal non trovato" });
     }
     squeal.emoticonNum.good += 1;
     squeal.emoticonGivenBy.good.push(req.body.username);
 
-    if (squeal.category !== 'private') {
-      if (squeal.emoticonNum.good > 0.25 * squeal.impression && squeal.emoticonNum.bad > 0.25 * squeal.impression) {
-        squeal.category = "Controversial"
-      }
-      else if (squeal.emoticonNum.good > 0.25 * squeal.impression) {
-        squeal.category = "Popular"
+    if (squeal.category !== "private") {
+      if (
+        squeal.emoticonNum.good > 0.25 * squeal.impression &&
+        squeal.emoticonNum.bad > 0.25 * squeal.impression
+      ) {
+        squeal.category = "Controversial";
+      } else if (squeal.emoticonNum.good > 0.25 * squeal.impression) {
+        squeal.category = "Popular";
       }
     }
-
 
     await squeal.save();
     res.status(200).json(squeal);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore interno del server' });
+    res.status(500).json({ error: "Errore interno del server" });
   }
 });
 
-
-app.post('/removeEmoticonGood', async (req, res) => {
+app.post("/removeEmoticonGood", async (req, res) => {
   try {
     const squeal = await SquealModel.findById(req.body._id);
     if (!squeal) {
-      return res.status(404).json({ error: 'Squeal non trovato' });
+      return res.status(404).json({ error: "Squeal non trovato" });
     }
     squeal.emoticonNum.good -= 1;
     squeal.emoticonGivenBy.good.pop(req.body.username);
 
-    if (squeal.category !== 'private') {
-      if (squeal.emoticonNum.good > 0.25 * squeal.impression && squeal.emoticonNum.bad > 0.25 * squeal.impression) {
-        squeal.category = "Controversial"
-      }
-      else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
-        squeal.category = "Unpopular"
+    if (squeal.category !== "private") {
+      if (
+        squeal.emoticonNum.good > 0.25 * squeal.impression &&
+        squeal.emoticonNum.bad > 0.25 * squeal.impression
+      ) {
+        squeal.category = "Controversial";
+      } else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
+        squeal.category = "Unpopular";
       }
     }
 
@@ -204,15 +214,15 @@ app.post('/removeEmoticonGood', async (req, res) => {
     res.status(200).json(squeal);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore interno del server' });
+    res.status(500).json({ error: "Errore interno del server" });
   }
-})
+});
 
-app.post('/addEmoticonBad', async (req, res) => {
+app.post("/addEmoticonBad", async (req, res) => {
   try {
     const squeal = await SquealModel.findById(req.body._id);
     if (!squeal) {
-      return res.status(404).json({ error: 'Squeal non trovato' });
+      return res.status(404).json({ error: "Squeal non trovato" });
     }
     squeal.emoticonNum.bad += 1;
     squeal.emoticonGivenBy.bad.push(req.body.username);
@@ -220,15 +230,15 @@ app.post('/addEmoticonBad', async (req, res) => {
     res.status(200).json(squeal);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore interno del server' });
+    res.status(500).json({ error: "Errore interno del server" });
   }
-})
+});
 
-app.post('/removeEmoticonBad', async (req, res) => {
+app.post("/removeEmoticonBad", async (req, res) => {
   try {
     const squeal = await SquealModel.findById(req.body._id);
     if (!squeal) {
-      return res.status(404).json({ error: 'Squeal non trovato' });
+      return res.status(404).json({ error: "Squeal non trovato" });
     }
     squeal.emoticonNum.bad -= 1;
     squeal.emoticonGivenBy.bad.pop(req.body.username);
@@ -236,41 +246,41 @@ app.post('/removeEmoticonBad', async (req, res) => {
     res.status(200).json(squeal);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore interno del server' });
+    res.status(500).json({ error: "Errore interno del server" });
   }
 });
 
-app.post('/addImpression', async (req, res) => {
+app.post("/addImpression", async (req, res) => {
   try {
     const { _id, username } = req.body;
     const squeal = await SquealModel.findById(_id);
     if (!squeal) {
-      return res.status(404).json({ error: 'Squeal non trovato' });
+      return res.status(404).json({ error: "Squeal non trovato" });
     }
     if (!squeal.impressionGivenBy.includes(username)) {
-      squeal.impressionGivenBy.push(username)
+      squeal.impressionGivenBy.push(username);
       squeal.impression += 1;
       await squeal.save();
     }
     res.status(200).json(squeal);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore interno del server' });
+    res.status(500).json({ error: "Errore interno del server" });
   }
 });
 
-app.post('/postSqueal', async (req, res) => {
+app.post("/postSqueal", async (req, res) => {
   try {
     const newSqueal = new SquealModel(req.body);
     await newSqueal.save();
     res.status(201).json(newSqueal);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore durante l\'invio dello squeal' });
+    res.status(500).json({ error: "Errore durante l'invio dello squeal" });
   }
 });
 
-app.post('/updateCharsLeft', async (req, res) => {
+app.post("/updateCharsLeft", async (req, res) => {
   try {
     //find by username
     const user = await UserModel.findByUsername(req.body.username);
@@ -279,82 +289,93 @@ app.post('/updateCharsLeft', async (req, res) => {
       user.caratteriSettimanaliUsati = req.body.caratteriSettimanaliUsati;
       user.caratteriMensiliUsati = req.body.caratteriMensiliUsati;
       await user.save();
-      res.status(200).json({ message: 'Dati utente aggiornati con successo nel database' });
+      res
+        .status(200)
+        .json({ message: "Dati utente aggiornati con successo nel database" });
     }
-  }
-  catch (error) {
+  } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore nell\'aggiornamento dei caratteri rimanenti' });
+    res
+      .status(500)
+      .json({ error: "Errore nell'aggiornamento dei caratteri rimanenti" });
   }
 });
 
-
 //API per modificare i campi (tipo account, popolarità, caratteri...) di uno specifico utente (di cui ho nome e cognome)
-app.post('/editUser', async (req, res) => {
+app.post("/editUser", async (req, res) => {
   try {
-    const user = await UserModel.findByNameAndLastname(req.body.nome, req.body.cognome);
+    const user = await UserModel.findByNameAndLastname(
+      req.body.nome,
+      req.body.cognome
+    );
     if (user !== null) {
       // Aggiorna i campi dell'utente con i nuovi valori
       user.tipoUtente = req.body.tipoUtente;
       user.popolarita = req.body.popolarita;
-      user.caratteriGiornalieriUsati = req.body.caratteriGiornalieriUsati
+      user.caratteriGiornalieriUsati = req.body.caratteriGiornalieriUsati;
       user.caratteriSettimanaliUsati = req.body.caratteriSettimanali;
       user.caratteriMensiliUsati = req.body.caratteriMensili;
       user.status = req.body.status;
       // Salva le modifiche nel database
       await user.save();
       // Invia una risposta di successo
-      res.status(200).json({ message: 'Dati utente aggiornati con successo nel database' });
+      res
+        .status(200)
+        .json({ message: "Dati utente aggiornati con successo nel database" });
     } else {
       // Invia una risposta con errore se l'utente non è stato trovato
-      res.status(404).json({ message: 'Utente non trovato nel database' });
+      res.status(404).json({ message: "Utente non trovato nel database" });
     }
   } catch (error) {
-    console.error('Errore durante l\'aggiornamento dell\'utente nel database:', error);
+    console.error(
+      "Errore durante l'aggiornamento dell'utente nel database:",
+      error
+    );
     // Invia una risposta con errore generico
-    res.status(500).json({ message: 'Errore durante l\'aggiornamento dell\'utente nel database' });
+    res.status(500).json({
+      message: "Errore durante l'aggiornamento dell'utente nel database",
+    });
   }
 });
 
 // API per aggiungere un nuovo squeal
-app.post('/newSqueal', async (req, res) => {
+app.post("/newSqueal", async (req, res) => {
   try {
     const newSqueal = new SquealModel(req.body);
-    console.log("Squeal da aggiungere:")
-    console.log(newSqueal)
+    console.log("Squeal da aggiungere:");
+    console.log(newSqueal);
     await newSqueal.save();
     res.status(201).json(newSqueal);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore durante l\'aggiunta dello squeal' });
+    res.status(500).json({ error: "Errore durante l'aggiunta dello squeal" });
   }
 });
 
 // Api per rimuovere uno specifico squeal
-app.post('/removeSqueal', async (req, res) => {
-  console.log("removeSqueal")
+app.post("/removeSqueal", async (req, res) => {
+  console.log("removeSqueal");
   try {
-    console.log("entrato nel try")
+    console.log("entrato nel try");
     const squealId = req.body._id;
-    console.log(req.body)
-    console.log("id dello squeal da eliminare", squealId)
+    console.log(req.body);
+    console.log("id dello squeal da eliminare", squealId);
     const deletedSqueal = await SquealModel.findByIdAndDelete(squealId);
-    console.log("squeal eliminato", squealId)
+    console.log("squeal eliminato", squealId);
 
     if (deletedSqueal) {
-      res.status(200).json({ message: 'Squeal rimosso con successo' });
+      res.status(200).json({ message: "Squeal rimosso con successo" });
     } else {
-      res.status(404).json({ error: 'Squeal non trovato' });
+      res.status(404).json({ error: "Squeal non trovato" });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore durante la rimozione dello squeal' });
+    res.status(500).json({ error: "Errore durante la rimozione dello squeal" });
   }
 });
 
-
 //API per aggiungere i destinatari e le reazioni di uno specifico squeal (di cui ho username del mittente)
-app.post('/addRecv', async (req, res) => {
+app.post("/addRecv", async (req, res) => {
   console.log("body: " + req.body.idSqueal);
   try {
     //Cerco lo squeal da modificare
@@ -364,12 +385,14 @@ app.post('/addRecv', async (req, res) => {
       squeal.destinatari = squeal.destinatari.concat(req.body.destinatari);
       console.log("destinatari aggiornati: " + squeal.destinatari);
 
-      if (squeal.category !== 'private') {
-        if (squeal.emoticonNum.good > 0.25 * squeal.impression && squeal.emoticonNum.bad > 0.25 * squeal.impression) {
-          squeal.category = "Controversial"
-        }
-        else if (squeal.emoticonNum.good > 0.25 * squeal.impression) {
-          squeal.category = "Popular"
+      if (squeal.category !== "private") {
+        if (
+          squeal.emoticonNum.good > 0.25 * squeal.impression &&
+          squeal.emoticonNum.bad > 0.25 * squeal.impression
+        ) {
+          squeal.category = "Controversial";
+        } else if (squeal.emoticonNum.good > 0.25 * squeal.impression) {
+          squeal.category = "Popular";
         }
       }
 
@@ -377,53 +400,72 @@ app.post('/addRecv', async (req, res) => {
       await squeal.save();
 
       // Invia una risposta di successo
-      res.status(200).json({ message: 'Modifiche allo Squeal apportate con successo nel database' });
+      res.status(200).json({
+        message: "Modifiche allo Squeal apportate con successo nel database",
+      });
     } else {
       // Invia una risposta con errore se l'utente non è stato trovato
-      res.status(404).json({ message: 'Squeal non trovato nel database' });
+      res.status(404).json({ message: "Squeal non trovato nel database" });
     }
   } catch (error) {
-    console.error('Errore durante l\'aggiornamento dello squeal nel database:', error);
+    console.error(
+      "Errore durante l'aggiornamento dello squeal nel database:",
+      error
+    );
     // Invia una risposta con errore generico
-    res.status(500).json({ message: 'Errore durante l\'aggiornamento dello squeal nel database' });
+    res.status(500).json({
+      message: "Errore durante l'aggiornamento dello squeal nel database",
+    });
   }
 });
 
-app.post('/editEmoticonMD', async (req, res) => {
+app.post("/editEmoticonMD", async (req, res) => {
   try {
     //Cerco lo squeal da modificare
     const squeal = await SquealModel.findSquealById(req.body.idSqueal);
-    console.log("sono nella modifica emoticons",req.body.emoticonNum[0],req.body.emoticonNum[1])
+    console.log(
+      "sono nella modifica emoticons",
+      req.body.emoticonNum[0],
+      req.body.emoticonNum[1]
+    );
     if (squeal !== null) {
       squeal.emoticonNum.good = req.body.emoticonNum[0];
       squeal.emoticonNum.bad = req.body.emoticonNum[1];
 
-      if (squeal.category !== 'private') {
-        if (squeal.emoticonNum.good > 0.25 * squeal.impression && squeal.emoticonNum.bad > 0.25 * squeal.impression) {
-          squeal.category = "Controversial"
-        }
-        else if (squeal.emoticonNum.good > 0.25 * squeal.impression) {
-          squeal.category = "Popular"
+      if (squeal.category !== "private") {
+        if (
+          squeal.emoticonNum.good > 0.25 * squeal.impression &&
+          squeal.emoticonNum.bad > 0.25 * squeal.impression
+        ) {
+          squeal.category = "Controversial";
+        } else if (squeal.emoticonNum.good > 0.25 * squeal.impression) {
+          squeal.category = "Popular";
         }
       }
       await squeal.save();
       // Invia una risposta di successo
-      res.status(200).json({ message: 'Modifiche allo Squeal apportate con successo nel database' });
+      res.status(200).json({
+        message: "Modifiche allo Squeal apportate con successo nel database",
+      });
     } else {
       // Invia una risposta con errore se l'utente non è stato trovato
-      res.status(404).json({ message: 'Squeal non trovato nel database' });
+      res.status(404).json({ message: "Squeal non trovato nel database" });
     }
-  }
-  catch (error) {
-    console.error('Errore durante l\'aggiornamento dello squeal nel database:', error);
+  } catch (error) {
+    console.error(
+      "Errore durante l'aggiornamento dello squeal nel database:",
+      error
+    );
     // Invia una risposta con errore generico
-    res.status(500).json({ message: 'Errore durante l\'aggiornamento dello squeal nel database' });
+    res.status(500).json({
+      message: "Errore durante l'aggiornamento dello squeal nel database",
+    });
   }
-})
+});
 
 //API per rimuovere i destinatari di uno specifico squeal (di cui ho username del mittente)
-app.post('/remRecv', async (req, res) => {
-  console.log("remRecv")
+app.post("/remRecv", async (req, res) => {
+  console.log("remRecv");
   console.log("body", req.body);
   try {
     //Cerco lo squeal da modificare
@@ -431,37 +473,45 @@ app.post('/remRecv', async (req, res) => {
     if (squeal !== null) {
       console.log("pre modifica", squeal.destinatari);
       // Aggiorna il campo destinatari con i nuovi utenti aggiunti
-      squeal.destinatari = squeal.destinatari.map(nome => nome.trim()).filter(nome => !req.body.destinatari.includes(nome));
+      squeal.destinatari = squeal.destinatari
+        .map((nome) => nome.trim())
+        .filter((nome) => !req.body.destinatari.includes(nome));
       console.log("destinatari aggiornati: " + squeal.destinatari);
       // Salva le modifiche nel database
       await squeal.save();
       // Invia una risposta di successo
-      res.status(200).json({ message: 'Modifiche allo Squeal apportate con successo nel database' });
+      res.status(200).json({
+        message: "Modifiche allo Squeal apportate con successo nel database",
+      });
     } else {
       // Invia una risposta con errore se l'utente non è stato trovato
-      res.status(404).json({ message: 'Squeal non trovato nel database' });
+      res.status(404).json({ message: "Squeal non trovato nel database" });
     }
   } catch (error) {
-    console.error('Errore durante l\'aggiornamento dello squeal nel database:', error);
+    console.error(
+      "Errore durante l'aggiornamento dello squeal nel database:",
+      error
+    );
     // Invia una risposta con errore generico
-    res.status(500).json({ message: 'Errore durante l\'aggiornamento dello squeal nel database' });
+    res.status(500).json({
+      message: "Errore durante l'aggiornamento dello squeal nel database",
+    });
   }
 });
 
 // API per ottenere la lista di tutti i canali
-app.get('/channels', async (req, res) => {
+app.get("/channels", async (req, res) => {
   try {
     const channels = await ChannelModel.find();
     res.status(200).json(channels);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore durante il recupero dei canali' });
+    res.status(500).json({ error: "Errore durante il recupero dei canali" });
   }
 });
 
-
 // API per modificare la descrizione di un canale
-app.post('/editChannelDescription', async (req, res) => {
+app.post("/editChannelDescription", async (req, res) => {
   try {
     const channel = await ChannelModel.findChannelByName(req.body.name);
     if (channel !== null) {
@@ -470,22 +520,29 @@ app.post('/editChannelDescription', async (req, res) => {
       // Salva le modifiche nel database
       await channel.save();
       // Invia una risposta di successo
-      res.status(200).json({ message: 'Dati utente aggiornati con successo nel database' });
+      res
+        .status(200)
+        .json({ message: "Dati utente aggiornati con successo nel database" });
     } else {
       // Invia una risposta con errore se l'utente non è stato trovato
-      res.status(404).json({ message: 'Canale non trovato nel database' });
+      res.status(404).json({ message: "Canale non trovato nel database" });
     }
   } catch (error) {
-    console.error('Errore durante l\'aggiornamento del canale nel database:', error);
+    console.error(
+      "Errore durante l'aggiornamento del canale nel database:",
+      error
+    );
     // Invia una risposta con errore generico
-    res.status(500).json({ message: 'Errore durante l\'aggiornamento del canale nel database' });
+    res.status(500).json({
+      message: "Errore durante l'aggiornamento del canale nel database",
+    });
   }
 });
 
 // API per aggiungere uno squeal nella lista squeal canale (Manuel)
-app.post('/editChannelSqueal', async (req, res) => {
+app.post("/editChannelSqueal", async (req, res) => {
   try {
-    console.log("editChannelSqueal")
+    console.log("editChannelSqueal");
     console.log("Entro nella modifica numero squeal del canale");
     const channel = await ChannelModel.findChannelByName(req.body.name);
     if (channel !== null) {
@@ -496,18 +553,25 @@ app.post('/editChannelSqueal', async (req, res) => {
         channel.listofSqueals.push(req.body.newSquealId);
       }
       await channel.save();
-      res.status(200).json({ message: 'Canale aggiornato con successo nel database' });
+      res
+        .status(200)
+        .json({ message: "Canale aggiornato con successo nel database" });
     } else {
-      res.status(404).json({ message: 'Canale non trovato nel database' });
+      res.status(404).json({ message: "Canale non trovato nel database" });
     }
   } catch (error) {
-    console.error('Errore durante aggiornamento del canale nel database:', error);
-    res.status(500).json({ message: 'Errore durante aggiornamento del canale nel database' });
+    console.error(
+      "Errore durante aggiornamento del canale nel database:",
+      error
+    );
+    res.status(500).json({
+      message: "Errore durante aggiornamento del canale nel database",
+    });
   }
 });
 
 // API per rimuovere uno squeal dalla lista squeal canale
-app.post('/removeSquealFromChannel', async (req, res) => {
+app.post("/removeSquealFromChannel", async (req, res) => {
   try {
     console.log("removeSquealFromChannel");
     const { channelName, squealId } = req.body;
@@ -516,118 +580,125 @@ app.post('/removeSquealFromChannel', async (req, res) => {
     const channel = await ChannelModel.findOne({ name: channelName });
 
     if (!channel) {
-      return res.status(404).json({ message: 'Canale non trovato' });
+      return res.status(404).json({ message: "Canale non trovato" });
     }
-    console.log("Elenco" + channel, squealId)
+    console.log("Elenco" + channel, squealId);
     // Rimuovi l'ID dello squeal dalla lista di squeal del canale
-    channel.listofSqueals = channel.listofSqueals.filter(id => id.toString() !== squealId);
-    console.log("listofSqueals" + channel.listofSqueals)
+    channel.listofSqueals = channel.listofSqueals.filter(
+      (id) => id.toString() !== squealId
+    );
+    console.log("listofSqueals" + channel.listofSqueals);
 
     await channel.save();
 
-    res.status(200).json({ message: 'Squeal rimosso dal canale con successo' });
+    res.status(200).json({ message: "Squeal rimosso dal canale con successo" });
   } catch (error) {
-    console.error('Errore durante la rimozione dello squeal dal canale:', error);
-    res.status(500).json({ message: 'Errore interno del server' });
+    console.error(
+      "Errore durante la rimozione dello squeal dal canale:",
+      error
+    );
+    res.status(500).json({ message: "Errore interno del server" });
   }
 });
 
 // Api per ritornare gli squeal di uno specifico canale
-app.get('/squealsByChannel', async (req, res) => {
+app.get("/squealsByChannel", async (req, res) => {
   try {
-    console.log("squealsByChannel")
-    console.log(req.query)
+    console.log("squealsByChannel");
+    console.log(req.query);
     const channelId = req.query.channelId;
     console.log(channelId);
     const channel = await ChannelModel.findById(channelId);
     console.log(channel);
     if (!channel) {
-      return res.status(404).send('Canale non trovato');
+      return res.status(404).send("Canale non trovato");
     }
-    const squeals = await SquealModel.find({ '_id': { $in: channel.listofSqueals } });
+    const squeals = await SquealModel.find({
+      _id: { $in: channel.listofSqueals },
+    });
     console.log(squeals);
     res.json(squeals);
   } catch (error) {
-    res.status(500).send('Errore interno del server');
+    res.status(500).send("Errore interno del server");
   }
 });
 
 // Api per aggiungere un canale
-app.post('/addChannel', async (req, res) => {
+app.post("/addChannel", async (req, res) => {
   try {
     const newChannel = new ChannelModel({
       name: req.body.name,
       type: req.body.type,
       description: req.body.description,
-
     });
     await newChannel.save();
     res.status(201).json(newChannel);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore durante la creazione del canale' });
+    res.status(500).json({ error: "Errore durante la creazione del canale" });
   }
 });
 
 //Api per rimuovere un canale
-app.post('/removeChannel', async (req, res) => {
+app.post("/removeChannel", async (req, res) => {
   try {
     const channelName = req.body.name;
     // Utilizza il modello di Mongoose per trovare e rimuovere il canale per nome
-    const deletedChannel = await ChannelModel.findOneAndDelete({ name: channelName });
+    const deletedChannel = await ChannelModel.findOneAndDelete({
+      name: channelName,
+    });
 
     if (deletedChannel) {
-      res.status(200).json({ message: 'Canale rimosso con successo' });
+      res.status(200).json({ message: "Canale rimosso con successo" });
     } else {
-      res.status(404).json({ error: 'Canale non trovato' });
+      res.status(404).json({ error: "Canale non trovato" });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore durante la rimozione del canale' });
+    res.status(500).json({ error: "Errore durante la rimozione del canale" });
   }
 });
 
-
 //APi che dà profile pic from username
-app.post('/profilePicByUsername', async (req, res) => {
+app.post("/profilePicByUsername", async (req, res) => {
   try {
     const user = await UserModel.findByUsername(req.body.username);
     if (!user) {
-      return res.status(404).json({ error: 'Utente non trovato' });
+      return res.status(404).json({ error: "Utente non trovato" });
     }
     res.status(200).json({ image: user.image });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore interno del server' });
+    res.status(500).json({ error: "Errore interno del server" });
   }
 });
 
-
-app.post('/search', async (req, res) => {
+app.post("/search", async (req, res) => {
   try {
     const searchTerm = req.body.searchTerm;
-    let users = [], channels = [], keywordCounts = {};
+    let users = [],
+      channels = [],
+      keywordCounts = {};
     const loggedUser = req.body.username;
 
-    if (searchTerm.startsWith('@')) {
+    if (searchTerm.startsWith("@")) {
       // Ricerca per utenti
-      users = await UserModel.find({ username: new RegExp(searchTerm, 'i') }); // i = case insensitive (maiuscole/minuscole non fanno differenza)
-
-    } else if (searchTerm.startsWith('§')) {
+      users = await UserModel.find({ username: new RegExp(searchTerm, "i") }); // i = case insensitive (maiuscole/minuscole non fanno differenza)
+    } else if (searchTerm.startsWith("§")) {
       // Ricerca per canali
-      channels = await ChannelModel.find({ name: new RegExp(searchTerm, 'i') });
-
-    } else if (searchTerm.startsWith('#')) {
-      const regex = new RegExp(searchTerm.slice(1), 'i'); // Rimuove '#' e prepara la regex
+      channels = await ChannelModel.find({ name: new RegExp(searchTerm, "i") });
+    } else if (searchTerm.startsWith("#")) {
+      const regex = new RegExp(searchTerm.slice(1), "i"); // Rimuove '#' e prepara la regex
       const squeals = await SquealModel.find({
         text: regex,
-        $or: [{ destinatari: loggedUser }, { destinatari: '@everyone' }]
+        $or: [{ destinatari: loggedUser }, { destinatari: "@everyone" }],
       });
-      squeals.forEach(squeal => {
+      squeals.forEach((squeal) => {
         const words = squeal.text.match(/#\w+/g); // Trova tutte le parole che iniziano con '#'
         if (words) {
-          words.forEach(word => {
-            if (regex.test(word)) { // Aggiungi solo se corrisponde al termine di ricerca specifico
+          words.forEach((word) => {
+            if (regex.test(word)) {
+              // Aggiungi solo se corrisponde al termine di ricerca specifico
               keywordCounts[word] = (keywordCounts[word] || 0) + 1;
             }
           });
@@ -636,66 +707,66 @@ app.post('/search', async (req, res) => {
     }
 
     // Converti l'oggetto keywordCounts in un array di oggetti (per poterlo scorrere nel frontend)
-    let keywordsArray = Object.keys(keywordCounts).map(key => {
+    let keywordsArray = Object.keys(keywordCounts).map((key) => {
       return { keyword: key, count: keywordCounts[key] };
     });
 
     res.json({ users, channels, keywords: keywordsArray });
   } catch (error) {
-    console.error('Errore durante la ricerca:', error);
-    res.status(500).send('Si è verificato un errore durante la ricerca');
+    console.error("Errore durante la ricerca:", error);
+    res.status(500).send("Si è verificato un errore durante la ricerca");
   }
 });
 
 //Api per ottenere, dato username, tutti i dati dell'utente (username è come query) const response = await axios.get(`http://localhost:3001/getUserByUsername/${username}`);
-app.get('/getUserByUsername/:username', async (req, res) => {
+app.get("/getUserByUsername/:username", async (req, res) => {
   try {
     const username = req.params.username;
-    console.log('parametro username:', username)
+    console.log("parametro username:", username);
     const user = await UserModel.findByUsername(username);
 
     if (!user) {
-      return res.status(404).json({ error: 'Utente non trovato' });
+      return res.status(404).json({ error: "Utente non trovato" });
     }
     res.status(200).json(user);
     console.log(user);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore interno del server' });
+    res.status(500).json({ error: "Errore interno del server" });
   }
 });
 
 //Api per ottenere squeal con mittente uno username dato come query
-app.get('/getPublicSquealsBySender/:username', async (req, res) => {
+app.get("/getPublicSquealsBySender/:username", async (req, res) => {
   try {
     const username = req.params.username;
     const squeals = await SquealModel.findPublicSquealsBySender(username);
     res.status(200).json(squeals);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore interno del server' });
+    res.status(500).json({ error: "Errore interno del server" });
   }
 });
 
 //api per ottenere numero di squeal pubblicati da un utente, somma totale numero di likes e dislikes dei suoi post
-app.get('/getUserActivity/:username', async (req, res) => {
+app.get("/getUserActivity/:username", async (req, res) => {
   try {
     const username = req.params.username;
     const squeals = await SquealModel.findSquealsByUsername(username);
     let likes = 0;
     let dislikes = 0;
-    squeals.forEach(squeal => {
+    squeals.forEach((squeal) => {
       likes += squeal.emoticonNum.good;
       dislikes += squeal.emoticonNum.bad;
     });
     res.status(200).json({ squeals: squeals.length, likes, dislikes });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore interno del server' });
+    res.status(500).json({ error: "Errore interno del server" });
   }
 });
 
-app.post('/deleteAccount', async (req, res) => {
+app.post("/deleteAccount", async (req, res) => {
   try {
     const username = req.body.username;
 
@@ -707,13 +778,16 @@ app.post('/deleteAccount', async (req, res) => {
     // 2. Eliminare i commenti e le reazioni dell'utente dagli squeal di altri utenti
     const allSqueals = await SquealModel.find();
     for (let squeal of allSqueals) {
-      const filteredComments = squeal.comments.filter(comment => comment.mittente !== username); //la funzione filter restituisce un array con tutti gli elementi che soddisfano la condizione
-      if (squeal.comments.length !== filteredComments.length) { // Se sono stati rimossi dei commenti
+      const filteredComments = squeal.comments.filter(
+        (comment) => comment.mittente !== username
+      ); //la funzione filter restituisce un array con tutti gli elementi che soddisfano la condizione
+      if (squeal.comments.length !== filteredComments.length) {
+        // Se sono stati rimossi dei commenti
         squeal.comments = filteredComments;
         squeal.commentsNum = filteredComments.length;
       }
 
-      ['verygood', 'good', 'bad', 'verybad'].forEach(emotion => {
+      ["verygood", "good", "bad", "verybad"].forEach((emotion) => {
         const index = squeal.emoticonGivenBy[emotion].indexOf(username); //calcolo l'index dell'utente nell'array delle reazioni (se non presente, indexOf restituisce -1)
         if (index !== -1) {
           squeal.emoticonGivenBy[emotion].splice(index, 1); //splice rimuove un numero di elementi a partire dall'index specificato )in questoc aso rimuove 1 elemento a partire da index
@@ -726,82 +800,89 @@ app.post('/deleteAccount', async (req, res) => {
 
     await UserModel.deleteOne({ username });
 
-    res.status(200).json({ message: 'Account eliminato con successo' });
+    res.status(200).json({ message: "Account eliminato con successo" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore interno del server' });
+    res.status(500).json({ error: "Errore interno del server" });
   }
 });
 
-app.get('/getChannelByChannelName/:channelName', async (req, res) => {
+app.get("/getChannelByChannelName/:channelName", async (req, res) => {
   try {
     const channelName = req.params.channelName;
     const channel = await ChannelModel.findChannelByName(channelName);
     if (!channel) {
-      return res.status(404).json({ error: 'Canale non trovato' });
+      return res.status(404).json({ error: "Canale non trovato" });
     }
     res.status(200).json(channel);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore interno del server' });
+    res.status(500).json({ error: "Errore interno del server" });
   }
 });
 
-app.get('/getPublicSquealsByKeyword/:keyword', async (req, res) => {
+app.get("/getPublicSquealsByKeyword/:keyword", async (req, res) => {
   try {
     const keyword = req.params.keyword;
     const squeals = await SquealModel.findPublicSquealsByKeyword(keyword);
     res.status(200).json(squeals);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore interno del server' });
+    res.status(500).json({ error: "Errore interno del server" });
   }
 });
 
-
-app.post('/scheduleSqueal', (req, res) => {
+app.post("/scheduleSqueal", (req, res) => {
   const { squeal, intervalloInvio, numeroInvii } = req.body;
 
-  console.log('Scheduling squeal con i seguenti dettagli:', squeal, intervalloInvio, numeroInvii);
+  console.log(
+    "Scheduling squeal con i seguenti dettagli:",
+    squeal,
+    intervalloInvio,
+    numeroInvii
+  );
 
   // Calcola l'espressione cron in base all'intervalloInvio
-  //NB:CRON NON SUPPORTA VALORI DECIMALI, QUINDI INTERVALLOiNVIO DEVE ESSERE UN VALORE INTERO (SE METTO 0.5, MI METTE AUTOMATICAMENTE 1)-> GIUSTIFICAZIONE: NON è CONCESSO SPAMMARE MESSAGGI OGNI POCHI SECONDI 
+  //NB:CRON NON SUPPORTA VALORI DECIMALI, QUINDI INTERVALLOiNVIO DEVE ESSERE UN VALORE INTERO (SE METTO 0.5, MI METTE AUTOMATICAMENTE 1)-> GIUSTIFICAZIONE: NON è CONCESSO SPAMMARE MESSAGGI OGNI POCHI SECONDI
   // Ad esempio, per un invio ogni 2 minuti, l'espressione cron sarà "*/2 * * * *"
   const cronExpression = `*/${intervalloInvio} * * * *`;
 
   let inviiEffettuati = 0;
-  const task = cron.schedule(cronExpression, async () => {
+  const task = cron.schedule(
+    cronExpression,
+    async () => {
       if (inviiEffettuati < numeroInvii) {
-          // Qui dovresti inserire la logica per l'invio effettivo dello squeal.
-           // Logica per l'invio effettivo dello squeal
-           try {
-            // Crea un nuovo documento SquealModel usando i dati dello squeal
-            const newSqueal = new SquealModel({
-                ...squeal,
-                // Assicurati di aggiungere/aggiornare qualsiasi campo necessario qui
-                postedAt: new Date(), // Aggiunge la data corrente per ogni invio
-            });
+        // Qui dovresti inserire la logica per l'invio effettivo dello squeal.
+        // Logica per l'invio effettivo dello squeal
+        try {
+          // Crea un nuovo documento SquealModel usando i dati dello squeal
+          const newSqueal = new SquealModel({
+            ...squeal,
+            // Assicurati di aggiungere/aggiornare qualsiasi campo necessario qui
+            postedAt: new Date(), // Aggiunge la data corrente per ogni invio
+          });
 
-            // Salva lo squeal nel database
-            await newSqueal.save();
+          // Salva lo squeal nel database
+          await newSqueal.save();
 
           inviiEffettuati++;
         } catch (error) {
-          console.error('Errore durante il salvataggio dello squeal:', error);
+          console.error("Errore durante il salvataggio dello squeal:", error);
           // Considera di fermare il task se l'invio fallisce ripetutamente
-      }
+        }
       } else {
-          console.log('Tutti gli invii programmati sono stati completati.');
-          task.stop();
+        console.log("Tutti gli invii programmati sono stati completati.");
+        task.stop();
       }
-  }, {
-      scheduled: true
-  });
+    },
+    {
+      scheduled: true,
+    }
+  );
 
-  res.json({ message: 'Squeal programmato con successo.' });
+  res.json({ message: "Squeal programmato con successo." });
 });
 
-
-app.listen(3001, ()=>{
-    console.log("Server is running")
-})
+app.listen(3001, () => {
+  console.log("Server is running");
+});

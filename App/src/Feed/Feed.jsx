@@ -260,6 +260,10 @@ const Feed = () => {
     });
   };
 
+  const handleSmmButton = () => {
+    navigate("ManageSMM");
+  };
+
   const handleSearchButton = () => {
     navigate("/Feed/Search");
   };
@@ -289,6 +293,7 @@ const Feed = () => {
           <SideBar
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
+            onSmmButton={handleSmmButton}
             onDeleteAccount={handleDeleteAccount}
             onLogOut={handleLogOut}
           />
@@ -336,7 +341,13 @@ function PopUp({ handleYes, handleNo }) {
   );
 }
 
-function SideBar({ sidebarOpen, setSidebarOpen, onDeleteAccount, onLogOut }) {
+function SideBar({
+  sidebarOpen,
+  setSidebarOpen,
+  onSmmButton,
+  onDeleteAccount,
+  onLogOut,
+}) {
   return (
     <div className={`sidebar ${sidebarOpen ? "open" : ""}`}>
       <ul className="top-list">
@@ -349,7 +360,7 @@ function SideBar({ sidebarOpen, setSidebarOpen, onDeleteAccount, onLogOut }) {
         <li>
           <i className="fa-solid fa-user"></i> Profile
         </li>
-        <li>
+        <li onClick={onSmmButton}>
           <i className="fa-solid fa-address-book"></i> Manager
         </li>
       </ul>

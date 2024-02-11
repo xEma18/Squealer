@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 // Dovresti importare i file css (servono feed_style.css e style.css, ma penso convenga importarli direttamente in main.jsx)
 
 // Qui come al solito sto definendo un array di manager "finto", sarebbero da prendere dal database. Comunque come test funziona.
@@ -33,6 +33,17 @@ export default function SmmList() {
   // // //
   // AGGIUNGERE LOGICA SELEZIONE SMM //
   // // //
+  useEffect(
+    function () {
+      fetchAvailableManagers();
+    },
+    [setManagers]
+  );
+
+  async function fetchAvailableManagers() {
+    //...
+    setManagers();
+  }
 
   function handleRemoveManager() {
     setManagers((managers) => [...managers, currentManager]);
