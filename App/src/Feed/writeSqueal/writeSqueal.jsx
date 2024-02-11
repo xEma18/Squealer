@@ -283,7 +283,7 @@ const WriteSqueal = () => {
     }
   };
 
-    const renderContent = () => {
+const renderContent = () => {
         if (image) {
             
             return (
@@ -311,18 +311,19 @@ const WriteSqueal = () => {
         }
     };
     
-    const handleNumeroInviiChange = (e) => {
+const handleNumeroInviiChange = (e) => {
         if(text.length*parseInt(e.target.value)+userData.caratteriGiornalieriUsati > userData.caratteriGiornalieri) {
             alert("Non hai abbastanza caratteri rimanenti per inviare il messaggio così tante volte");
             return;
         }
         setNumeroInvii(e.target.value);
-    }
+    };
 
 
         
 
     const handleRandomImage = async () => {
+        setShowMap(false);
         try {
           const response = await axios.get('http://localhost:3001/randomImage');
           setImage(response.data.imageUrl);
@@ -330,11 +331,20 @@ const WriteSqueal = () => {
         } catch (error) {
           console.error('Errore durante il recupero di un\'immagine casuale:', error);
         }
-      };
+    };
       
-        const handleRandomNews = async () => {
-        };
-
+    const handleRandomNews = async () => {
+        setImage(''); 
+        setShowMap(false);
+        try {
+            const response = await axios.get('http://localhost:3001/randomNews');
+            const article = response.data;
+            setText(`Titolo: ${article.title}\nDescrizione: ${article.description}\nURL: ${article.url}`);
+        } catch (error) {
+            console.error('Errore durante il recupero delle news:', error);
+        }
+    };
+    
 
 
 
@@ -414,7 +424,7 @@ const WriteSqueal = () => {
       <p>Add your recipients, each one separated by a space.</p>
       <textarea
         id="recipients-list"
-        placeholder="@foo §foo §BAR"
+        placeholder="@foo §foo"
         onChange={(e) => handleRecipientsChange(e)}
       ></textarea>
 

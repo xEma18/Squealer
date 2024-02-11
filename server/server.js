@@ -906,7 +906,7 @@ app.post('/scheduleSqueal', async (req, res) => {
 });
 
 app.get('/randomImage', async (req, res) => {
-  const accessKey = 'mwL0X9KXKbhFSNH60n-KvzoQY7PhTdXyfYmIXX8vbqc'; // Sostituisci con la tua API key
+  const accessKey = 'mwL0X9KXKbhFSNH60n-KvzoQY7PhTdXyfYmIXX8vbqc';
   try {
     const response = await fetch(`https://api.unsplash.com/photos/random?client_id=${accessKey}`);
     const data = await response.json();
@@ -916,6 +916,23 @@ app.get('/randomImage', async (req, res) => {
     res.status(500).json({ error: 'Errore interno del server' });
   }
 });
+
+app.get('/randomNews', async (req, res) => {
+  const apiKey = 'c214f8be1062421dae64b6de673ca966';
+  const url = `https://newsapi.org/v2/top-headlines?country=us&apiKey=${apiKey}`;
+
+  try {
+      const response = await fetch(url);
+      const data = await response.json();
+      const articles = data.articles;
+      const randomArticle = articles[Math.floor(Math.random() * articles.length)];
+      res.json(randomArticle);
+  } catch (error) {
+      console.error('Errore durante il recupero delle news:', error);
+      res.status(500).json({ error: 'Errore interno del server' });
+  }
+});
+
 
 
 
