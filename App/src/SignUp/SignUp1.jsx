@@ -48,7 +48,7 @@ const SignUp1 = ({ updateRegistrationData }) => {
             <option value="" disabled>Seleziona un'opzione</option>
             <option value="Standard">Standard</option>
             <option value="VIP">VIP</option>
-            <option value="Premium">Premium</option>
+            <option value="Premium">SMM</option>
           </select>
         </div>
         <div className="pro-note">

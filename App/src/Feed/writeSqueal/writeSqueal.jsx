@@ -141,6 +141,10 @@ const WriteSqueal = () => {
   };
 
   const handlePostSqueal = async () => {
+    if(recipients.length === 0) {
+        alert("Insert at least one recipient");
+        return;
+    }
     const newSqueal = {
       mittente: username,
       destinatari: recipients,
@@ -305,7 +309,6 @@ const renderContent = () => {
                     onChange={handleChangeText} 
                     value={text}
                     style={{ marginLeft: '10px' }}
-                    required
                 ></textarea>
             );
         }
