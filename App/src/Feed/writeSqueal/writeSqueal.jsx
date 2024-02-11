@@ -401,7 +401,7 @@ const WriteSqueal = () => {
             </div>
           </div>
         </div>
-      )}
+      }
       {publicMode && (
         <div id="buy-char" className="inactive">
           Not enough? Buy it!
