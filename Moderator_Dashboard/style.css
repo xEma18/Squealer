@@ -119,6 +119,7 @@ button:focus-visible {
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 1000;
 }
 
 .overlay-rem {
@@ -132,6 +133,7 @@ button:focus-visible {
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 1000;
 }
 
 .popup {
@@ -142,6 +144,7 @@ button:focus-visible {
     padding: 100px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
 }
 
 .add-buton {

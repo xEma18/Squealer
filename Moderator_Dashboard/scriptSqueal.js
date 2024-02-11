@@ -92,7 +92,8 @@ function updateSqueal(squeal) {
             <div class="d-flex align-items-center mb-3">
               <h6 class="card-subtitle" id="destinatari">${squealConSpazi[i].destinatari}</h6>
             </div>
-            <p id="squealText-${i}">${textToShow}</p>
+            <p id="squealText-${i}">${squeal[i].bodyImage ? `<img src="${squeal[i].bodyImage}" alt="Squeal Image">` : textToShow}</p>
+            ${squeal[i].mapLocation ? `<div id="geolocation-${i}" style="width:100%; height:200px;"></div>` : ''}
           </div>
           <div>
           <p id="squealCategory-${i}">${squeal[i].category}</p>
@@ -120,6 +121,11 @@ function updateSqueal(squeal) {
       </div>
         `
     }
+    squeal.forEach((item, index) => {
+        if (item.mapLocation) {
+          createGeoMap(item.mapLocation, 'geolocation-' + index);
+        }
+      });
 }
 
 
@@ -149,7 +155,29 @@ function getCardNumber(cardId) {
     return parseInt(cardNumber);
 }
 
+// Funzione per mostrare mappe, mapId è l'id devl div dove si mette la geolocazione
+function createGeoMap(geolocation, mapId = null) {
+    //check if geolocation.latitude and geolocation.longituted are null
+    if (geolocation.lat === null || geolocation.lng === null || mapId === null) {
+        return '';
+    }
 
+    let map = L.map(mapId, {
+        center: [geolocation.lat, geolocation.lng],
+        zoom: 13,
+        layers: [
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 20,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }),
+            L.marker([geolocation.lat, geolocation.lng])
+        ]
+    }).setView([geolocation.lat, geolocation.lng], 13);
+
+
+
+    return map;
+}
 // Aggiungi un gestore di eventi al pulsante "Modifica"
 async function ModifyButton(cardId, cardNumber) {
     
