@@ -408,7 +408,10 @@ app.post('/editEmoticonMD', async (req, res) => {
       }
       await squeal.save();
       // Invia una risposta di successo
-      res.status(200).json({ message: 'Modifiche allo Squeal apportate con successo nel database' });
+      res.status(200).json({
+        message: 'Modifiche allo Squeal apportate con successo nel database',
+        newCategory: squeal.category  
+      });
     } else {
       // Invia una risposta con errore se l'utente non è stato trovato
       res.status(404).json({ message: 'Squeal non trovato nel database' });

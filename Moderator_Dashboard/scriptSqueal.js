@@ -94,6 +94,9 @@ function updateSqueal(squeal) {
             </div>
             <p id="squealText-${i}">${textToShow}</p>
           </div>
+          <div>
+          <p id="squealCategory-${i}">${squeal[i].category}</p>
+          </div>
           <!-- I bottoni sono posizionati qui, mantenendo la loro posizione fissa dal basso -->
           <div>
             <div class="d-flex justify-content-between" id="emoticons">
@@ -202,6 +205,7 @@ async function ModifyButton(cardId, cardNumber) {
     // Disabilita impression per fare spazio (tanto non è modificabile)
     impressionSpan = document.getElementById(`impressionSpan-${cardNumber}`);
     impressionSpan.innerHTML = "";
+
     /*Abilita la modifica dei campi*/
 
     // Aggiungi un pulsante "+" dinamicamente
@@ -521,6 +525,13 @@ async function ModifyButton(cardId, cardNumber) {
 
         likeSpan.outerHTML = `<span id="likeSpan-${cardNumber}">${good}</span> `
         dislikeSpan.innerHTML =`<span id="dislikeSpan-${cardNumber}">${bad}</span>`
+
+        // Riattivo le impressions 
+        impressionSpan = document.getElementById(`impressionSpan-${cardNumber}`);
+        impressionSpan.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+        <path d="M15 12c0 1.657-1.343 3-3 3s-3-1.343-3-3c0-.199.02-.393.057-.581 1.474.541 2.927-.882 2.405-2.371.174-.03.354-.048.538-.048 1.657 0 3 1.344 3 3zm-2.985-7c-7.569 0-12.015 6.551-12.015 6.551s4.835 7.449 12.015 7.449c7.733 0 11.985-7.449 11.985-7.449s-4.291-6.551-11.985-6.551zm-.015 12c-2.761 0-5-2.238-5-5 0-2.761 2.239-5 5-5 2.762 0 5 2.239 5 5 0 2.762-2.238 5-5 5z"></path>
+        </svg> ${squeal[cardNumber].impression}`
+
         // Aggiungo il pulsante modifica
         modifyBtnFather.appendChild(modificaBtn);
         
@@ -547,12 +558,18 @@ async function ModifyButton(cardId, cardNumber) {
                 else {
                     const responseData = await response.json();
                     console.log(responseData.message);
+                    console.log(responseData.newCategory);
+                    const categorySpan = document.getElementById(`squealCategory-${cardNumber}`);
+                    console.log(categorySpan)
+                    categorySpan.outerHTML = `<p id="dislikeSpan-${cardNumber}">${responseData.newCategory}</p>`
+                    console.log(categorySpan.innertext)
                 }
             }
             catch (error) {
                 console.error('Errore durante la chiamata POST all\'API:', error);
             }
         }
+
 
         // Verifico il flag per vedere se ho aggiunto oppure rimosso destinatari    
         if (addFlag) {
