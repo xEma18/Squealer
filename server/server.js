@@ -10,6 +10,13 @@ const fetch = require('node-fetch');
 
 const app = express();
 
+app.use(
+  "/SMM",
+  auth,
+  checkRole(["SMM", "Mod"]),
+  express.static(path.join(__dirname, "SquealerSMMDashboard", "dist"))
+);
+
 const uri =
   "mongodb+srv://emanuele:emanuele@cluster0.dbp6yx6.mongodb.net/?retryWrites=true&w=majority";
 
