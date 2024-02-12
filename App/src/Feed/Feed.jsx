@@ -100,9 +100,8 @@ const Feed = () => {
     navigate("/");
   };
 
-  const handleOpenComments = function(){
-    // da fareee
-    navigate("/Feed/comments");
+  const handleOpenComments = function(squealId){
+    navigate(`/Feed/comments?squeal_id=${squealId}`);
   }
 
   const handleEmoticonGood = async (squeal) => {
@@ -459,7 +458,7 @@ function Squeal({
           )}
         </div>
         <div className="post-reactions">
-          <div className="post-comments" onClick={onOpenComments}>
+          <div className="post-comments" onClick={() => onOpenComments(squeal._id)}>
             <i className="fa-regular fa-comment"></i>
             <span className="post-comments-number"> {squeal.commentsNum}</span>
           </div>

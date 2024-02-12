@@ -7,6 +7,7 @@ const SquealSchema = new mongoose.Schema({
     text: String,
     commentsNum: Number,
     comments: [{
+        _id: String,
         mittente: String,
         text: String,
         date: Date,

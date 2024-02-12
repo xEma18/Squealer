@@ -1,38 +1,60 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import axios from "axios";
 
 // Come faccio a passare lo squeal dal Feed a questa schermata
-export default function CommentsList({ post }) {
+export default function CommentsList() {
   const navigate = useNavigate();
+  const [queryParams] = useSearchParams();
   const [comment, setComment] = useState(null);
   const [squealComments, setSquealComments] = useState([]);
-  // squealComments è dove andrebbero salvati i commenti del post.
+  const accountData = JSON.parse(sessionStorage.getItem("accountData"));
 
   // Appena carica la pagina, faccio un fetch dei commenti salvati nel database
   useEffect(function(){
     async function fetchComments(){
+      const squealId = queryParams.get("squeal_id");
+      if(!squealId) return;
+
       try{
         // Logica per fetchare commenti dal database
-        // setSquealComments(commenti fetchati)
+        const res = await axios.get(`http://localhost:3001/squealComments/${squealId}`);
+
+        setSquealComments(res.data);
       }catch(error){
         console.error(`Errore durante il caricamento dei commento ${error.message}`)
       }
     }
+
     fetchComments();
-  }, [])
+  }, [queryParams])
 
   async function handleAddComment(e){
     e.preventDefault();
 
+    console.log(accountData);
+
+    const squealId = queryParams.get("squeal_id");
+
     if(!comment) return;
 
-    setSquealComments(current => [...current, comment]);
+    const newComment = {
+      _id: crypto.randomUUID(),
+      mittente: accountData.username,
+      text: comment,
+      date: Date.now(), 
+      profilePic: accountData.profilePic,
+    }
+
+    setSquealComments(current => [...current, newComment]);
 
     try{
-      // Logica per salvare il nuovo commento nel database
+      await axios.post(`http://localhost:3001/squealComments`, {squealId, comment: newComment});
     }catch(error){
       console.error(`Errore durante la pubblicazione del commento ${error.message}`);
     }
+
+    setComment("");
   }
 
   return (
@@ -45,7 +67,7 @@ export default function CommentsList({ post }) {
 
       <div className="comments-list">
         {squealComments.map((comment) => (
-          <Comment comment={comment} key={comment.id} />
+          <Comment comment={comment} key={comment._id} />
         ))}
       </div>
       <TypeBar comment={comment} setComment={setComment} onAddComment={handleAddComment}/>
@@ -58,18 +80,18 @@ function Comment({ comment }) {
     // prettierignore
     <div className="item">
       <div className="item-pic">
-        <img src={comment.userPicture} alt="Profile picture" />
+        <img src={comment.profilePic} alt="Profile picture" />
       </div>
       <div className="item-body">
         <div className="item-namedate">
           <span className="item-username">
             <h>@</h>
-            {comment.username}
+            {comment.mittente.split("@").at(1)}
           </span>
           <i className="fa-solid fa-feather"></i>
-          <span className="item-date"> | {comment.date}</span>
+          <span className="item-date"> | {new Date(comment.date).toDateString()}</span>
         </div>
-        <div className="item-content">{comment.commentBody}</div>
+        <div className="item-content">{comment.text}</div>
       </div>
     </div>
   );

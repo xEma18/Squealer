@@ -244,6 +244,25 @@ app.get('/squealComments/:squealId', async (req, res) => {
   }
 });
 
+app.post("/squealComments", async (req, res) => {
+    console.log(req.body);
+  try{
+    const squeal = await SquealModel.findById(req.body.squealId);
+    if (!squeal) {
+      return res.status(404).json({ error: "Squeal non trovato" });
+    }
+
+    squeal.comments = [...squeal.comments, req.body.comment];
+    squeal.commentsNum += 1;
+
+    await squeal.save();
+    res.status(200).json(squeal);
+  }catch(error){
+    console.error(error);
+    res.status(500).json({error: "Errore durante la pubblicazione del commento"})
+  }
+})
+
 app.post("/addEmoticonGood", async (req, res) => {
   try {
     const squeal = await SquealModel.findById(req.body._id);
