@@ -7,15 +7,64 @@ const SquealModel = require('./models/Squeals');
 const ChannelModel = require('./models/Channels');
 const CounterModel = require('./models/Counters');
 const fetch = require('node-fetch');
+const path = require("path")
 
 const app = express();
 
 app.use(
   "/SMM",
-  auth,
-  checkRole(["SMM", "Mod"]),
-  express.static(path.join(__dirname, "SquealerSMMDashboard", "dist"))
+  //checkRole(["SMM", "Mod"]),
+  express.static(path.join(__dirname,"..", "SMM","smm", "dist"))
 );
+
+app.get("/SMM/*", async function (req, res) {
+  res.sendFile(
+      path.join(
+          __dirname,
+          "..",
+          "SMM",
+          "smm",
+          "dist",
+          "index.html"
+      )
+  );
+});
+
+app.use(
+  "/App",
+  //checkRole(["SMM", "Mod"]),
+  express.static(path.join(__dirname,"..", "App", "dist"))
+);
+
+app.get("/App/*", async function (req, res) {
+  res.sendFile(
+      path.join(
+          __dirname,
+          "..",
+          "App",
+          "dist",
+          "index.html"
+      )
+  );
+});
+
+app.use(
+  "/Moderator_Dashboard",
+  //checkRole(["SMM", "Mod"]),
+  express.static(path.join(__dirname,"..", "Moderator_Dashboard"))
+);
+
+app.get("/Moderator_Dashboard/*", async function (req, res) {
+  res.sendFile(
+      path.join(
+          __dirname,
+          "..",
+          "Moderator_Dashboard",
+          "HomePage.html"
+      )
+  );
+});
+
 
 const uri =
   "mongodb+srv://emanuele:emanuele@cluster0.dbp6yx6.mongodb.net/?retryWrites=true&w=majority";
