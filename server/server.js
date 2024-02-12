@@ -88,15 +88,18 @@ async function updateCharacterQuotas() {
           else if (isUnpopular && !isPopular) unpopularCount++;
       });
 
+      const standardDailyQuota=500;
+      const standardWeeklyQuota=standardDailyQuota*7;
+      const standardMonthlyQuota=standardWeeklyQuota*4;
       const initialDailyQuota = user.caratteriGiornalieri;
       const initialWeeklyQuota = user.caratteriSettimanali;
       const initialMonthlyQuota = user.caratteriMensili;
       const increasePercent = Math.floor(popularCount / 10) * 0.01;
       const decreasePercent = Math.floor(unpopularCount / 3) * 0.01;
 
-      user.caratteriGiornalieri = Math.round(Math.max(initialDailyQuota + initialDailyQuota * (increasePercent - decreasePercent), 0));
-      user.caratteriSettimanali = Math.round(Math.max(initialWeeklyQuota + initialDailyQuota * (increasePercent - decreasePercent), 0));
-      user.caratteriMensili = Math.round(Math.max(initialMonthlyQuota + initialDailyQuota * (increasePercent - decreasePercent), 0));
+      user.caratteriGiornalieri = Math.round(Math.max(standardDailyQuota + standardDailyQuota * (increasePercent - decreasePercent), 0));
+      user.caratteriSettimanali = Math.round(Math.max(standardWeeklyQuota + standardWeeklyQuota * (increasePercent - decreasePercent), 0));
+      user.caratteriMensili = Math.round(Math.max(standardMonthlyQuota + standardMonthlyQuota * (increasePercent - decreasePercent), 0));
 
       await user.save();
   }

@@ -15,7 +15,7 @@ document.getElementById("apply-filter").addEventListener("click", function () {
     filtraUtenti(nomeFiltro, tipoFiltro, popolaritaFiltro);
 });
 function filtraUtenti(nome, tipo, popolarita) {
-    const cards = document.querySelectorAll(".card"); // Seleziona tutte le carte degli utenti
+    const cards = document.querySelectorAll(".card"); // Seleziona tutte le card degli utenti
 
     cards.forEach(card => {
         const nomeUtente = card.querySelector(".card-title").innerText;
@@ -25,8 +25,8 @@ function filtraUtenti(nome, tipo, popolarita) {
 
         // Controllo se l'utente soddisfa i criteri di filtro
         const nomeMatch = nome === "" || nomeUtente.toLowerCase().includes(nome.toLowerCase());
-        const tipoMatch = tipo === "Tutti" || tipoUtente === tipo;
-        const popolaritaMatch = popolarita === "Qualsiasi" || popolaritaUtente === popolarita;
+        const tipoMatch = tipo === "All" || tipoUtente === tipo;
+        const popolaritaMatch = popolarita === "Any" || popolaritaUtente === popolarita;
 
         // Nascondo o mostro la carta in base ai criteri di filtro
         if (nomeMatch && tipoMatch && popolaritaMatch) {
@@ -210,25 +210,25 @@ async function ModifyButton(cardId, cardNumber) {
     if ((users[cardNumber].popolarita) == "High") {
         popolaritaField.innerHTML = `<span class="fw-bold">Popolarità:</span>
     <select class="form-select" aria-label="Popolarity high selected" id="popolaritaInput">
-        <option value="Alta" selected="selected">High</option>
-        <option value="Media">Medium</option>
-        <option value="Bassa">Low</option>
+        <option value="High" selected="selected">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
     </select>`;
     }
     else if ((users[cardNumber].popolarita) == "Medium") {
         popolaritaField.innerHTML = `<span class="fw-bold">Popolarità:</span>
         <select class="form-select" aria-label="Popolarity medium selected" id="popolaritaInput">
-            <option value="Alta">High</option>
-            <option value="Media" selected="selected">Medium</option>
-            <option value="Bassa">Low</option>
+            <option value="High">High</option>
+            <option value="Medium" selected="selected">Medium</option>
+            <option value="Low">Low</option>
         </select>`;
     }
     else {
         popolaritaField.innerHTML = `<span class="fw-bold">Popolarità:</span>
         <select class="form-select" aria-label="Popolarity low selected" id="popolaritaInput">
-            <option value="Alta">High</option>
-            <option value="Media">Medium</option>
-            <option value="Bassa" selected="selected">Low</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low" selected="selected">Low</option>
         </select>`;
     }
     caratteriGiornalieriField.innerHTML = `<span class="fw-bold">Caratteri Giornalieri:</span> <input class="form-control" type="number" id="caratteriGiornalieriInput" value="${users[cardNumber].caratteriGiornalieriUsati}">`;
@@ -293,18 +293,49 @@ async function ModifyButton(cardId, cardNumber) {
             caratteriGiornalieriField.innerHTML = `<span class="fw-bold">Caratteri Giornalieri:</span> ${nuoviCaratteriGiornalieri} / ${users[cardNumber].caratteriGiornalieri} `;
             caratteriSettimanaliField.innerHTML = `<span class="fw-bold">Caratteri Settimanali:</span> ${nuoviCaratteriSettimanali} / ${users[cardNumber].caratteriSettimanali} `;
             caratteriMensiliField.innerHTML = `<span class="fw-bold">Caratteri Mensili:</span>  ${nuoviCaratteriMensili} / ${users[cardNumber].caratteriMensili}`;
+        
         }
         else {
             console.log("entro nel blocked");
             statusUtente.innerHTML = `<h5 class="card-subtitle text-danger mb-3" id="status">${nuovoStatus}</h5>`
-            users[i].caratteriGiornalieriUsati = users[i].caratteriGiornalieri;
-            users[i].caratteriSettimanaliUsati = users[i].caratteriSettimanali;
-            users[i].caratteriMensiliUsati = users[i].caratteriMensili;
+            users[cardNumber].caratteriGiornalieriUsati = users[cardNumber].caratteriGiornalieri;
+            users[cardNumber].caratteriSettimanaliUsati = users[cardNumber].caratteriSettimanali;
+            users[cardNumber].caratteriMensiliUsati = users[cardNumber].caratteriMensili;
 
-            caratteriGiornalieriField.innerHTML = `<span class="fw-bold">Caratteri Giornalieri:</span> ${nuoviCaratteriGiornalieri} / ${users[cardNumber].caratteriGiornalieri} `;
-            caratteriSettimanaliField.innerHTML = `<span class="fw-bold">Caratteri Settimanali:</span> ${nuoviCaratteriSettimanali} / ${users[cardNumber].caratteriSettimanali} `;
-            caratteriMensiliField.innerHTML = `<span class="fw-bold">Caratteri Mensili:</span>  ${nuoviCaratteriMensili} / ${users[cardNumber].caratteriMensili}`;
+            caratteriGiornalieriField.innerHTML = `<span class="fw-bold">Caratteri Giornalieri:</span> ${users[cardNumber].caratteriGiornalieriUsati} / ${users[cardNumber].caratteriGiornalieri} `;
+            caratteriSettimanaliField.innerHTML = `<span class="fw-bold">Caratteri Settimanali:</span> ${users[cardNumber].caratteriSettimanaliUsati} / ${users[cardNumber].caratteriSettimanali} `;
+            caratteriMensiliField.innerHTML = `<span class="fw-bold">Caratteri Mensili:</span>  ${users[cardNumber].caratteriMensiliUsati} / ${users[cardNumber].caratteriMensili}`;
 
+                // Chiamata POST all'API per bloccare l'utente e impostare quindi i suoi caratteri usati al massimo consentito
+        try {
+            const response = await fetch('http://localhost:3001/editUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ //Da definire l'username 
+                    nome: nome,
+                    cognome: cognome,
+                    popolarita: nuovaPopolarita,
+                    tipoUtente: nuovoTipoUtente,
+                    caratteriGiornalieri: users[cardNumber].caratteriGiornalieri,
+                    caratteriSettimanali: users[cardNumber].caratteriSettimanali,
+                    caratteriMensili: users[cardNumber].caratteriMensili,
+                    status: nuovoStatus,
+                }),
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error(`Errore durante la chiamata POST all'API: ${errorData.message}`);
+            }
+            else {
+                const responseData = await response.json();
+                console.log(responseData.message);
+            }
+        }
+        catch (error) {
+            console.error('Errore durante la chiamata POST all\'API:', error);
+        }
         }
         tipoUtenteField.innerHTML = `<span class="fw-bold">Tipo utente:</span> ${nuovoTipoUtente}`;
         popolaritaField.innerHTML = `<span class="fw-bold">Popolarità:</span> ${nuovaPopolarita}`;
