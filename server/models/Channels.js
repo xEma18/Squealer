@@ -6,7 +6,6 @@ const ChannelSchema = new mongoose.Schema({
     name: String, 
     description: String,
     listofSqueals: [String],
-    postNum: [String], 
     profilePic: String,
 });
 

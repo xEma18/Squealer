@@ -68,7 +68,7 @@ function updateChannels(channel) {
                         <h4 class="card-title fw-bold" id="name">${channel[i].name}</h5>
                     </div>
                     <!-- Numero di squeal e follower -->
-                    <h6 class="card-subtitle mb-3" id="squealNum"><span class="fw-bold">Squeal:</span> </span>${channel[i].postNum} <span class="fw-bold">Follower:</span> 21244 <span class="justify-content-end fw-bold" id="popolarity">Popolarity:</span>${isOfficial(channel[i]) ? 'Nothing' : channel[i].popolarity}</h6>                    
+                    <h6 class="card-subtitle mb-3" id="squealNum"><span class="fw-bold">SquealNum:</span> ${channel[i].postNum}</span> <span class="justify-content-end fw-bold" id="popolarity">Type:</span> ${channel[i].type}</h6>                    
                     <!-- Contenuto -->
                     <h6 class="fw-bold">Channel description:</h6>
                     <p id="description">${channel[i].description}</p>
