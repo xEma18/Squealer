@@ -7,8 +7,64 @@ const SquealModel = require('./models/Squeals');
 const ChannelModel = require('./models/Channels');
 const CounterModel = require('./models/Counters');
 const fetch = require('node-fetch');
+const path = require("path")
 
 const app = express();
+
+app.use(
+  "/SMM",
+  //checkRole(["SMM", "Mod"]),
+  express.static(path.join(__dirname,"..", "SMM","smm", "dist"))
+);
+
+app.get("/SMM/*", async function (req, res) {
+  res.sendFile(
+      path.join(
+          __dirname,
+          "..",
+          "SMM",
+          "smm",
+          "dist",
+          "index.html"
+      )
+  );
+});
+
+app.use(
+  "/App",
+  //checkRole(["SMM", "Mod"]),
+  express.static(path.join(__dirname,"..", "App", "dist"))
+);
+
+app.get("/App/*", async function (req, res) {
+  res.sendFile(
+      path.join(
+          __dirname,
+          "..",
+          "App",
+          "dist",
+          "index.html"
+      )
+  );
+});
+
+app.use(
+  "/Moderator_Dashboard",
+  //checkRole(["SMM", "Mod"]),
+  express.static(path.join(__dirname,"..", "Moderator_Dashboard"))
+);
+
+app.get("/Moderator_Dashboard/*", async function (req, res) {
+  res.sendFile(
+      path.join(
+          __dirname,
+          "..",
+          "Moderator_Dashboard",
+          "HomePage.html"
+      )
+  );
+});
+
 
 const uri =
   "mongodb+srv://emanuele:emanuele@cluster0.dbp6yx6.mongodb.net/?retryWrites=true&w=majority";
@@ -749,6 +805,23 @@ app.get("/squealsByChannel", async (req, res) => {
     res.json(squeals);
   } catch (error) {
     res.status(500).send("Errore interno del server");
+  }
+});
+
+app.post("/addChannelWithProfilePic", async (req, res) => {
+  try {
+    const newChannel = new ChannelModel({
+      name: req.body.name,
+      type: req.body.type,
+      description: req.body.description,
+      profilePic: req.body.profilePic,
+      creators: [req.body.creator],
+    });
+    await newChannel.save();
+    res.status(201).json(newChannel);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Errore durante la creazione del canale" });
   }
 });
 
