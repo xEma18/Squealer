@@ -58,7 +58,7 @@ a:active {
 
   margin: 1rem 0;
 
-  font-size: 4rem;
+  font-size: 2.5rem;
   font-weight: bold;
   line-height: 100%;
   color: #dbb77c;
@@ -173,7 +173,7 @@ a:active {
 #signup-form .title {
   padding: 0;
 
-  font-size: 3rem;
+  font-size: 2rem;
   /* color: #dbb77c; */
 }
 

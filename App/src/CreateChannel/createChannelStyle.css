@@ -1,0 +1,30 @@
+.imageContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;  
+    gap: 20px; 
+}
+
+
+
+.optional{
+    margin:8%;
+    margin-left:0;
+    margin-bottom: 3%;
+    padding:0;
+}
+
+.postSqueal{
+    color: #dbb77c;
+    /* background-color: #fbfbfb; */
+    font-weight: bold;
+    border: 2px solid #dbb77c;
+    border-radius: 9999px;
+    padding: 0.3rem 0.8rem;
+    display:flex;
+    justify-content: center;
+    width: 60%;
+}
