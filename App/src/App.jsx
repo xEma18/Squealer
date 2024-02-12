@@ -28,7 +28,7 @@ const App = () => {
     password: "",
     image: "",
     description: "",
-    statoAccount: "Active",
+    status: "Active",
     tipoUtente: "",
     popolarita: "Low",
     caratteriGiornalieri: 200,
