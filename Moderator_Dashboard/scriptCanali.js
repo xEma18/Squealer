@@ -62,16 +62,18 @@ function updateChannels(channel) {
         const channelType = isOfficial(channel[i]) ? 'official' : 'unofficial';
         container.innerHTML += `
             <div class="card ms-1" id="card-${i}" data-type="${channelType}">
-                <div class="card-body">
+                <div class="card-body d-flex flex-column">
+                <div class="mb-auto">
                     <!-- Mittente -->
                     <div class="d-flex justify-content-between">
                         <h4 class="card-title fw-bold" id="name">${channel[i].name}</h5>
                     </div>
                     <!-- Numero di squeal e follower -->
-                    <h6 class="card-subtitle mb-3" id="squealNum"><span class="fw-bold">SquealNum:</span> ${channel[i].postNum}</span> <span class="justify-content-end fw-bold" id="popolarity">Type:</span> ${channel[i].type}</h6>                    
+                    <span class="justify-content-end fw-bold" id="popolarity">Type:</span> ${channel[i].type}                  
                     <!-- Contenuto -->
-                    <h6 class="fw-bold">Channel description:</h6>
+                    <h6 class="mt-4 fw-bold">Channel description:</h6>
                     <p id="description">${channel[i].description}</p>
+                </div>
                     <!-- Pulsante Modifica -->
                     <div class="container-fluid">
                     <div class="row d-flex justify-content-center">
@@ -192,7 +194,7 @@ function updateSqueal(squeal) {
         let buttonSelected = document.querySelector(`#removeSquealBtn-${i}`);
         buttonSelected.addEventListener('click', function () {
             const squealId = squeal[i]._id;
-            console.log("i",i,"squealId",squealId,"channel name",channel[cardNumber].name);
+            console.log("i", i, "squealId", squealId, "channel name", channel[cardNumber].name);
             removeSqueal(squealId, channel[cardNumber].name);
         });
 
@@ -441,7 +443,7 @@ async function ModifyButton(cardId, cardNumber) {
 
     // Capisco che card è stata selezionata
     const card = document.getElementById(cardId);
-
+    const cardBody = card.querySelector(".card-body");
     // Prendo tutti i campi della card
     const modifyBtn = card.querySelector("#modifyBtn");
     const viewBtn = card.querySelector("#viewBtn");
@@ -451,13 +453,18 @@ async function ModifyButton(cardId, cardNumber) {
     modifyBtn.style.display = "none";
     viewBtn.style.display = "none";
 
+    // Creazione di un contenitore per i pulsanti
+    const buttonsContainer = document.createElement("div");
+    buttonsContainer.classList.add("row");
+    buttonsContainer.classList.add("d-flex");
+    buttonsContainer.classList.add("justify-content-between");
+
     // Mostra il pulsante "salva modifiche"
-    const cardBody = card.querySelector(".card-body");
     const saveChangesBtn = document.createElement("button");
-    saveChangesBtn.classList.add("btn");
-    saveChangesBtn.classList.add("btn-success");
+    saveChangesBtn.classList.add("btn", "btn-success");
     saveChangesBtn.innerText = "Save changes";
-    cardBody.appendChild(saveChangesBtn);
+    saveChangesBtn.style.width = "49%"; 
+    buttonsContainer.appendChild(saveChangesBtn);
 
     /*Abilita la modifica dei campi*/
     description.innerHTML = `<div class="row d-flex mt-4 post-area">
@@ -468,12 +475,13 @@ async function ModifyButton(cardId, cardNumber) {
 
     // Mostra il pulsante "Rimuovi Canale"
     const removeChannelBtn = document.createElement("button");
-    removeChannelBtn.classList.add("btn");
-    removeChannelBtn.classList.add("btn-danger");
-    removeChannelBtn.classList.add("mx-3");
+    removeChannelBtn.classList.add("btn", "btn-danger");
     removeChannelBtn.innerText = "Remove Channel";
-    removeChannelBtn.id = "removeBtn";
-    cardBody.appendChild(removeChannelBtn);
+    removeChannelBtn.style.width = "49%"; 
+    buttonsContainer.appendChild(removeChannelBtn);
+
+    // Aggiunta del contenitore dei pulsanti al cardBody
+    cardBody.appendChild(buttonsContainer);
 
     // Aggiungi l'ascoltatore di eventi per la rimozione del canale
     removeChannelBtn.addEventListener('click', () => {
@@ -482,8 +490,8 @@ async function ModifyButton(cardId, cardNumber) {
 
     saveChangesBtn.addEventListener('click', async () => {
         // Gestione pulsanti
-        cardBody.removeChild(saveChangesBtn);
-        cardBody.removeChild(removeChannelBtn);
+        buttonsContainer.removeChild(saveChangesBtn);
+        buttonsContainer.removeChild(removeChannelBtn);
         modifyBtn.style.display = 'inline-block';
         viewBtn.style.display = 'inline-block';
 
