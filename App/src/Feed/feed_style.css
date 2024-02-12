@@ -453,7 +453,7 @@ h {
   object-fit: cover;
 }
 
-/* .profile-header #follow-btn {
+.item-header #follow-btn {
   grid-column-start: 4;
   grid-row-start: 2;
   justify-self: center;
@@ -469,9 +469,9 @@ h {
   padding: 0rem 0.8rem;
 }
 
-.profile-header #follow-btn i {
+.item-header #follow-btn i {
   margin-left: 0.3rem;
-} */
+}
 
 .item-header .username,
 .item-header .channel-name {

@@ -77,6 +77,7 @@ const ChannelProfile = () => {
                     <div className="img-container">
                         <img src={userData.profilePic} alt="Profile picture" />
                     </div>
+                    <span role="button" id="follow-btn">Follow <i className="fa-solid fa-plus"></i></span>
                     <div className="username">
                         {userData.name}
                     </div>
