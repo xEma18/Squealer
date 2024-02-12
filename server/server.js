@@ -808,6 +808,23 @@ app.get("/squealsByChannel", async (req, res) => {
   }
 });
 
+app.post("/addChannelWithProfilePic", async (req, res) => {
+  try {
+    const newChannel = new ChannelModel({
+      name: req.body.name,
+      type: req.body.type,
+      description: req.body.description,
+      profilePic: req.body.profilePic,
+      creators: [req.body.creator],
+    });
+    await newChannel.save();
+    res.status(201).json(newChannel);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Errore durante la creazione del canale" });
+  }
+});
+
 // Api per aggiungere un canale
 app.post("/addChannel", async (req, res) => {
   try {
