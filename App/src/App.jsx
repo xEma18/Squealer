@@ -14,6 +14,8 @@ import UserProfile from "./Feed/Search/UserProfile.jsx";
 import ChannelProfile from "./Feed/Search/ChannelProfile.jsx";
 import Keyword from "./Feed/Search/Keyword.jsx";
 import SmmList from "./SmmList/SmmList.jsx";
+import CreateChannel from "./CreateChannel/CreateChannel.jsx";
+
 
 const App = () => {
   // Stati per memorizzare i dati della registrazione raccolti in SignUp1, SignUp2, SignUp3
@@ -78,8 +80,8 @@ const App = () => {
         <Route path="/channel/:channelName" element={<ChannelProfile />} />
         <Route path="/keyword/:keyword" element={<Keyword />} />
         <Route path="/ManageSMM" element={<SmmList />} />
-
-        <Route path="*" element={<Login />} />
+        <Route path="/Feed/createChannel" element={<CreateChannel/>} />
+        <Route path="*" element={<InitialPage />} />
       </Routes>
     </Router>
   );
