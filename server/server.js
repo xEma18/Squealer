@@ -368,7 +368,7 @@ app.post("/updateCharsLeft", async (req, res) => {
 //API per modificare i campi (tipo account, popolarità, caratteri...) di uno specifico utente (di cui ho nome e cognome)
 app.post("/editUser", async (req, res) => {
   try {
-    const user = await UserModel.findByNameAndLastname(
+    const user = await UserModel.findByNameAndLastname( //TODO
       req.body.nome,
       req.body.cognome
     );
@@ -376,7 +376,7 @@ app.post("/editUser", async (req, res) => {
       // Aggiorna i campi dell'utente con i nuovi valori
       user.tipoUtente = req.body.tipoUtente;
       user.popolarita = req.body.popolarita;
-      user.caratteriGiornalieriUsati = req.body.caratteriGiornalieriUsati;
+      user.caratteriGiornalieriUsati = req.body.caratteriGiornalieri;
       user.caratteriSettimanaliUsati = req.body.caratteriSettimanali;
       user.caratteriMensiliUsati = req.body.caratteriMensili;
       user.status = req.body.status;
