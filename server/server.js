@@ -1034,6 +1034,30 @@ app.get("/getUserActivity/:username", async (req, res) => {
   }
 });
 
+app.get("/getChannelActivity/:channelName", async (req, res) => {
+  try {
+    const channelName = req.params.channelName;
+    const channel = await ChannelModel.findOne({ name: channelName });
+    if (!channel) {
+      return res.status(404).json({ message: "Canale non trovato" });
+    }
+    const squeals = await SquealModel.find({ '_id': { $in: channel.listofSqueals } });
+    let likes = 0;
+    let dislikes = 0;
+    
+    squeals.forEach((squeal) => {
+      likes += squeal.emoticonNum.good;
+      dislikes += squeal.emoticonNum.bad;
+    });
+
+    res.status(200).json({ squeals: squeals.length, likes, dislikes });
+  } catch (error) {
+    console.error("Errore durante il recupero dell'attività del canale:", error);
+    res.status(500).json({ error: "Errore interno del server" });
+  }
+});
+
+
 app.post("/deleteAccount", async (req, res) => {
   try {
     const username = req.body.username;

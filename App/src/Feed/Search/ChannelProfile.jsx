@@ -17,7 +17,7 @@ const ChannelProfile = () => {
     useEffect(() => {
         fetchUserData();
         fetchUserPublicSqueals();
-        fetchUserActivity();
+        fetchChannelActivity();
     }, [channelName]);
 
     const fetchUserData = async () => {
@@ -64,9 +64,10 @@ const ChannelProfile = () => {
     };
 
 
-    const fetchUserActivity = async () => {
+    const fetchChannelActivity = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/getUserActivity/${channelName}`);
+            const response = await axios.get(`http://localhost:3001/getChannelActivity/${channelName}`);
+            console.log(response.data);
             setUserActivity(response.data);
         } catch (error) {
             console.error('Errore durante il recupero dei dati utente:', error);
