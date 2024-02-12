@@ -100,6 +100,11 @@ const Feed = () => {
     navigate("/");
   };
 
+  const handleOpenComments = function(){
+    // da fareee
+    navigate("/Feed/comments");
+  }
+
   const handleEmoticonGood = async (squeal) => {
     // Uso un'espressione regolare per verificare se l'username è nel formato "guest_x". Se "username" soddisfa il pattern, allora isGuest sarà true
     const isGuest = /^@guest_\d+$/.test(username);
@@ -261,7 +266,7 @@ const Feed = () => {
   };
 
   const handleSmmButton = () => {
-    navigate("ManageSMM");
+    navigate("/ManageSMM");
   };
 
   const handleSearchButton = () => {
@@ -314,6 +319,7 @@ const Feed = () => {
                 refs={refs}
                 onEmoticonGood={handleEmoticonGood}
                 onEmoticonBad={handleEmoticonBad}
+                onOpenComments={handleOpenComments}
                 renderTextWithLinks={renderTextWithLinks}
                 key={squeal._id}
                 username={username}
@@ -416,6 +422,7 @@ function Squeal({
   index,
   onEmoticonGood,
   onEmoticonBad,
+  onOpenComments,
   renderTextWithLinks,
   username,
 }) {
@@ -452,7 +459,7 @@ function Squeal({
           )}
         </div>
         <div className="post-reactions">
-          <div className="post-comments">
+          <div className="post-comments" onClick={onOpenComments}>
             <i className="fa-regular fa-comment"></i>
             <span className="post-comments-number"> {squeal.commentsNum}</span>
           </div>

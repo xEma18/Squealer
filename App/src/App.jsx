@@ -72,7 +72,7 @@ const App = () => {
         <Route path="/LogIn" element={<Login />} />
         <Route path="/Feed" element={<Feed />} />
         <Route path="/Feed/WriteSqueal" element={<WriteSqueal />} />
-        <Route path="/Feed/comments/CommentsList" element={<CommentsList />} />
+        <Route path="/Feed/comments" element={<CommentsList />} />
         <Route path="/Feed/Search" element={<Search />} />
         <Route path="/user/:username" element={<UserProfile />} />
         <Route path="/channel/:channelName" element={<ChannelProfile />} />
