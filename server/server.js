@@ -211,6 +211,22 @@ app.post("/checkIfUserAndEmailAlreadyRegistered", async (req, res) => {
   }
 });
 
+app.post('/checkIfChannelNameIsAlreadyTaken', async (req, res) => {
+  const { name } = req.body;
+
+  try {
+      const channel = await ChannelModel.findChannelByName(name);
+      if (channel) {
+          res.json(true);
+      } else {
+          res.json(false);
+      }
+  } catch (error) {
+      console.error('Errore durante la verifica del nome del canale:', error);
+      res.status(500).json({ message: 'Errore interno del server' });
+  }
+});
+
 // API per ottenere la lista degli utenti
 app.get("/users", async (req, res) => {
   try {

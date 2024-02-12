@@ -59,7 +59,7 @@ export default function CommentsList() {
 
   return (
     <div className="comments-container"> 
-      <div className="go-back" onClick={() => navigate("/Feed")}>
+      <div className="go-back" onClick={() => navigate("/App/Feed")}>
         <span>
           <i className="fa-solid fa-arrow-left"></i> Feed
         </span>

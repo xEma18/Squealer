@@ -13,6 +13,7 @@ const CreateChannel = () => {
     const accountData = JSON.parse(savedData);
     const username = accountData.username;
     const [showErrorName, setShowErrorName] = useState(false);
+    const [showNameAlreadyTaken, setShowNameAlreadyTaken] = useState(false);
 
 
     const handleChangeName=(e)=>{
@@ -65,26 +66,45 @@ const CreateChannel = () => {
     };
 
     const createChannel = async () => {
-        //api a /addChannelWithProfilePic inviando i dati del form e l'immagine con try e catch
-        try {
-            const response = await axios.post('http://localhost:3001/addChannelWithProfilePic', {name: name, type:"Unofficial", description: description, profilePic: image, creator: username});
+        // Controllo che il nome del canale non sia già stato preso con un'api a /checkIfChannelNameIsAlreadyTaken inviando il nome del canale
+        try{
+            const response = await axios.post('http://localhost:3001/checkIfChannelNameIsAlreadyTaken', {name: name});
             console.log(response);
-        } catch (error) {
-            console.error('Errore durante la creazione del canale:', error);
+            if(response.data === true){
+                setShowNameAlreadyTaken(true);
+                return;
+            }
         }
-
-        navigate("/Feed")
+        catch (error) {
+            console.error('Errore durante il controllo del nome del canale:', error);
+        }
+        
+        if(name === '' || showErrorName || showNameAlreadyTaken){
+            return;
+        }
+        else{
+            try {
+                const response = await axios.post('http://localhost:3001/addChannelWithProfilePic', {name: name, type:"Unofficial", description: description, profilePic: image, creator: username});
+                console.log(response);
+            } catch (error) {
+                console.error('Errore durante la creazione del canale:', error);
+            }
+    
+            navigate("/App/Feed")
+        }
+        
 
     };
     return(
         <div>
             <div className="step">
-                <span className="x-step"><Link to="/Feed">x</Link></span>Feed
+                <span className="x-step"><Link to="/App/Feed">x</Link></span>Feed
             </div>
             <form id="signup-form">
                 <div className="title title-create-channel">Create your Channel</div>
                 <input type="text" id="name" placeholder="Name" onChange={(e)=>handleChangeName(e)} value={name} />
                 {showErrorName && <span style={{fontWeight:"bold", fontSize:"115%", color:"red"}}>Channel's name must start width "§". </span>}
+                {showNameAlreadyTaken && <span style={{fontWeight:"bold", fontSize:"115%", color:"red"}}>This name is already taken. Please choose another one. </span>}
 
                 <div className="subtitle s-small optional">Optional:</div>
                 <div className="t-area-container">

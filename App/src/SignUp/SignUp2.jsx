@@ -38,7 +38,7 @@ const SignUp2 = ({ updateRegistrationData }) => {
             setShowErrorUserAndEmailAlreadyRegistered(true);
         } else {
             updateRegistrationData({ email, password, username });
-            navigate('/SignUp3');
+            navigate('/App/SignUp3');
           }
     } catch (error) {
         console.error('Errore:', error);
@@ -133,7 +133,7 @@ const togglePasswordVisibility = () => {
   return (
     <>
       <div className="step">
-      <span className="x-step"><Link to="/">x</Link></span>
+      <span className="x-step"><Link to="/App/">x</Link></span>
         Passo 2 di 4
       </div>
       <form id="signup-form">

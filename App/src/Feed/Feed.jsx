@@ -97,11 +97,11 @@ const Feed = () => {
       console.error("Errore nel gestire l'eliminazione dell'account:", error);
     }
     sessionStorage.removeItem("accountData");
-    navigate("/");
+    navigate("/App/");
   };
 
   const handleOpenComments = function(squealId){
-    navigate(`/Feed/comments?squeal_id=${squealId}`);
+    navigate(`/App/Feed/comments?squeal_id=${squealId}`);
   }
 
   const handleEmoticonGood = async (squeal) => {
@@ -265,28 +265,28 @@ const Feed = () => {
   };
 
   const handleSmmButton = () => {
-    navigate("/ManageSMM");
+    navigate("/App/ManageSMM");
   };
 
   const handleSearchButton = () => {
-    navigate("/Feed/Search");
+    navigate("/App/Feed/Search");
   };
 
   const handleNewChannelButton = () => {
-    navigate("/Feed/createChannel");
+    navigate("/App/Feed/createChannel");
   };
 
   const handleWriteSquealButton = () => {
     //se l'utente è guest, non può scrivere uno squeal, mentre se non è guest, va a navigate a WriteSqueal
     const isGuest = /^@guest_\d+$/.test(username);
     if (!isGuest) {
-      navigate("/Feed/WriteSqueal");
+      navigate("/App/Feed/WriteSqueal");
     }
   };
 
   const handleLogOut = () => {
     sessionStorage.removeItem("accountData");
-    navigate("/");
+    navigate("/App/");
   };
 
   return (

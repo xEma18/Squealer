@@ -18,7 +18,7 @@ const Login = ({}) => {
     if(response.status===200){//response.status indica che la richiesta è andata a buon fine (a prescindere dal contenuto della risposta)
       if(response.data){//qui controllo che la risposta contenga effettivamente un utente (se non c'è, vuol dire che le credenziali sono sbagliate)
         sessionStorage.setItem('accountData', JSON.stringify(response.data));
-        navigate('/Feed');
+        navigate('/App/Feed');
       }
       else{
         setShowWrongCredentials(true);
@@ -52,7 +52,7 @@ const handleChangePassword=async(e)=>{
   return (
     <>
       <div className="step">
-      <span className="x-step"><Link to="/">x</Link></span>
+      <span className="x-step"><Link to="/App/">x</Link></span>
         Passo 1 di 1
       </div>
       <form id="signup-form">
