@@ -590,7 +590,7 @@ async function ModifyButton(cardId, cardNumber) {
                     const categorySpan = document.getElementById(`squealCategory-${cardNumber}`);
                     console.log(categorySpan)
                     categorySpan.outerHTML = `<p id="dislikeSpan-${cardNumber}">${responseData.newCategory}</p>`
-                    console.log(categorySpan.innertext)
+                    console.log(categorySpan)
                 }
             }
             catch (error) {
