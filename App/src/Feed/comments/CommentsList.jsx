@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 export default function CommentsList({ post }) {
   const navigate = useNavigate();
   const [comment, setComment] = useState(null);
-  const [squealComments, setSquealComments] = useState(null);
+  const [squealComments, setSquealComments] = useState([]);
   // squealComments è dove andrebbero salvati i commenti del post.
 
   // Appena carica la pagina, faccio un fetch dei commenti salvati nel database

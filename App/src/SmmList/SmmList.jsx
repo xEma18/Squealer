@@ -35,24 +35,45 @@ export default function SmmList() {
   // // //
   // AGGIUNGERE LOGICA SELEZIONE SMM //
   // // //
-  // useEffect(
-  //   function () {
-  //     fetchAvailableManagers();
-  //   },
-  //   [setManagers]
-  // );
+  useEffect(
+    function () {
+      async function fetchAvailableManagers() {
+        try{
+          //...
+          setManagers();
+        }catch(error){
+          console.error(`Errore nel caricamento dei manager ${error.message}`)
+        } 
+      }
+      fetchAvailableManagers();
+    },
+    []
+  );
 
-  async function fetchAvailableManagers() {
-    //...
-    setManagers();
-  }
+  useEffect(
+    function(){
+      async function fetchCurrentManager(){
+        setCurrentManger();
+      }
+      fetchCurrentManager();
+    },
+    []  
+  )
 
-  function handleRemoveManager() {
+  
+
+  async function handleRemoveManager() {
     setManagers((managers) => [...managers, currentManager]);
     setCurrentManger(null);
+    
+    try{
+      // aggiorna il database per togliere il manager da questo utente
+    }catch(error){
+      console.error(`Errore nella rimozione del manager ${error.message}`)
+    }
   }
 
-  function handleSelectManager(selectedManager) {
+  async function handleSelectManager(selectedManager) {
     setManagers((managers) =>
       managers.filter((manager) => manager.id !== selectedManager.id)
     );
@@ -61,6 +82,12 @@ export default function SmmList() {
       setManagers((managers) => [...managers, currentManager]);
 
     setCurrentManger(selectedManager);
+
+    try{
+      // aggiorna il database per aggiungere il manager a questo utente
+    }catch(error){
+      console.error(`Errore nella selezione del manager ${error.message}`)
+    }
   }
 
   return (
