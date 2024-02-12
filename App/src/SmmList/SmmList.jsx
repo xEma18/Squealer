@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 // Dovresti importare i file css (servono feed_style.css e style.css, ma penso convenga importarli direttamente in main.jsx)
 
 // Qui come al solito sto definendo un array di manager "finto", sarebbero da prendere dal database. Comunque come test funziona.
@@ -27,18 +28,19 @@ const managersList = [
 ];
 
 export default function SmmList() {
+  const navigate = useNavigate();
   const [currentManager, setCurrentManger] = useState(null);
   const [managers, setManagers] = useState(managersList);
 
   // // //
   // AGGIUNGERE LOGICA SELEZIONE SMM //
   // // //
-  useEffect(
-    function () {
-      fetchAvailableManagers();
-    },
-    [setManagers]
-  );
+  // useEffect(
+  //   function () {
+  //     fetchAvailableManagers();
+  //   },
+  //   [setManagers]
+  // );
 
   async function fetchAvailableManagers() {
     //...
@@ -64,7 +66,7 @@ export default function SmmList() {
   return (
     <>
       {/* <!-- Tasto per tornare al feed --> */}
-      <div className="go-back">
+      <div className="go-back" onClick={() => navigate("/Feed")}>
         <span>
           <i className="fa-solid fa-arrow-left"></i> Feed
         </span>

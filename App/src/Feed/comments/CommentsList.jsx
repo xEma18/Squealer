@@ -1,16 +1,14 @@
-// import React from 'react';
-// import ReactDOM from 'react-dom/client';
-// import "../feed_style.css";
-// import "../../style.css";
+import { useNavigate } from "react-router-dom";
 
 export default function CommentsList({ post }) {
+  const navigate = useNavigate();
   // postComments è vuoto ma è dove andrebbero salvati i commenti del post.
   // Qui ci va tutta la parte di logica per fetchare i commenti di un determinato post
   const postComments = [];
 
   return (
-    <div className="comments-container">
-      <div className="go-back">
+    <div className="comments-container"> 
+      <div className="go-back" onClick={() => navigate("/Feed")}>
         <span>
           <i className="fa-solid fa-arrow-left"></i> Feed
         </span>
