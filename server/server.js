@@ -317,7 +317,6 @@ app.get('/squealComments/:squealId', async (req, res) => {
 });
 
 app.post("/squealComments", async (req, res) => {
-    console.log(req.body);
   try{
     const squeal = await SquealModel.findById(req.body.squealId);
     if (!squeal) {
