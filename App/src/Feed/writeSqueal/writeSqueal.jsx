@@ -192,10 +192,27 @@ const WriteSqueal = () => {
           newSqueal
         );
         updateCharsLeft(1);
+        newSqueal._id = response.data._id;
       } catch (error) {
         console.error("Errore durante il salvataggio del post:", error);
       }
     }
+
+    //controllo che: se nei recipients c'è un canale (ovvero §nomeCanale) allora fa un'api che mi aggiunge a quel canale l'id del post nel campo listofSqueals (che è un array di stringhe)
+    const channelNames = recipients.filter(recipient => recipient.startsWith("§"));
+    channelNames.forEach(async (channelName) => {
+      try {
+        // Include sia squealId che channelName nel body della richiesta POST
+        await axios.post(`http://localhost:3001/addSquealToChannel`, {
+          squealId: newSqueal._id,
+          channelName: channelName // Invia il nome del canale, compreso il prefisso "§", nel body
+        });
+      } catch (error) {
+        console.error(`Error updating channel ${channelName}:`, error);
+      }
+    });
+
+
     navigate("/App/Feed");
   };
 

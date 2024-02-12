@@ -272,16 +272,51 @@ app.get("/squeals", async (req, res) => {
 
 //API per ottenere gli Squeals che hanno come destinatario un utente specifico + tutti gli squeal "pubblici" (@everyone) se username !="guest"
 app.post("/squealsToUser", async (req, res) => {
+  const { username } = req.body;
+
   try {
-    const squeals = await SquealModel.findSquealsToUser(req.body.username);
-    res.status(200).json(squeals);
+    const user = await UserModel.findOne({ username: username });
+    if (!user) {
+      return res.status(404).json({ message: "Utente non trovato" });
+    }
+
+    // Recupera gli squeals diretti all'utente e gli squeals pubblici
+    let squeals = await SquealModel.find({
+      $or: [{ destinatari: username }, { destinatari: '@everyone' }]
+    });
+
+    // Recupera gli squeals dai canali a cui l'utente è iscritto
+    const channelsSqueals = await Promise.all(user.subscriptions.map(async (channelName) => {
+      const channel = await ChannelModel.findOne({ name: channelName });
+      if (channel && channel.listofSqueals.length > 0) {
+        return await SquealModel.find({
+          '_id': { $in: channel.listofSqueals }
+        });
+      }
+      return [];
+    }));
+
+    // Combina gli squeals diretti all'utente con quelli dei canali
+    channelsSqueals.forEach(channelSqueals => {
+      squeals = squeals.concat(channelSqueals);
+    });
+
+    // Rimuovi eventuali duplicati (opzionale, dipende dalla logica applicativa)
+    squeals = squeals.filter((squeal, index, self) =>
+      index === self.findIndex((t) => (
+        t._id.toString() === squeal._id.toString()
+      ))
+    );
+
+    squeals.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    res.json(squeals);
   } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ error: "Errore durante il recupero degli squeals all'utente" });
+    console.error("Errore durante il recupero degli squeals:", error);
+    res.status(500).json({ message: "Errore interno del server" });
   }
 });
+
 
 app.post("/getUserImageAndCharLeft", async (req, res) => {
   try {
@@ -965,6 +1000,22 @@ app.get("/getPublicSquealsBySender/:username", async (req, res) => {
   }
 });
 
+app.get('/squealsByChannelName/:channelName', async (req, res) => {
+  const { channelName } = req.params;
+  try {
+      const channel = await ChannelModel.findOne({ name: channelName });
+      if (!channel) {
+          return res.status(404).json({ message: 'Canale non trovato' });
+      }
+      const squeals = await SquealModel.find({ '_id': { $in: channel.listofSqueals } }).sort({ date: -1 });
+      res.json(squeals);
+  } catch (error) {
+      console.error('Errore durante il recupero degli squeals del canale:', error);
+      res.status(500).json({ message: 'Errore interno del server' });
+  }
+});
+
+
 //api per ottenere numero di squeal pubblicati da un utente, somma totale numero di likes e dislikes dei suoi post
 app.get("/getUserActivity/:username", async (req, res) => {
   try {
@@ -1191,6 +1242,45 @@ app.post('/unfollowChannel', async (req, res) => {
   }
 });
 
+
+app.post('/addSquealToChannel', async (req, res) => {
+  const { channelName, squealId } = req.body; // Estrai il nome del canale e l'ID dello squeal dal body della richiesta
+
+  try {
+    // Trova il canale basandosi sul nome (ricorda di gestire il prefisso "§" come parte del nome)
+    const channel = await ChannelModel.findOne({ name: channelName });
+    if (!channel) {
+      return res.status(404).json({ message: 'Canale non trovato' });
+    }
+
+    // Aggiungi l'ID dello squeal alla lista degli squeal del canale se non è già presente
+    if (!channel.listofSqueals.includes(squealId)) {
+      channel.listofSqueals.push(squealId);
+      await channel.save(); // Salva le modifiche nel canale
+      res.status(200).json({ message: 'Squeal aggiunto al canale con successo' });
+    } else {
+      res.status(400).json({ message: 'Squeal già presente nel canale' });
+    }
+  } catch (error) {
+    console.error('Errore durante l\'aggiunta dello squeal al canale:', error);
+    res.status(500).json({ message: 'Errore interno del server' });
+  }
+});
+
+app.post('/isUserFollowingChannel', async (req, res) => {
+  const { username, channelName } = req.body;
+  try {
+      const user = await UserModel.findOne({ username });
+      if (!user) {
+          return res.status(404).json({ message: 'Utente non trovato' });
+      }
+      const isUserFollowing = user.subscriptions.includes(channelName);
+      res.json({ isUserFollowing });
+  } catch (error) {
+      console.error('Errore durante la verifica dello stato di iscrizione:', error);
+      res.status(500).json({ message: 'Errore interno del server' });
+  }
+});
 
 
 

@@ -24,6 +24,12 @@ const ChannelProfile = () => {
         try {
             const response = await axios.get(`http://localhost:3001/getChannelByChannelName/${channelName}`);
             setUserData(response.data);
+
+            const followResponse = await axios.post(`http://localhost:3001/isUserFollowingChannel`, {
+            username,
+            channelName
+        });
+        setIsFollowing(followResponse.data.isUserFollowing);
         } catch (error) {
             console.error('Errore durante il recupero dei dati utente:', error);
         }
@@ -49,12 +55,14 @@ const ChannelProfile = () => {
 
     const fetchUserPublicSqueals = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/getPublicSquealsBySender/${channelName}`);
+            // Assumendo che esista un endpoint `/squealsByChannelName` che accetta il nome del canale e ritorna gli squeal associati
+            const response = await axios.get(`http://localhost:3001/squealsByChannelName/${channelName}`);
             setUserSqueals(response.data);
         } catch (error) {
-            console.error('Errore durante il recupero degli squeals dell\'utente:', error);
+            console.error('Errore durante il recupero degli squeals del canale:', error);
         }
     };
+
 
     const fetchUserActivity = async () => {
         try {
