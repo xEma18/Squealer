@@ -20,7 +20,7 @@ const InitialPageComponent = () => {
       sessionStorage.setItem('accountData', JSON.stringify({ username: guestUsername }));
   
       // Naviga al componente Feed
-      navigate('/Feed');
+      navigate('/App/Feed');
     } catch (error) {
       console.error("Errore nell'accesso come guest:", error);
     }
@@ -37,10 +37,10 @@ const InitialPageComponent = () => {
               <div className="subtitle">Join us today.</div>
               <div className="btns-container">
                 
-                <Link to="/SignUpPage1" className="btn" id="btn-registrati">
+                <Link to="/App/SignUpPage1" className="btn" id="btn-registrati">
                   Registrati
                 </Link>
-                <Link to ="/Login" className="btn" id="btn-accedi">Accedi</Link>
+                <Link to ="/App/Login" className="btn" id="btn-accedi">Accedi</Link>
               </div>
               <div className="divider">
                 <div className="divider-line"></div>

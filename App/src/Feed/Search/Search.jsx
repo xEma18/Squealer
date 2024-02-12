@@ -4,7 +4,7 @@ import axios from "axios";
 
 // Componenti ausiliari per organizzare la visualizzazione
 const UserItem = ({ user }) => (
-    <Link to={`/user/${user.username}`}>
+    <Link to={`/App/user/${user.username}`}>
         <div className="item" key={user.username}>
             <div className="item-pic">
                 <img src={user.image} alt="Profile picture" />
@@ -23,7 +23,7 @@ const UserItem = ({ user }) => (
 );
 
 const ChannelItem = ({ channel }) => (
-    <Link to={`/channel/${channel.name}`}>
+    <Link to={`/App/channel/${channel.name}`}>
         <div className="item" key={channel.name}>
             <div className="item-pic">
                 <img src={channel.profilePic} alt="Profile picture" />
@@ -41,7 +41,7 @@ const ChannelItem = ({ channel }) => (
 );
 
 const KeywordItem = ({ keywordObj }) => (
-    <Link to={`/keyword/${keywordObj.keyword.substring(1)}`}>
+    <Link to={`/App/keyword/${keywordObj.keyword.substring(1)}`}>
         <div className="item" key={keywordObj.keyword}>
             <div className="item-pic">
                 <img src="https://plus.unsplash.com/premium_photo-1681487872232-fa622a6dd59e?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Profile picture" />
@@ -98,7 +98,7 @@ const Search = () => {
     return (
         <div>
             <div className="go-back">
-                <Link to="/Feed"><span><i className="fa-solid fa-arrow-left"></i> Feed</span></Link>
+                <Link to="/App/Feed"><span><i className="fa-solid fa-arrow-left"></i> Feed</span></Link>
             </div>
             <form id="search-form">
                 <img src={profilePic} alt="Profile picture" />

@@ -49,21 +49,21 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<InitialPage />} />
+        <Route path="/App" element={<InitialPage />} />
         <Route
-          path="/SignUpPage1"
+          path="/App/SignUpPage1"
           element={<SignUp1 updateRegistrationData={updateRegistrationData} />}
         />
         <Route
-          path="/SignUp2"
+          path="/App/SignUp2"
           element={<SignUp2 updateRegistrationData={updateRegistrationData} />}
         />
         <Route
-          path="/SignUp3"
+          path="/App/SignUp3"
           element={<SignUp3 updateRegistrationData={updateRegistrationData} />}
         />
         <Route
-          path="/SignUp4"
+          path="/App/SignUp4"
           element={
             <SignUp4
               updateRegistrationData={updateRegistrationData}
@@ -71,17 +71,17 @@ const App = () => {
             />
           }
         />
-        <Route path="/LogIn" element={<Login />} />
-        <Route path="/Feed" element={<Feed />} />
-        <Route path="/Feed/WriteSqueal" element={<WriteSqueal />} />
-        <Route path="/Feed/comments" element={<CommentsList />} />
-        <Route path="/Feed/Search" element={<Search />} />
-        <Route path="/user/:username" element={<UserProfile />} />
-        <Route path="/channel/:channelName" element={<ChannelProfile />} />
-        <Route path="/keyword/:keyword" element={<Keyword />} />
-        <Route path="/ManageSMM" element={<SmmList />} />
-        <Route path="/Feed/createChannel" element={<CreateChannel/>} />
-        <Route path="*" element={<InitialPage />} />
+        <Route path="/App/LogIn" element={<Login />} />
+        <Route path="/App/Feed" element={<Feed />} />
+        <Route path="/App/Feed/WriteSqueal" element={<WriteSqueal />} />
+        <Route path="/App/Feed/comments" element={<CommentsList />} />
+        <Route path="/App/Feed/Search" element={<Search />} />
+        <Route path="/App/user/:username" element={<UserProfile />} />
+        <Route path="/App/channel/:channelName" element={<ChannelProfile />} />
+        <Route path="/App/keyword/:keyword" element={<Keyword />} />
+        <Route path="/App/ManageSMM" element={<SmmList />} />
+        <Route path="/App/Feed/createChannel" element={<CreateChannel/>} />
+        
       </Routes>
     </Router>
   );

@@ -38,7 +38,7 @@ const SignUp3=({updateRegistrationData})=>{
         updateRegistrationData({
           image,
         });
-        navigate('/SignUp4');
+        navigate('/App/SignUp4');
       }
 
 
@@ -46,7 +46,7 @@ const SignUp3=({updateRegistrationData})=>{
       return (
         <>  
           <div className="step">
-            <span className="x-step"><Link to="/">x</Link></span>
+            <span className="x-step"><Link to="/App">x</Link></span>
             Passo 3 di 4
           </div>
           <form id="signup-form">

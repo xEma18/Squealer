@@ -196,7 +196,7 @@ const WriteSqueal = () => {
         console.error("Errore durante il salvataggio del post:", error);
       }
     }
-    navigate("/Feed");
+    navigate("/App/Feed");
   };
 
   const updateCharsLeft = async (times) => {
@@ -380,7 +380,7 @@ const handleNumeroInviiChange = (e) => {
 
         <div>
             <div className="header">
-                <span className="x-step"><Link to="/Feed">x</Link></span>
+                <span className="x-step"><Link to="/App/Feed">x</Link></span>
                 <div id="post-squeal" onClick={handlePostSqueal}>Squeal</div>
             </div>
             {/* Contiene la profile pic e la textarea dove scrivere */}
