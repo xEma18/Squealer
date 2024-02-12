@@ -9,14 +9,14 @@ export default function CommentsList({ post }) {
   const postComments = [];
 
   return (
-    <div class="comments-container">
-      <div class="go-back">
+    <div className="comments-container">
+      <div className="go-back">
         <span>
-          <i class="fa-solid fa-arrow-left"></i> Feed
+          <i className="fa-solid fa-arrow-left"></i> Feed
         </span>
       </div>
 
-      <div class="comments-list">
+      <div className="comments-list">
         {postComments.map((comment) => (
           <Comment comment={comment} key={comment.id} />
         ))}
@@ -27,20 +27,21 @@ export default function CommentsList({ post }) {
 
 function Comment({ comment }) {
   return (
-    <div class="item">
-      <div class="item-pic">
+    // prettierignore
+    <div className="item">
+      <div className="item-pic">
         <img src={comment.userPicture} alt="Profile picture" />
       </div>
-      <div class="item-body">
-        <div class="item-namedate">
-          <span class="item-username">
+      <div className="item-body">
+        <div className="item-namedate">
+          <span className="item-username">
             <h>@</h>
             {comment.username}
           </span>
-          <i class="fa-solid fa-feather"></i>
-          <span class="item-date"> | {comment.date}</span>
+          <i className="fa-solid fa-feather"></i>
+          <span className="item-date"> | {comment.date}</span>
         </div>
-        <div class="item-content">{comment.commentBody}</div>
+        <div className="item-content">{comment.commentBody}</div>
       </div>
     </div>
   );

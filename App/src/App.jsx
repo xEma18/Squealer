@@ -77,7 +77,7 @@ const App = () => {
         <Route path="/user/:username" element={<UserProfile />} />
         <Route path="/channel/:channelName" element={<ChannelProfile />} />
         <Route path="/keyword/:keyword" element={<Keyword />} />
-        <Route patch="/ManageSMM" element={<SmmList />} />
+        <Route path="/ManageSMM" element={<SmmList />} />
 
         <Route path="*" element={<Login />} />
       </Routes>
