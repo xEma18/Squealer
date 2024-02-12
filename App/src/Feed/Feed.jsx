@@ -272,6 +272,10 @@ const Feed = () => {
     navigate("/Feed/Search");
   };
 
+  const handleNewChannelButton = () => {
+    navigate("/Feed/createChannel");
+  };
+
   const handleWriteSquealButton = () => {
     //se l'utente è guest, non può scrivere uno squeal, mentre se non è guest, va a navigate a WriteSqueal
     const isGuest = /^@guest_\d+$/.test(username);
@@ -298,6 +302,7 @@ const Feed = () => {
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
             onSmmButton={handleSmmButton}
+            onNewChannelButton={handleNewChannelButton}
             onDeleteAccount={handleDeleteAccount}
             onLogOut={handleLogOut}
           />
@@ -350,6 +355,7 @@ function SideBar({
   sidebarOpen,
   setSidebarOpen,
   onSmmButton,
+  onNewChannelButton,
   onDeleteAccount,
   onLogOut,
 }) {
@@ -367,6 +373,9 @@ function SideBar({
         </li>
         <li onClick={onSmmButton}>
           <i className="fa-solid fa-address-book"></i> Manager
+        </li>
+        <li onClick={onNewChannelButton}>
+          <i className="fa-solid fa-plus"></i> New channel
         </li>
       </ul>
       <ul className="bottom-list">
