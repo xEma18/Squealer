@@ -97,7 +97,7 @@ const Feed = () => {
       console.error("Errore nel gestire l'eliminazione dell'account:", error);
     }
     sessionStorage.removeItem("accountData");
-    navigate("/App");
+    navigate("/App/");
   };
 
   const handleOpenComments = function(squealId){
@@ -286,7 +286,7 @@ const Feed = () => {
 
   const handleLogOut = () => {
     sessionStorage.removeItem("accountData");
-    navigate("/App");
+    navigate("/App/");
   };
 
   return (

@@ -47,7 +47,7 @@ const SignUp4 = ({ updateRegistrationData, registrationData }) => {
   return (
     <>
     <div className="step">
-    <span className="x-step"><Link to="/App">x</Link></span>
+    <span className="x-step"><Link to="/App/">x</Link></span>
         Passo 4 di 4
     </div>
     <form id="signup-form">

@@ -31,7 +31,7 @@ const SignUp1 = ({ updateRegistrationData }) => {
 
   return (
     <><div className="step">
-      <span className="x-step"><Link to="/App">x</Link></span>Passo 1 di 4
+      <span className="x-step"><Link to="/App/">x</Link></span>Passo 1 di 4
     </div><form id="signup-form">
         <div className="title">Crea il tuo account</div>
         <input type="text" id="name" placeholder="Nome" onChange={(e)=>setName(e.target.value)} value={name} />

@@ -49,7 +49,7 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/App" element={<InitialPage />} />
+        <Route path="/App/" element={<InitialPage />} />
         <Route
           path="/App/SignUpPage1"
           element={<SignUp1 updateRegistrationData={updateRegistrationData} />}

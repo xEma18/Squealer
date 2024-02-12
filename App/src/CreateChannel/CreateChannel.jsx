@@ -104,6 +104,7 @@ const CreateChannel = () => {
                 <div className="title title-create-channel">Create your Channel</div>
                 <input type="text" id="name" placeholder="Name" onChange={(e)=>handleChangeName(e)} value={name} />
                 {showErrorName && <span style={{fontWeight:"bold", fontSize:"115%", color:"red"}}>Channel's name must start width "§". </span>}
+                {showNameAlreadyTaken && <span style={{fontWeight:"bold", fontSize:"115%", color:"red"}}>This name is already taken. Please choose another one. </span>}
 
                 <div className="subtitle s-small optional">Optional:</div>
                 <div className="t-area-container">
