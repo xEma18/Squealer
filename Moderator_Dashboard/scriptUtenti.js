@@ -19,7 +19,7 @@ function filtraUtenti(nome, tipo, popolarita) {
 
     cards.forEach(card => {
         const nomeUtente = card.querySelector(".card-title").innerText;
-        //Prendo l'elemento Tipo utente: tipoutente creo un array del tipo ["Tipo utente","tipoutente"] con [1] prendo il tipoutente e grazie a .trim() rimuovo lo spazio bianco iniziale
+        //Prendo l'elemento User Type: tipoutente creo un array del tipo ["User Type","tipoutente"] con [1] prendo il tipoutente e grazie a .trim() rimuovo lo spazio bianco iniziale
         const tipoUtente = card.querySelector('h6:nth-child(3)').innerText.split(":")[1].trim();
         const popolaritaUtente = card.querySelector('h6:nth-child(4)').innerText.split(":")[1].trim();
 
@@ -66,11 +66,11 @@ function updateCards(users) {
                 <div class="card-body">
                     <h4 class="nomeECognome card-title fw-bold ">${users[i].name} ${users[i].lastname} <span class="fw-light small">(${users[i].username})<span></h4>
                     <h5 class="card-subtitle mb-3 text-success" id="status">${users[i].status}</h5>
-                    <h6><span class="fw-bold">Tipo utente:</span><span class="tipoUtente"> ${users[i].tipoUtente}</span></h6>
-                    <h6><span class="fw-bold">Popolarità:</span><span class="popolarita"> ${users[i].popolarita}</span></h6>
-                    <h6><span class="fw-bold">Caratteri Giornalieri Usati:</span><span class="caratteriGiornalieri"> ${users[i].caratteriGiornalieriUsati} / ${users[i].caratteriGiornalieri} </span></h6>
-                    <h6><span class="fw-bold">Caratteri Settimanali Usati:</span><span class="caratteriSettimanali"> ${users[i].caratteriSettimanaliUsati} / ${users[i].caratteriSettimanali} </span></h6>
-                    <h6><span class="fw-bold">Caratteri Mensili Usati:</span><span class="caratteriMensili"> ${users[i].caratteriMensiliUsati} / ${users[i].caratteriMensili}</span></h6>
+                    <h6><span class="fw-bold">User Type:</span><span class="tipoUtente"> ${users[i].tipoUtente}</span></h6>
+                    <h6><span class="fw-bold">Popolarity:</span><span class="popolarita"> ${users[i].popolarita}</span></h6>
+                    <h6><span class="fw-bold">Daily Characters Used:</span><span class="caratteriGiornalieri"> ${users[i].caratteriGiornalieriUsati} / ${users[i].caratteriGiornalieri} </span></h6>
+                    <h6><span class="fw-bold">Weekly Characters Used:</span><span class="caratteriSettimanali"> ${users[i].caratteriSettimanaliUsati} / ${users[i].caratteriSettimanali} </span></h6>
+                    <h6><span class="fw-bold">Montly Characters Used:</span><span class="caratteriMensili"> ${users[i].caratteriMensiliUsati} / ${users[i].caratteriMensili}</span></h6>
                     <button class="btn btn-dark" id="modificaBtn">Modify</button>
                 </div>
             </div>`
@@ -86,9 +86,9 @@ function updateCards(users) {
                     <h5 class="card-subtitle mb-3 text-danger" id="status">${users[i].status}</h5>
                     <h6><span class="fw-bold">User Type:</span><span class="tipoUtente"> ${users[i].tipoUtente}</span></h6>
                     <h6><span class="fw-bold">Popolarity:</span><span class="popolarita"> ${users[i].popolarita}</span></h6>
-                    <h6><span class="fw-bold">Daily chars:</span><span class="caratteriGiornalieri"> ${users[i].caratteriGiornalieriUsati} / ${users[i].caratteriGiornalieri}</span></h6>
-                    <h6><span class="fw-bold">Weekly chars:</span><span class="caratteriSettimanali"> ${users[i].caratteriSettimanaliUsati} / ${users[i].caratteriSettimanali}</span></h6>
-                    <h6><span class="fw-bold">Monthly chars:</span><span class="caratteriMensili"> ${users[i].caratteriMensiliUsati} / ${users[i].caratteriMensili}</span></h6>
+                    <h6><span class="fw-bold">Daily Characters Used:</span><span class="caratteriGiornalieri"> ${users[i].caratteriGiornalieriUsati} / ${users[i].caratteriGiornalieri}</span></h6>
+                    <h6><span class="fw-bold">Weekly Characters Used:</span><span class="caratteriSettimanali"> ${users[i].caratteriSettimanaliUsati} / ${users[i].caratteriSettimanali}</span></h6>
+                    <h6><span class="fw-bold">Montly Characters Used:</span><span class="caratteriMensili"> ${users[i].caratteriMensiliUsati} / ${users[i].caratteriMensili}</span></h6>
                     <button class="btn btn-dark" id="modificaBtn">Modify</button>
                 </div>
             </div>`
@@ -183,7 +183,7 @@ async function ModifyButton(cardId, cardNumber) {
     }
 
     if ((users[cardNumber].tipoUtente) == "VIP") {
-        tipoUtenteField.innerHTML = `<span class="fw-bold">Tipo utente:</span>
+        tipoUtenteField.innerHTML = `<span class="fw-bold">User Type:</span>
         <select class="form-select" aria-label="VIP selected" id="tipoUtenteInput">
         <option value="Standard">Standard</option>
         <option value="VIP" selected="selected">VIP</option>
@@ -191,7 +191,7 @@ async function ModifyButton(cardId, cardNumber) {
         </select>`;
     }
     else if ((users[cardNumber].tipoUtente) == "Standard") {
-        tipoUtenteField.innerHTML = `<span class="fw-bold">Tipo utente:</span>
+        tipoUtenteField.innerHTML = `<span class="fw-bold">User Type:</span>
             <select class="form-select" aria-label="Standard Selected" id="tipoUtenteInput">
             <option value="Standard" selected="selected">Standard</option>
             <option value="VIP">VIP</option>
@@ -199,7 +199,7 @@ async function ModifyButton(cardId, cardNumber) {
             </select>`;
     }
     else {
-        tipoUtenteField.innerHTML = `<span class="fw-bold">Tipo utente:</span>
+        tipoUtenteField.innerHTML = `<span class="fw-bold">User Type:</span>
             <select class="form-select" aria-label="SMM selected" id="tipoUtenteInput">
             <option value="Standard">Standard</option>
             <option value="VIP">VIP</option>
@@ -208,7 +208,7 @@ async function ModifyButton(cardId, cardNumber) {
     }
 
     if ((users[cardNumber].popolarita) == "High") {
-        popolaritaField.innerHTML = `<span class="fw-bold">Popolarità:</span>
+        popolaritaField.innerHTML = `<span class="fw-bold">Popolarity:</span>
     <select class="form-select" aria-label="Popolarity high selected" id="popolaritaInput">
         <option value="High" selected="selected">High</option>
         <option value="Medium">Medium</option>
@@ -216,7 +216,7 @@ async function ModifyButton(cardId, cardNumber) {
     </select>`;
     }
     else if ((users[cardNumber].popolarita) == "Medium") {
-        popolaritaField.innerHTML = `<span class="fw-bold">Popolarità:</span>
+        popolaritaField.innerHTML = `<span class="fw-bold">Popolarity:</span>
         <select class="form-select" aria-label="Popolarity medium selected" id="popolaritaInput">
             <option value="High">High</option>
             <option value="Medium" selected="selected">Medium</option>
@@ -224,16 +224,16 @@ async function ModifyButton(cardId, cardNumber) {
         </select>`;
     }
     else {
-        popolaritaField.innerHTML = `<span class="fw-bold">Popolarità:</span>
+        popolaritaField.innerHTML = `<span class="fw-bold">Popolarity:</span>
         <select class="form-select" aria-label="Popolarity low selected" id="popolaritaInput">
             <option value="High">High</option>
             <option value="Medium">Medium</option>
             <option value="Low" selected="selected">Low</option>
         </select>`;
     }
-    caratteriGiornalieriField.innerHTML = `<span class="fw-bold">Caratteri Giornalieri:</span> <input class="form-control" type="number" id="caratteriGiornalieriInput" value="${users[cardNumber].caratteriGiornalieriUsati}">`;
-    caratteriSettimanaliField.innerHTML = `<span class="fw-bold">Caratteri Settimanali:</span> <input class="form-control"type="number" id="caratteriSettimanaliInput" value="${users[cardNumber].caratteriSettimanaliUsati}">`;
-    caratteriMensiliField.innerHTML = `<span class="fw-bold">Caratteri Mensili:</span> <input class="form-control" type="number" id="caratteriMensiliInput" value="${users[cardNumber].caratteriMensiliUsati}">`;
+    caratteriGiornalieriField.innerHTML = `<span class="fw-bold">Daily Characters Used:</span> <input class="form-control" type="number" id="caratteriGiornalieriInput" value="${users[cardNumber].caratteriGiornalieriUsati}">`;
+    caratteriSettimanaliField.innerHTML = `<span class="fw-bold">Weekly Characters Used:</span> <input class="form-control"type="number" id="caratteriSettimanaliInput" value="${users[cardNumber].caratteriSettimanaliUsati}">`;
+    caratteriMensiliField.innerHTML = `<span class="fw-bold">Montly Characters Used:</span> <input class="form-control" type="number" id="caratteriMensiliInput" value="${users[cardNumber].caratteriMensiliUsati}">`;
 
 
     // Aggiungi il pulsante "Salva Modifiche"
@@ -288,11 +288,11 @@ async function ModifyButton(cardId, cardNumber) {
         // Aggiorna i campi con i nuovi valori
         if (nuovoStatus === "Active") {
             console.log("entro nell'active")
-            console.log("caratteriGiornalieriUsatiNuovi", nuoviCaratteriGiornalieri);
+            console.log("caratteriGiornalieriNuovi", nuoviCaratteriGiornalieri);
             statusUtente.innerHTML = `<h5 class="card-subtitle text-success mb-3" id="status">${nuovoStatus}</h5>`
-            caratteriGiornalieriField.innerHTML = `<span class="fw-bold">Caratteri Giornalieri:</span> ${nuoviCaratteriGiornalieri} / ${users[cardNumber].caratteriGiornalieri} `;
-            caratteriSettimanaliField.innerHTML = `<span class="fw-bold">Caratteri Settimanali:</span> ${nuoviCaratteriSettimanali} / ${users[cardNumber].caratteriSettimanali} `;
-            caratteriMensiliField.innerHTML = `<span class="fw-bold">Caratteri Mensili:</span>  ${nuoviCaratteriMensili} / ${users[cardNumber].caratteriMensili}`;
+            caratteriGiornalieriField.innerHTML = `<span class="fw-bold">Daily Characters Usedi:</span> ${nuoviCaratteriGiornalieri} / ${users[cardNumber].caratteriGiornalieri} `;
+            caratteriSettimanaliField.innerHTML = `<span class="fw-bold">Daily Montly Weekly Used:</span> ${nuoviCaratteriSettimanali} / ${users[cardNumber].caratteriSettimanali} `;
+            caratteriMensiliField.innerHTML = `<span class="fw-bold">Daily Montly Characters Used:</span>  ${nuoviCaratteriMensili} / ${users[cardNumber].caratteriMensili}`;
         
         }
         else {
@@ -302,11 +302,11 @@ async function ModifyButton(cardId, cardNumber) {
             users[cardNumber].caratteriSettimanaliUsati = users[cardNumber].caratteriSettimanali;
             users[cardNumber].caratteriMensiliUsati = users[cardNumber].caratteriMensili;
 
-            caratteriGiornalieriField.innerHTML = `<span class="fw-bold">Caratteri Giornalieri:</span> ${users[cardNumber].caratteriGiornalieriUsati} / ${users[cardNumber].caratteriGiornalieri} `;
-            caratteriSettimanaliField.innerHTML = `<span class="fw-bold">Caratteri Settimanali:</span> ${users[cardNumber].caratteriSettimanaliUsati} / ${users[cardNumber].caratteriSettimanali} `;
-            caratteriMensiliField.innerHTML = `<span class="fw-bold">Caratteri Mensili:</span>  ${users[cardNumber].caratteriMensiliUsati} / ${users[cardNumber].caratteriMensili}`;
+            caratteriGiornalieriField.innerHTML = `<span class="fw-bold">Daily Characters Usedi:</span> ${users[cardNumber].caratteriGiornalieriUsati} / ${users[cardNumber].caratteriGiornalieri} `;
+            caratteriSettimanaliField.innerHTML = `<span class="fw-bold">Daily Montly Weekly Used:</span> ${users[cardNumber].caratteriSettimanaliUsati} / ${users[cardNumber].caratteriSettimanali} `;
+            caratteriMensiliField.innerHTML = `<span class="fw-bold">Daily Montly Characters Used:</span>  ${users[cardNumber].caratteriMensiliUsati} / ${users[cardNumber].caratteriMensili}`;
 
-                // Chiamata POST all'API per bloccare l'utente e impostare quindi i suoi caratteri usati al massimo consentito
+                // Chiamata POST all'API per bloccare l'utente e impostare quindi i suoi caratteri  al massimo consentito
         try {
             const response = await fetch('http://localhost:3001/editUser', {
                 method: 'POST',
@@ -337,8 +337,8 @@ async function ModifyButton(cardId, cardNumber) {
             console.error('Errore durante la chiamata POST all\'API:', error);
         }
         }
-        tipoUtenteField.innerHTML = `<span class="fw-bold">Tipo utente:</span> ${nuovoTipoUtente}`;
-        popolaritaField.innerHTML = `<span class="fw-bold">Popolarità:</span> ${nuovaPopolarita}`;
+        tipoUtenteField.innerHTML = `<span class="fw-bold">User Type:</span> ${nuovoTipoUtente}`;
+        popolaritaField.innerHTML = `<span class="fw-bold">Popolarity:</span> ${nuovaPopolarita}`;
 
         // Rimuovi il pulsante "Salva Modifiche"
         cardBody.removeChild(saveChangesBtn);

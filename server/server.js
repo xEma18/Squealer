@@ -238,7 +238,7 @@ app.post("/addEmoticonGood", async (req, res) => {
     squeal.emoticonNum.good += 1;
     squeal.emoticonGivenBy.good.push(req.body.username);
 
-    if (squeal.category !== "private") {
+    if (squeal.category !== "Private") {
       if (
         squeal.emoticonNum.good > 0.25 * squeal.impression &&
         squeal.emoticonNum.bad > 0.25 * squeal.impression
@@ -246,6 +246,9 @@ app.post("/addEmoticonGood", async (req, res) => {
         squeal.category = "Controversial";
       } else if (squeal.emoticonNum.good > 0.25 * squeal.impression) {
         squeal.category = "Popular";
+      }
+      else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
+        squeal.category = "Unpopular";
       }
     }
 
@@ -266,13 +269,16 @@ app.post("/removeEmoticonGood", async (req, res) => {
     squeal.emoticonNum.good -= 1;
     squeal.emoticonGivenBy.good.pop(req.body.username);
 
-    if (squeal.category !== "private") {
+    if (squeal.category !== "Private") {
       if (
         squeal.emoticonNum.good > 0.25 * squeal.impression &&
         squeal.emoticonNum.bad > 0.25 * squeal.impression
       ) {
         squeal.category = "Controversial";
       } else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
+        squeal.category = "Unpopular";
+      }
+      else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
         squeal.category = "Unpopular";
       }
     }
@@ -293,6 +299,21 @@ app.post("/addEmoticonBad", async (req, res) => {
     }
     squeal.emoticonNum.bad += 1;
     squeal.emoticonGivenBy.bad.push(req.body.username);
+
+    if (squeal.category !== "Private") {
+      if (
+        squeal.emoticonNum.good > 0.25 * squeal.impression &&
+        squeal.emoticonNum.bad > 0.25 * squeal.impression
+      ) {
+        squeal.category = "Controversial";
+      } else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
+        squeal.category = "Unpopular";
+      }
+      else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
+        squeal.category = "Unpopular";
+      }
+    }
+
     await squeal.save();
     res.status(200).json(squeal);
   } catch (error) {
@@ -309,6 +330,21 @@ app.post("/removeEmoticonBad", async (req, res) => {
     }
     squeal.emoticonNum.bad -= 1;
     squeal.emoticonGivenBy.bad.pop(req.body.username);
+
+    if (squeal.category !== "Private") {
+      if (
+        squeal.emoticonNum.good > 0.25 * squeal.impression &&
+        squeal.emoticonNum.bad > 0.25 * squeal.impression
+      ) {
+        squeal.category = "Controversial";
+      } else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
+        squeal.category = "Unpopular";
+      }
+      else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
+        squeal.category = "Unpopular";
+      }
+    }
+
     await squeal.save();
     res.status(200).json(squeal);
   } catch (error) {
@@ -452,17 +488,6 @@ app.post("/addRecv", async (req, res) => {
       squeal.destinatari = squeal.destinatari.concat(req.body.destinatari);
       console.log("destinatari aggiornati: " + squeal.destinatari);
 
-      if (squeal.category !== "private") {
-        if (
-          squeal.emoticonNum.good > 0.25 * squeal.impression &&
-          squeal.emoticonNum.bad > 0.25 * squeal.impression
-        ) {
-          squeal.category = "Controversial";
-        } else if (squeal.emoticonNum.good > 0.25 * squeal.impression) {
-          squeal.category = "Popular";
-        }
-      }
-
       // Salva le modifiche nel database
       await squeal.save();
 
@@ -499,7 +524,7 @@ app.post("/editEmoticonMD", async (req, res) => {
       squeal.emoticonNum.good = req.body.emoticonNum[0];
       squeal.emoticonNum.bad = req.body.emoticonNum[1];
 
-      if (squeal.category !== "private") {
+      if (squeal.category !== "Private") {
         if (
           squeal.emoticonNum.good > 0.25 * squeal.impression &&
           squeal.emoticonNum.bad > 0.25 * squeal.impression
@@ -508,13 +533,15 @@ app.post("/editEmoticonMD", async (req, res) => {
         } else if (squeal.emoticonNum.good > 0.25 * squeal.impression) {
           squeal.category = "Popular";
         }
+        else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
+          squeal.category = "Unpopular";
+        }
       }
       await squeal.save();
       // Invia una risposta di successo
-      res
-        .status(200)
-        .json({
+      res.status(200).json({
           message: "Modifiche allo Squeal apportate con successo nel database",
+          newCategory: squeal.category,
         });
     } else {
       // Invia una risposta con errore se l'utente non è stato trovato
@@ -590,8 +617,7 @@ app.post("/editChannelDescription", async (req, res) => {
       await channel.save();
       // Invia una risposta di successo
       res
-        .status(200)
-        .json({ message: "Dati utente aggiornati con successo nel database" });
+        .status(200).json({ message: "Dati utente aggiornati con successo nel database" });
     } else {
       // Invia una risposta con errore se l'utente non è stato trovato
       res.status(404).json({ message: "Canale non trovato nel database" });
