@@ -48,11 +48,11 @@ const SignUp1 = ({ updateRegistrationData }) => {
             <option value="" disabled>Seleziona un'opzione</option>
             <option value="Standard">Standard</option>
             <option value="VIP">VIP</option>
-            <option value="Premium">SMM</option>
+            <option value="SMM">SMM</option>
           </select>
         </div>
         <div className="pro-note">
-          <span>Nota:</span> prima di poter usufruire delle funzionalità VIP o Premium, un
+          <span>Nota:</span> prima di poter usufruire delle funzionalità VIP o SMM, un
           moderatore dovrà valutare la tua richiesta.
         </div>
         <div className="btn btn-avanti" id="btn-signup-1" onClick={handleNext}>Avanti</div>
