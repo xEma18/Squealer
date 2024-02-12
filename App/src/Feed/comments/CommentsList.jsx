@@ -1,10 +1,39 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+// Come faccio a passare lo squeal dal Feed a questa schermata
 export default function CommentsList({ post }) {
   const navigate = useNavigate();
-  // postComments è vuoto ma è dove andrebbero salvati i commenti del post.
-  // Qui ci va tutta la parte di logica per fetchare i commenti di un determinato post
-  const postComments = [];
+  const [comment, setComment] = useState(null);
+  const [squealComments, setSquealComments] = useState(null);
+  // squealComments è dove andrebbero salvati i commenti del post.
+
+  // Appena carica la pagina, faccio un fetch dei commenti salvati nel database
+  useEffect(function(){
+    async function fetchComments(){
+      try{
+        // Logica per fetchare commenti dal database
+        // setSquealComments(commenti fetchati)
+      }catch(error){
+        console.error(`Errore durante il caricamento dei commento ${error.message}`)
+      }
+    }
+    fetchComments();
+  }, [])
+
+  async function handleAddComment(e){
+    e.preventDefault();
+
+    if(!comment) return;
+
+    setSquealComments(current => [...current, comment]);
+
+    try{
+      // Logica per salvare il nuovo commento nel database
+    }catch(error){
+      console.error(`Errore durante la pubblicazione del commento ${error.message}`);
+    }
+  }
 
   return (
     <div className="comments-container"> 
@@ -15,10 +44,11 @@ export default function CommentsList({ post }) {
       </div>
 
       <div className="comments-list">
-        {postComments.map((comment) => (
+        {squealComments.map((comment) => (
           <Comment comment={comment} key={comment.id} />
         ))}
       </div>
+      <TypeBar comment={comment} setComment={setComment} onAddComment={handleAddComment}/>
     </div>
   );
 }
@@ -43,4 +73,12 @@ function Comment({ comment }) {
       </div>
     </div>
   );
+}
+
+function TypeBar({comment, setComment, onAddComment}){
+  return (
+    <form className="write-comment" onSubmit={onAddComment}>
+        <input type="text" value={comment} onChange={e => setComment(e.target.value)}/>
+        <i className="fa-solid fa-paper-plane"></i>
+    </form>)
 }
