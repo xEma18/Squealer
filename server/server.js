@@ -238,7 +238,7 @@ app.post("/addEmoticonGood", async (req, res) => {
     squeal.emoticonNum.good += 1;
     squeal.emoticonGivenBy.good.push(req.body.username);
 
-    if (squeal.category !== "private") {
+    if (squeal.category !== "Private") {
       if (
         squeal.emoticonNum.good > 0.25 * squeal.impression &&
         squeal.emoticonNum.bad > 0.25 * squeal.impression
@@ -269,13 +269,16 @@ app.post("/removeEmoticonGood", async (req, res) => {
     squeal.emoticonNum.good -= 1;
     squeal.emoticonGivenBy.good.pop(req.body.username);
 
-    if (squeal.category !== "private") {
+    if (squeal.category !== "Private") {
       if (
         squeal.emoticonNum.good > 0.25 * squeal.impression &&
         squeal.emoticonNum.bad > 0.25 * squeal.impression
       ) {
         squeal.category = "Controversial";
       } else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
+        squeal.category = "Unpopular";
+      }
+      else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
         squeal.category = "Unpopular";
       }
     }
@@ -296,6 +299,21 @@ app.post("/addEmoticonBad", async (req, res) => {
     }
     squeal.emoticonNum.bad += 1;
     squeal.emoticonGivenBy.bad.push(req.body.username);
+
+    if (squeal.category !== "Private") {
+      if (
+        squeal.emoticonNum.good > 0.25 * squeal.impression &&
+        squeal.emoticonNum.bad > 0.25 * squeal.impression
+      ) {
+        squeal.category = "Controversial";
+      } else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
+        squeal.category = "Unpopular";
+      }
+      else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
+        squeal.category = "Unpopular";
+      }
+    }
+
     await squeal.save();
     res.status(200).json(squeal);
   } catch (error) {
@@ -312,6 +330,21 @@ app.post("/removeEmoticonBad", async (req, res) => {
     }
     squeal.emoticonNum.bad -= 1;
     squeal.emoticonGivenBy.bad.pop(req.body.username);
+
+    if (squeal.category !== "Private") {
+      if (
+        squeal.emoticonNum.good > 0.25 * squeal.impression &&
+        squeal.emoticonNum.bad > 0.25 * squeal.impression
+      ) {
+        squeal.category = "Controversial";
+      } else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
+        squeal.category = "Unpopular";
+      }
+      else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
+        squeal.category = "Unpopular";
+      }
+    }
+
     await squeal.save();
     res.status(200).json(squeal);
   } catch (error) {
@@ -455,17 +488,6 @@ app.post("/addRecv", async (req, res) => {
       squeal.destinatari = squeal.destinatari.concat(req.body.destinatari);
       console.log("destinatari aggiornati: " + squeal.destinatari);
 
-      if (squeal.category !== "private") {
-        if (
-          squeal.emoticonNum.good > 0.25 * squeal.impression &&
-          squeal.emoticonNum.bad > 0.25 * squeal.impression
-        ) {
-          squeal.category = "Controversial";
-        } else if (squeal.emoticonNum.good > 0.25 * squeal.impression) {
-          squeal.category = "Popular";
-        }
-      }
-
       // Salva le modifiche nel database
       await squeal.save();
 
@@ -502,7 +524,7 @@ app.post("/editEmoticonMD", async (req, res) => {
       squeal.emoticonNum.good = req.body.emoticonNum[0];
       squeal.emoticonNum.bad = req.body.emoticonNum[1];
 
-      if (squeal.category !== "private") {
+      if (squeal.category !== "Private") {
         if (
           squeal.emoticonNum.good > 0.25 * squeal.impression &&
           squeal.emoticonNum.bad > 0.25 * squeal.impression
@@ -510,6 +532,9 @@ app.post("/editEmoticonMD", async (req, res) => {
           squeal.category = "Controversial";
         } else if (squeal.emoticonNum.good > 0.25 * squeal.impression) {
           squeal.category = "Popular";
+        }
+        else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
+          squeal.category = "Unpopular";
         }
       }
       await squeal.save();
