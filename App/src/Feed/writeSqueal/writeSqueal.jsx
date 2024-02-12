@@ -48,26 +48,18 @@ const WriteSqueal = () => {
   }, [username]);
 
   const handleChangeText = (e) => {
-    if (
-      e.target.value.length * numeroInvii + userData.caratteriGiornalieriUsati >
-      userData.caratteriGiornalieri
-    ) {
-      setNoDailyCharsLeft(true);
-      if (
-        e.target.value.length * numeroInvii +
-          userData.caratteriSettimanaliUsati >
-        userData.caratteriSettimanali
-      ) {
-        setNoWeeklyCharsLeft(true);
-      }
-      if (
-        e.target.value.length * numeroInvii + userData.caratteriMensiliUsati >
-        userData.caratteriMensili
-      ) {
-        setNoMonthlyCharsLeft(true);
-      }
-      return;
-    }
+    if(publicMode){
+      if (e.target.value.length * numeroInvii + userData.caratteriGiornalieriUsati > userData.caratteriGiornalieri) {
+          setNoDailyCharsLeft(true);
+          if (e.target.value.length * numeroInvii + userData.caratteriSettimanaliUsati > userData.caratteriSettimanali) {
+            setNoWeeklyCharsLeft(true);
+          }
+          if (e.target.value.length * numeroInvii + userData.caratteriMensiliUsati > userData.caratteriMensili) {
+            setNoMonthlyCharsLeft(true);
+          }
+          return;
+      } 
+  }
     setNoDailyCharsLeft(false);
     setNoWeeklyCharsLeft(false);
     setNoMonthlyCharsLeft(false);
@@ -86,10 +78,7 @@ const WriteSqueal = () => {
   };
 
   const handleImageChange = async (e) => {
-    if (
-      userData.caratteriGiornalieri - userData.caratteriGiornalieriUsati >=
-      125
-    ) {
+    if (userData.caratteriGiornalieri - userData.caratteriGiornalieriUsati >=125) {
       setShowMap(false);
       const file = e.target.files[0]; //prendo il primo file selezionato (siccome potrei selezionare più file)
 
@@ -119,7 +108,7 @@ const WriteSqueal = () => {
       setNoWeeklyCharsLeft(false);
       setNoMonthlyCharsLeft(false);
     } else {
-      alert("Per caricare un'immagine sono necessari 125 caratteri");
+      alert("125 characters needed to upload an image");
     }
   };
 
@@ -134,6 +123,11 @@ const WriteSqueal = () => {
     );
 
     setPublicMode(containsPublicModeTrigger);
+    if(containsPublicModeTrigger){
+      setImage("");
+      setText("");
+      setShowMap(false);
+    }
   };
 
   const toggleTemporizzato = () => {
@@ -144,6 +138,10 @@ const WriteSqueal = () => {
     if(recipients.length === 0) {
         alert("Insert at least one recipient");
         return;
+    }
+    if(text.length * numeroInvii + userData.caratteriGiornalieriUsati > userData.caratteriGiornalieri){
+      alert("You used too much characters")
+      return;
     }
     const newSqueal = {
       mittente: username,
@@ -326,14 +324,40 @@ const handleNumeroInviiChange = (e) => {
         
 
     const handleRandomImage = async () => {
-        setShowMap(false);
-        try {
-          const response = await axios.get('http://localhost:3001/randomImage');
-          setImage(response.data.imageUrl);
-          setText(''); // Rimuove il testo se presente
-        } catch (error) {
-          console.error('Errore durante il recupero di un\'immagine casuale:', error);
+      if(publicMode){
+        if (userData.caratteriGiornalieri - userData.caratteriGiornalieriUsati >=125) {
+            setShowMap(false);
+            try {
+              const response = await axios.get('http://localhost:3001/randomImage');
+              setImage(response.data.imageUrl);
+
+              setText(''); // Rimuove il testo se presente
+            } catch (error) {
+              console.error('Errore durante il recupero di un\'immagine casuale:', error);
+            }
+
+            let fixedLengthText = text.substring(0, 125);
+            while (fixedLengthText.length < 125) {
+              fixedLengthText += " "; // Aggiungi spazi per raggiungere 125 caratteri
+            }
+            setText(fixedLengthText);
+          }
+          else{
+            alert("125 characters needed to upload an image")
+          }
+        } 
+        else{
+          setShowMap(false);
+            try {
+              const response = await axios.get('http://localhost:3001/randomImage');
+              setImage(response.data.imageUrl);
+
+              setText(''); // Rimuove il testo se presente
+            } catch (error) {
+              console.error('Errore durante il recupero di un\'immagine casuale:', error);
+            }
         }
+      
     };
       
     const handleRandomNews = async () => {
