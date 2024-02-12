@@ -247,6 +247,9 @@ app.post("/addEmoticonGood", async (req, res) => {
       } else if (squeal.emoticonNum.good > 0.25 * squeal.impression) {
         squeal.category = "Popular";
       }
+      else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
+        squeal.category = "Unpopular";
+      }
     }
 
     await squeal.save();
