@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+// Come faccio a passare lo squeal dal Feed a questa schermata
 export default function CommentsList({ post }) {
   const navigate = useNavigate();
   const [comment, setComment] = useState(null);
