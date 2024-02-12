@@ -32,23 +32,23 @@ export default function CommentsList() {
   async function handleAddComment(e){
     e.preventDefault();
 
-    console.log(accountData);
-
     const squealId = queryParams.get("squeal_id");
 
     if(!comment) return;
 
-    const newComment = {
-      _id: crypto.randomUUID(),
-      mittente: accountData.username,
-      text: comment,
-      date: Date.now(), 
-      profilePic: accountData.profilePic,
-    }
-
-    setSquealComments(current => [...current, newComment]);
-
     try{
+      const res = await axios.post("http://localhost:3001/profilePicByUsername", {username: accountData.username});
+
+      const newComment = {
+        _id: crypto.randomUUID(),
+        mittente: accountData.username,
+        text: comment,
+        date: Date.now(), 
+        profilePic: res.data.image,
+      }
+  
+      setSquealComments(current => [...current, newComment]);
+
       await axios.post(`http://localhost:3001/squealComments`, {squealId, comment: newComment});
     }catch(error){
       console.error(`Errore durante la pubblicazione del commento ${error.message}`);
