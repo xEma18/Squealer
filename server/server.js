@@ -229,6 +229,21 @@ app.post("/getUserImageAndCharLeft", async (req, res) => {
   }
 });
 
+// API per prendere i commenti di uno squeal
+app.get('/squealComments/:squealId', async (req, res) => {
+  const { squealId } = req.params;
+  try {
+    const squeal = await SquealModel.findById(squealId);
+    if (!squeal) {
+      return res.status(404).json({ message: 'Squeal non trovato.' });
+    }
+    res.status(200).json(squeal.comments);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Errore interno del server.' });
+  }
+});
+
 app.post("/addEmoticonGood", async (req, res) => {
   try {
     const squeal = await SquealModel.findById(req.body._id);
