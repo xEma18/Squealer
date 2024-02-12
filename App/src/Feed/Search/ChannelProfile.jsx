@@ -5,10 +5,14 @@ import L from 'leaflet';
 import BackButton from './components/BackButton';
 
 const ChannelProfile = () => {
+    const savedData = sessionStorage.getItem("accountData");
+    const accountData = JSON.parse(savedData);
+    const username = accountData.username;
     const { channelName } = useParams();
     const [userData, setUserData] = useState(null);
     const [userSqueals, setUserSqueals] = useState([]);
     const [userActivity, setUserActivity] = useState([]);
+    const [isFollowing, setIsFollowing] = useState(false);
 
     useEffect(() => {
         fetchUserData();
@@ -22,6 +26,24 @@ const ChannelProfile = () => {
             setUserData(response.data);
         } catch (error) {
             console.error('Errore durante il recupero dei dati utente:', error);
+        }
+    };
+
+    const followChannel = async () => {
+        try {
+            const response = await axios.post(`http://localhost:3001/followChannel`, { username: username, channelName: channelName });
+            setIsFollowing(true);
+        } catch (error) {
+            console.error('Errore durante il follow del canale:', error);
+        }
+    };
+
+    const unfollowChannel = async () => {
+        try {
+            const response = await axios.post(`http://localhost:3001/unfollowChannel`, { username: username, channelName: channelName });
+            setIsFollowing(false);
+        } catch (error) {
+            console.error('Errore durante l\'unfollow del canale:', error);
         }
     };
 
@@ -77,6 +99,11 @@ const ChannelProfile = () => {
                     <div className="img-container">
                         <img src={userData.profilePic} alt="Profile picture" />
                     </div>
+                    {isFollowing ? (
+                        <span role="button" onClick={unfollowChannel} id="follow-btn">Unfollow <i className="fa-solid fa-minus"></i></span>
+                    ) : (
+                        <span role="button" onClick={followChannel} id="follow-btn">Follow <i className="fa-solid fa-plus"></i></span>
+                    )}
                     <div className="username">
                         {userData.name}
                     </div>
@@ -91,7 +118,6 @@ const ChannelProfile = () => {
                 </div>
             </div>
         );
-        console.log(userData);
     };
 
     const SquealReactions = ({ squeal }) => (

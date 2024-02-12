@@ -1150,6 +1150,52 @@ app.get('/randomNews', async (req, res) => {
 
 
 
+app.post('/followChannel', async (req, res) => {
+  const { username, channelName } = req.body;
+
+  try {
+      const user = await UserModel.findOneAndUpdate(
+          { username },
+          { $addToSet: { subscriptions: channelName } }, 
+          { new: true } //mi restituisce il documento aggiornato
+      );
+
+      if (!user) {
+          return res.status(404).json({ message: 'Utente non trovato' });
+      }
+
+      res.status(200).json({ message: 'Canale aggiunto alle sottoscrizioni dell\'utente', user });
+  } catch (error) {
+      console.error('Errore durante il follow del canale:', error);
+      res.status(500).json({ message: 'Errore del server durante il follow del canale' });
+  }
+});
+
+app.post('/unfollowChannel', async (req, res) => {
+  const { username, channelName } = req.body;
+
+  try {
+      const user = await UserModel.findOneAndUpdate(
+          { username },
+          { $pull: { subscriptions: channelName } },
+          { new: true }
+      );
+
+      if (!user) {
+          return res.status(404).json({ message: 'Utente non trovato' });
+      }
+
+      res.status(200).json({ message: 'Canale rimosso dalle sottoscrizioni dell\'utente', user });
+  } catch (error) {
+      console.error('Errore durante l\'unfollow del canale:', error);
+      res.status(500).json({ message: 'Errore del server durante l\'unfollow del canale' });
+  }
+});
+
+
+
+
+
 
 
 app.listen(3001, ()=>{
