@@ -75,6 +75,8 @@ function updateCards(users) {
                 </div>
             </div>`
         } else if(users[i].status === "Blocked"){
+            users[i].caratteriGiornalieri = 0;
+            users[i].caratt
             container.innerHTML +=`
             <div class="card ms-1" id="card-${i}">
                 <div class="card-body">
