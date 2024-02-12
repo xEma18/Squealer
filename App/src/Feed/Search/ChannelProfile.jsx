@@ -100,9 +100,9 @@ const ChannelProfile = () => {
                         <img src={userData.profilePic} alt="Profile picture" />
                     </div>
                     {isFollowing ? (
-                        <span role="button" onClick={unfollowChannel} id="follow-btn">Unfollow <i className="fa-solid fa-minus"></i></span>
+                        <span role="button" onClick={unfollowChannel} className="follow-btn">Unfollow <i className="fa-solid fa-minus"></i></span>
                     ) : (
-                        <span role="button" onClick={followChannel} id="follow-btn">Follow <i className="fa-solid fa-plus"></i></span>
+                        <span role="button" onClick={followChannel} className="follow-btn">Follow <i className="fa-solid fa-plus"></i></span>
                     )}
                     <div className="username">
                         {userData.name}
