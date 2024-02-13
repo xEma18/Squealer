@@ -43,7 +43,7 @@ let users;
 /*Fetch degli utenti*/
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const response = await fetch('http://localhost:3001/users');
+        const response = await fetch('/users');
         users = await response.json();
 
         // Aggiorna le card con i dati degli utenti
@@ -128,13 +128,13 @@ function getCardNumber(cardId) {
 // Aggiungi un gestore di eventi al pulsante "Modifica"
 async function ModifyButton(cardId, cardNumber) {
     try {
-        const response = await fetch('http://localhost:3001/users');
+        const response = await fetch('/users');
         if (!response.ok) {
             // ... (gestione degli errori)
         } else {
             const responseData = await response.json();
             // Aggiorna la lista degli utenti dopo la modifica
-            const updatedUsersResponse = await fetch('http://localhost:3001/users');
+            const updatedUsersResponse = await fetch('/users');
             users = await updatedUsersResponse.json();
             updateCards(users);
             console.log(users);
@@ -256,7 +256,7 @@ async function ModifyButton(cardId, cardNumber) {
 
         // Chiamata POST all'API per aggiornare i valori nel database
         try {
-            const response = await fetch('http://localhost:3001/editUser', {
+            const response = await fetch('/editUser', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -308,7 +308,7 @@ async function ModifyButton(cardId, cardNumber) {
 
                 // Chiamata POST all'API per bloccare l'utente e impostare quindi i suoi caratteri  al massimo consentito
         try {
-            const response = await fetch('http://localhost:3001/editUser', {
+            const response = await fetch('/editUser', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
