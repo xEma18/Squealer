@@ -47,7 +47,17 @@ const WriteSqueal = () => {
     fetchUserData();
   }, [username]);
 
+  const returnIfRecipientIsEmpty = () => {
+    if (recipients.length === 0) {
+      alert("Please specify at least one recipient before writing.");
+      return true;
+    }
+  };
+
   const handleChangeText = (e) => {
+    if(returnIfRecipientIsEmpty()) return;
+    
+
     if(publicMode){
       if (e.target.value.length * numeroInvii + userData.caratteriGiornalieriUsati > userData.caratteriGiornalieri) {
           setNoDailyCharsLeft(true);
@@ -78,6 +88,7 @@ const WriteSqueal = () => {
   };
 
   const handleImageChange = async (e) => {
+    if(returnIfRecipientIsEmpty()) return;
     if (userData.caratteriGiornalieri - userData.caratteriGiornalieriUsati >=125) {
       setShowMap(false);
       const file = e.target.files[0]; //prendo il primo file selezionato (siccome potrei selezionare più file)
@@ -123,11 +134,6 @@ const WriteSqueal = () => {
     );
 
     setPublicMode(containsPublicModeTrigger);
-    if(containsPublicModeTrigger){
-      setImage("");
-      setText("");
-      setShowMap(false);
-    }
   };
 
   const toggleTemporizzato = () => {
@@ -254,6 +260,7 @@ const WriteSqueal = () => {
   };
 
   const handleLocationClick = () => {
+    if(returnIfRecipientIsEmpty()) return;
     if (
       userData.caratteriGiornalieri - userData.caratteriGiornalieriUsati >=
       125
@@ -341,6 +348,7 @@ const handleNumeroInviiChange = (e) => {
         
 
     const handleRandomImage = async () => {
+      if(returnIfRecipientIsEmpty()) return;
       if(publicMode){
         if (userData.caratteriGiornalieri - userData.caratteriGiornalieriUsati >=125) {
             setShowMap(false);
@@ -348,7 +356,7 @@ const handleNumeroInviiChange = (e) => {
               const response = await axios.get('http://localhost:3001/randomImage');
               setImage(response.data.imageUrl);
 
-              setText(''); // Rimuove il testo se presente
+              
             } catch (error) {
               console.error('Errore durante il recupero di un\'immagine casuale:', error);
             }
@@ -378,6 +386,7 @@ const handleNumeroInviiChange = (e) => {
     };
       
     const handleRandomNews = async () => {
+      if(returnIfRecipientIsEmpty()) return;
         setImage(''); 
         setShowMap(false);
         try {
