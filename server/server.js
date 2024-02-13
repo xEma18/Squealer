@@ -425,6 +425,9 @@ app.post("/addEmoticonGood", async (req, res) => {
       else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
         squeal.category = "Unpopular";
       }
+      else {
+        squeal.category = "Public";
+      }
     }
 
     await squeal.save();
@@ -450,11 +453,14 @@ app.post("/removeEmoticonGood", async (req, res) => {
         squeal.emoticonNum.bad > 0.25 * squeal.impression
       ) {
         squeal.category = "Controversial";
-      } else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
-        squeal.category = "Unpopular";
+      } else if (squeal.emoticonNum.good > 0.25 * squeal.impression) {
+        squeal.category = "Popular";
       }
       else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
         squeal.category = "Unpopular";
+      }
+      else {
+        squeal.category = "Public";
       }
     }
 
@@ -481,11 +487,14 @@ app.post("/addEmoticonBad", async (req, res) => {
         squeal.emoticonNum.bad > 0.25 * squeal.impression
       ) {
         squeal.category = "Controversial";
-      } else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
-        squeal.category = "Unpopular";
+      } else if (squeal.emoticonNum.good > 0.25 * squeal.impression) {
+        squeal.category = "Popular";
       }
       else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
         squeal.category = "Unpopular";
+      }
+      else {
+        squeal.category = "Public";
       }
     }
 
@@ -512,11 +521,14 @@ app.post("/removeEmoticonBad", async (req, res) => {
         squeal.emoticonNum.bad > 0.25 * squeal.impression
       ) {
         squeal.category = "Controversial";
-      } else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
-        squeal.category = "Unpopular";
+      } else if (squeal.emoticonNum.good > 0.25 * squeal.impression) {
+        squeal.category = "Popular";
       }
       else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
         squeal.category = "Unpopular";
+      }
+      else {
+        squeal.category = "Public";
       }
     }
 
@@ -1391,6 +1403,46 @@ app.post('/isMod', async (req, res) => {
   } catch (error) {
       console.error('Errore durante la verifica dello status Mod dell\'utente:', error);
       res.status(500).json({ message: 'Errore interno del server', isMod: false });
+  }
+});
+
+app.post('/addSquealToControversialChannel', async (req, res) => {
+  const { squealId } = req.body;
+  try {
+      const controversialChannel = await ChannelModel.findOne({ name: '§CONTROVERSIAL' });
+      if (!controversialChannel) {
+          return res.status(404).json({ message: 'Canale controverso non trovato' });
+      }
+      if (!controversialChannel.listofSqueals.includes(squealId)) {
+          controversialChannel.listofSqueals.push(squealId);
+          await controversialChannel.save();
+          res.status(200).json({ message: 'Squeal aggiunto al canale controverso con successo' });
+      } else {
+          res.status(400).json({ message: 'Squeal già presente nel canale controverso' });
+      }
+  } catch (error) {
+      console.error('Errore durante l\'aggiunta dello squeal al canale controverso:', error);
+      res.status(500).json({ message: 'Errore interno del server' });
+  }
+});
+
+app.post('/removeSquealFromControversialChannel', async (req, res) => {
+  const { squealId } = req.body;
+  try {
+      const controversialChannel = await ChannelModel.findOne({ name: '§CONTROVERSIAL' });
+      if (!controversialChannel) {
+          return res.status(404).json({ message: 'Canale controverso non trovato' });
+      }
+      if (controversialChannel.listofSqueals.includes(squealId)) {
+          controversialChannel.listofSqueals = controversialChannel.listofSqueals.filter(id => id !== squealId);
+          await controversialChannel.save();
+          res.status(200).json({ message: 'Squeal rimosso dal canale controverso con successo' });
+      } else {
+          res.status(200).json({ message: 'Squeal non presente nel canale controverso' });
+      }
+  } catch (error) {
+      console.error('Errore durante la rimozione dello squeal dal canale controverso:', error);
+      res.status(500).json({ message: 'Errore interno del server' });
   }
 });
 
