@@ -57,9 +57,14 @@ export default function CommentsList() {
     setComment("");
   }
 
+  function handleGoBack(){
+    const location = queryParams.get("back") || "Feed";
+    navigate(`/App/${location}`)
+  }
+
   return (
     <div className="comments-container"> 
-      <div className="go-back" onClick={() => navigate("/App/Feed")}>
+      <div className="go-back" onClick={handleGoBack}>
         <span>
           <i className="fa-solid fa-arrow-left"></i> Feed
         </span>

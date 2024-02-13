@@ -351,6 +351,7 @@ app.get('/squealComments/:squealId', async (req, res) => {
   }
 });
 
+// API per aggiungere un commento
 app.post("/squealComments", async (req, res) => {
   try{
     const squeal = await SquealModel.findById(req.body.squealId);
@@ -368,6 +369,22 @@ app.post("/squealComments", async (req, res) => {
     res.status(500).json({error: "Errore durante la pubblicazione del commento"})
   }
 })
+
+// API per cambiare password
+app.post("/modifyPassword", async (req, res) => {
+  try {
+    const user = await UserModel.findByUsername(req.body.username);
+
+    if(!user) res.status(404).json({error: "User not found"});
+
+    user.password = req.body.newPassword;
+
+    await user.save();
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({error: "Errore durante la modifica della password"})
+  }
+});
 
 app.post("/addEmoticonGood", async (req, res) => {
   try {

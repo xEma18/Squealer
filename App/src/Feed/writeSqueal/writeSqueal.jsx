@@ -395,7 +395,7 @@ const handleNumeroInviiChange = (e) => {
     
     return (
 
-        <div>
+        <div className="write-container">
             <div className="header">
                 <span className="x-step"><Link to="/App/Feed">x</Link></span>
                 <div id="post-squeal" onClick={handlePostSqueal}>Squeal</div>
