@@ -1358,6 +1358,23 @@ app.post('/isSMM', async (req, res) => {
   }
 });
 
+app.post('/isMod', async (req, res) => {
+  const { username } = req.body;
+  try {
+      const user = await UserModel.findByUsername(username);
+      if (user) {
+          // Verifica se il tipoUtente dell'utente è Mod
+          const isMod = user.tipoUtente === 'MOD';
+          res.json({ isMod });
+      } else {
+          // Se l'utente non viene trovato, restituisci false
+          res.status(404).json({ message: 'Utente non trovato', isMod: false });
+      }
+  } catch (error) {
+      console.error('Errore durante la verifica dello status Mod dell\'utente:', error);
+      res.status(500).json({ message: 'Errore interno del server', isMod: false });
+  }
+});
 
 
 
