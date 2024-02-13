@@ -3,7 +3,7 @@ let channel; //Array con i canali
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const response = await fetch('http://localhost:3001/channels');
+        const response = await fetch('/channels');
         channel = await response.json();
         // Aggiorna le card con i dati degli utenti
         updateChannels(channel);
@@ -206,7 +206,7 @@ function updateSqueal(squeal) {
 async function removeSqueal(squealId, channelName) {
     console.log("Sto per eliminare lo squeal:", squealId)
     try {
-        const response = await fetch('http://localhost:3001/removeSqueal', {
+        const response = await fetch('/removeSqueal', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -224,7 +224,7 @@ async function removeSqueal(squealId, channelName) {
     }
 
     try {
-        const responseChannel = await fetch('http://localhost:3001/removeSquealFromChannel', {
+        const responseChannel = await fetch('/removeSquealFromChannel', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -243,7 +243,7 @@ async function removeSqueal(squealId, channelName) {
 async function addSquealToChannel(squealId, channelName) {
     try {
         console.log("entro in addSquealToChannel")
-        const response = await fetch('http://localhost:3001/editChannelSqueal', {
+        const response = await fetch('/editChannelSqueal', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -300,7 +300,7 @@ async function handlePostClick(overlay, cardNumber, channelId) {
     //Aggiunta nuovo squeal al database
     try {
         console.log("Aggiungo nuovo squeal")
-        const response = await fetch('http://localhost:3001/newSqueal', {
+        const response = await fetch('/newSqueal', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -355,7 +355,7 @@ async function handlePostClick(overlay, cardNumber, channelId) {
     }
     // Refresh degli squeal dopo la modifica
     try {
-        const response = await fetch(`http://localhost:3001/squealsByChannel?channelId=${channelId}`);
+        const response = await fetch(`/squealsByChannel?channelId=${channelId}`);
         const squealsForChannel = await response.json();
         console.log(squealsForChannel);
 
@@ -402,7 +402,7 @@ async function ViewButton(cardId, cardNumber) {
 
     try {
         console.log("Prendo gli squeal del canale")
-        const response = await fetch(`http://localhost:3001/squealsByChannel?channelId=${channelId}`);
+        const response = await fetch(`/squealsByChannel?channelId=${channelId}`);
         const squealsForChannel = await response.json();
         // Aggiorna le card con gli squeal del canale
         updateSqueal(squealsForChannel);
@@ -428,12 +428,12 @@ document.getElementById("addChannelButton").addEventListener("click", function (
 // Gestore di eventi del pulsante "Modifica"
 async function ModifyButton(cardId, cardNumber) {
     try {
-        const response = await fetch('http://localhost:3001/channels');
+        const response = await fetch('/channels');
         if (!response.ok) {
 
         } else {
             // Aggiorna la lista degli utenti dopo la modifica
-            const updatedSquealResponse = await fetch('http://localhost:3001/channels');
+            const updatedSquealResponse = await fetch('/channels');
             channels = await updatedSquealResponse.json();
             updateChannels(channels);
         }
@@ -504,7 +504,7 @@ async function ModifyButton(cardId, cardNumber) {
         // Chiamata POST all'API per aggiornare i valori nel database
 
         try {
-            const response = await fetch('http://localhost:3001/editChannelDescription', {
+            const response = await fetch('/editChannelDescription', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -545,7 +545,7 @@ document.getElementById("newChannelForm").addEventListener("submit", async funct
 
     // Chiamata API per salvare il nuovo canale
     try {
-        const response = await fetch('http://localhost:3001/addChannel', {
+        const response = await fetch('/addChannel', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -565,7 +565,7 @@ document.getElementById("newChannelForm").addEventListener("submit", async funct
 
     // Refresha i canali
     try {
-        const response = await fetch('http://localhost:3001/channels');
+        const response = await fetch('/channels');
         channel = await response.json();
         // Aggiorna le card con i dati degli utenti
         updateChannels(channel);
@@ -582,7 +582,7 @@ document.getElementById("closeNewChannelOverlay").addEventListener("click", func
 // Funzione per rimuovere i canali
 async function RemoveChannel(cardId, cardNumber) {
     try {
-        const response = await fetch('http://localhost:3001/removeChannel', {
+        const response = await fetch('/removeChannel', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -67,17 +67,28 @@ app.get("/Moderator_Dashboard/*", async function (req, res) {
 
 
 const uri =
-  "mongodb+srv://emanuele:emanuele@cluster0.dbp6yx6.mongodb.net/?retryWrites=true&w=majority";
+  "mongodb+srv://emanuele:emanuele@cluster0.dbp6yx6.mongodb.net/?retryWrites=true&w=majority"; 
+const MONGO_USER = "site222333"
+const MONGO_PASSWORD = "Haisue4j"
+const MONGO_SITE = "mongo_site222333"
+"Mongodb username: site222333 - Mongodb password: Haisue4j"
 
+const uri2 = `mongodb://${MONGO_USER ? MONGO_USER + ":" : ""}${MONGO_PASSWORD ? MONGO_PASSWORD + "@": ""}${MONGO_SITE}/db?writeConcern=majority&directConnection=true&authSource=admin`
+
+const prod = false; //da casa false da scuola true
+const uri3 = prod ? uri2 : "mongodb://127.0.0.1:27017/Squealer"
+console.log(uri3);
 app.use(cors()); //enable to use cors
 //allows to convert in json format files I transfer from frontend to server
 app.use(express.json({ limit: "20mb" })); // Imposta il limite a 10 MB
 app.use(express.urlencoded({ extended: true, limit: "20mb" })); // Imposta il limite a 10 MB
 
-mongoose.connect("mongodb://127.0.0.1:27017/Squealer", {
+mongoose.connect(uri3, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-});
+})
+.then(() => console.log('Connessione al database riuscita!'))
+.catch(err => console.error('Errore di connessione al database:', err));
 
 // Funzioni di azzeramento
 async function resetDailyCounters() {
@@ -1385,6 +1396,6 @@ app.post('/isMod', async (req, res) => {
 
 
 
-app.listen(3001, ()=>{
+app.listen(8000, ()=>{
     console.log("Server is running")
 })

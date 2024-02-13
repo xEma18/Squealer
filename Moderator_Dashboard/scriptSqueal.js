@@ -3,7 +3,7 @@ let squeal = []; //Array con gli squeal
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const response = await fetch('http://localhost:3001/squeals');
+        const response = await fetch('/squeals');
         squeal = await response.json();
         console.log(squeal);
         // Aggiorna le card con i dati degli utenti
@@ -183,12 +183,12 @@ async function ModifyButton(cardId, cardNumber) {
     
     // Fondamentale per evitare di poter modificare due card contemporaneamente 
     try {
-        const response = await fetch('http://localhost:3001/squeals');
+        const response = await fetch('/squeals');
         if (!response.ok) {
             // ... (gestione degli errori)
         } else {
             // Aggiorna la lista degli squeal dopo la modifica
-            const updatedSquealResponse = await fetch('http://localhost:3001/squeals');
+            const updatedSquealResponse = await fetch('/squeals');
             squeal = await updatedSquealResponse.json();
             updateSqueal(squeal);
             console.log(squeal);
@@ -336,7 +336,7 @@ async function ModifyButton(cardId, cardNumber) {
 
             // Chiamata API per ottenere la lista degli utenti
             try {
-                const response = await fetch('http://localhost:3001/users');
+                const response = await fetch('/users');
                 if (!response.ok) {
                     console.log("Errore nella risposta da parte del database")
                 } else {
@@ -460,11 +460,11 @@ async function ModifyButton(cardId, cardNumber) {
 
             try {
                 // Chiamata API per ottenere la lista degli utenti
-                const responseUsers = await fetch('http://localhost:3001/users');
+                const responseUsers = await fetch('/users');
                 const userList = responseUsers.ok ? await responseUsers.json() : null;
 
                 // Chiamata API per ottenere la lista dei canali
-                const responseChannels = await fetch('http://localhost:3001/channels');
+                const responseChannels = await fetch('/channels');
                 const channelList = responseChannels.ok ? await responseChannels.json() : null;
 
                 // Verifica se il nuovo destinatario è presente nella lista degli utenti e nei canali
@@ -480,7 +480,7 @@ async function ModifyButton(cardId, cardNumber) {
                             // Se è un canale valido, invia una richiesta all'API per aggiungere lo squeal al canale
                             if (isChannelValid) {
                                 const squealId = squeal[cardNumber]._id;
-                                await fetch('http://localhost:3001/editChannelSqueal', {
+                                await fetch('/editChannelSqueal', {
                                     method: 'POST',
                                     headers: {
                                         'Content-Type': 'application/json',
@@ -572,7 +572,7 @@ async function ModifyButton(cardId, cardNumber) {
                     emoticonNum: [good,bad],
             }
             try {
-                const response = await fetch('http://localhost:3001/editEmoticonMD', {
+                const response = await fetch('/editEmoticonMD', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -611,7 +611,7 @@ async function ModifyButton(cardId, cardNumber) {
             }
 
             try {
-                const response = await fetch('http://localhost:3001/addRecv', {
+                const response = await fetch('/addRecv', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -640,7 +640,7 @@ async function ModifyButton(cardId, cardNumber) {
                 }
 
             try {
-                const response = await fetch('http://localhost:3001/remRecv', {
+                const response = await fetch('/remRecv', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -668,12 +668,12 @@ async function ModifyButton(cardId, cardNumber) {
         // Annullo le modifiche apportate al campo destinatari
         // Faccio una richiesta API a squeals per ricaricare lo squeal senza le modifiche provvisorie
         try {
-            const response = await fetch('http://localhost:3001/squeals');
+            const response = await fetch('/squeals');
             if (!response.ok) {
                 // ... (gestione degli errori)
             } else {
                 // Aggiorna la lista degli squeal dopo la modifica
-                const updatedSquealResponse = await fetch('http://localhost:3001/squeals');
+                const updatedSquealResponse = await fetch('/squeals');
                 squeal = await updatedSquealResponse.json();
                 updateSqueal(squeal);
                 console.log(squeal);
