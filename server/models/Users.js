@@ -13,6 +13,8 @@ const UserSchema=new mongoose.Schema({
     description:String,
     tipoUtente:String, // Standard, VIP, SMM
     popolarita:String,
+    manager: String, // Il proprio manager, se si è VIP
+    vipManaged: String, // Il VIP di cui si è manager, se si è SMM
     caratteriGiornalieri:Number, // Totali
     caratteriSettimanali:Number,
     caratteriMensili:Number,

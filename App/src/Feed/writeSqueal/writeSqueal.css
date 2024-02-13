@@ -21,7 +21,7 @@ body {
   font-weight: 600;
 }
 
-p {
+.write-container p {
   padding: 0 1rem;
   margin-bottom: 1rem;
 

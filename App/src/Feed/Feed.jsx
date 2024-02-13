@@ -150,7 +150,7 @@ const Feed = () => {
   };
 
   const handleOpenComments = function(squealId){
-    navigate(`/App/Feed/comments?squeal_id=${squealId}`);
+    navigate(`/App/Feed/comments?squeal_id=${squealId}&back=Feed`);
   }
 
   const handleEmoticonGood = async (squeal) => {
@@ -502,9 +502,10 @@ function Squeal({
   username,
 }) {
 
+  
+  // Dato uno squeal, verifica se il mittente è standard o meno
   const isStandard = useRef(true);
 
-  // Dato uno squeal, verifica se il mittente è standard o meno
   useEffect(function(){
     async function getUserType(){
       try{
