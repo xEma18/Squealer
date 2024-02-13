@@ -15,15 +15,22 @@
         <div class="columns squeal-about-it">
           <div class="column is-2">
             <figure class="image is-64x64">
-              <img :src="userData.image" alt="Profile Picture" class="is-rounded">
+              <img :src=vipProfilePic alt="Profile Picture" class="is-rounded">
             </figure>
           </div>
           <div class="column is-10">
-            <!-- Contenuto del post (testo, immagine o mappa) -->
+            <!-- Contenuto dell'anteprima di pubblicazione post (testo, immagine o mappa) -->
             <div v-if="image" class="image-container">
               <img :src="image" alt="Uploaded">
             </div>
+            <div v-else-if="video" class="image-container">
+              <video controls>
+                <source :src="video">
+                Your browser does not support the video tag.
+              </video>
+            </div>
             <div v-else-if="showMap" ref="mapRef" class="map-container"></div>
+            
             <div v-else class="textarea-container">
               <textarea class="textarea" placeholder="Squeal about it!" v-model="text" @input="updateCharacterCount" :maxlength="maxLength"></textarea>
             </div>
@@ -39,7 +46,7 @@
           </div>
           <div class="control">
             <label class="label">
-              <input id="fileInput" type="file" accept="video/*" @change="handleImageChange" hidden>
+              <input id="fileInput" type="file" accept="video/*" @change="handleVideoChange" hidden>
               <span class="icon"><i class="fas fa-video"></i></span>
             </label>
           </div>
@@ -62,9 +69,9 @@
           <character-count :daily-chars-used="dailyCharsUsed"
                             :weekly-chars-used="weeklyCharsUsed"
                             :monthly-chars-used="monthlyCharsUsed"
-                            :daily-char-limit="dailyCharLimit"
-                            :weekly-char-limit="weeklyCharLimit"
-                            :monthly-char-limit="monthlyCharLimit">
+                            :daily-char-limit="dailyChars"
+                            :weekly-char-limit="weeklyChars"
+                            :monthly-char-limit="monthlyChars">
           </character-count>
         </div>
         
@@ -106,6 +113,7 @@
 
   <script>
   import CharacterCount from './charactersCounter.vue';
+  import axios from 'axios';
 
   export default {
     components: {
@@ -113,33 +121,45 @@
     },
     data() {
       return {
-        userData: {}, // Dati utente
+        accountData: null,
+        username: '',
+        vipProfilePic: '',
+        startDailyCharsUsed: 0,
+        startWeeklyCharsUsed: 0,
+        startMonthlyCharsUsed: 0,
+        dailyChars: 0,
+        weeklyChars: 0,
+        monthlyChars: 0,
+        dailyCharsUsed: 0,
+        weeklyCharsUsed: 0,
+        monthlyCharsUsed: 0,
+
         text: '', 
         image: '', 
+        video: '',
         recipientsText: '', 
         recipients: [], 
         showMap: false, // Mostra mappa
         mapInfo: { lat: null, lng: null, zoom: 13 }, // Informazioni mappa
         publicMode: false, 
-
-        userData: {
-        caratteriGiornalieriUsati: 100, // Numero di caratteri giornalieri già usati
-        caratteriSettimanaliUsati: 700, // Numero di caratteri settimanali già usati
-        caratteriMensiliUsati: 1400, // Numero di caratteri mensili già usati
-      },
-        dailyCharsUsed: 100,
-        weeklyCharsUsed: 700,
-        monthlyCharsUsed: 1400,
-        dailyCharLimit: 200,
-        weeklyCharLimit: 2800,
-        monthlyCharLimit: 11200,
+        
         isTemporizzato: false,
         numeroInvii: 1,
         intervalloInvio: 1,
-
+        noDailyCharsLeft: false,
+        noWeeklyCharsLeft: false,
+        noMonthlyCharsLeft: false,
       };
     },
     methods: {
+      returnIfRecipientIsEmpty() {
+        if (this.recipients.length === 0) {
+          alert("Please specify at least one recipient before writing.");
+          this.image = ""; // Usa `this.image` per accedere alla proprietà reattiva
+          return true;
+        }
+      },
+
       navigateToFeed() {
         this.$router.push('/SMM/');
       },
@@ -150,9 +170,9 @@
         const textLength = this.text.length;
         
         // Aggiorna i contatori dei caratteri
-        this.dailyCharsUsed = this.userData.caratteriGiornalieriUsati + textLength;
-        this.weeklyCharsUsed = this.userData.caratteriSettimanaliUsati + textLength;
-        this.monthlyCharsUsed = this.userData.caratteriMensiliUsati + textLength;
+        this.dailyCharsUsed = this.startDailyCharsUsed + textLength * this.numeroInvii;
+        this.weeklyCharsUsed = this.startWeeklyCharsUsed + textLength * this.numeroInvii;
+        this.monthlyCharsUsed = this.startMonthlyCharsUsed + textLength * this.numeroInvii;
       },
       handleImageChange(e) {
         const file = e.target.files[0];
@@ -160,10 +180,34 @@
           const reader = new FileReader();
           reader.onload = (e) => {
             this.image = e.target.result; // Imposta l'immagine come base64
-            this.text = ''; // Pulisce la textarea quando viene caricata un'immagine
+            this.video = ''; // Resetta il video
+            this.text = ''; // Pulisce il testo
           };
           reader.readAsDataURL(file);
         }
+        if(this.publicMode){
+          this.dailyCharsUsed = this.startDailyCharsUsed + 125 * this.numeroInvii;
+          this.weeklyCharsUsed = this.startWeeklyCharsUsed + 125 * this.numeroInvii;
+          this.monthlyCharsUsed = this.startMonthlyCharsUsed + 125 * this.numeroInvii;
+        }
+      },
+      handleVideoChange(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            this.video = e.target.result; // Imposta il video come base64
+            this.image = ''; // Resetta l'immagine
+            this.text = ''; // Pulisce il testo
+          };
+          reader.readAsDataURL(file);
+        }
+        if(this.publicMode){
+          this.dailyCharsUsed = this.startDailyCharsUsed + 125 * this.numeroInvii;
+          this.weeklyCharsUsed = this.startWeeklyCharsUsed + 125 * this.numeroInvii;
+          this.monthlyCharsUsed = this.startMonthlyCharsUsed + 125 * this.numeroInvii;
+        }
+        
       },
       handleLocationClick() {
         // Gestione click sulla localizzazione
@@ -183,19 +227,45 @@
           recipient === "@everyone" || recipient.startsWith("§")
         );
       },
-      
+      async fetchUserData() {
+      try {
+        if (this.accountData && this.accountData.username) {
+          const response = await axios.post(`http://localhost:3001/getUserImageAndCharLeft`, { username: this.accountData.vipManaged });
+          this.userData = response.data;
+          this.vipProfilePic = response.data.image;
+          this.dailyChars= response.data.caratteriGiornalieri;
+          this.weeklyChars= response.data.caratteriSettimanali;
+          this.monthlyChars= response.data.caratteriMensili;
+          this.dailyCharsUsed = response.data.caratteriGiornalieriUsati;
+          this.weeklyCharsUsed = response.data.caratteriSettimanaliUsati;
+          this.monthlyCharsUsed = response.data.caratteriMensiliUsati;
+          this.startDailyCharsUsed = response.data.caratteriGiornalieriUsati;
+          this.startWeeklyCharsUsed = response.data.caratteriSettimanaliUsati;
+          this.startMonthlyCharsUsed = response.data.caratteriMensiliUsati;
+        }
+      } catch (error) {
+        console.error("Errore durante il recupero dei dati utente:", error);
+      }
+    },
+    async fetchManagedUsername() {
+      const savedData = sessionStorage.getItem("accountData");
+      if (savedData) {
+        this.accountData = JSON.parse(savedData);
+        console.log(this.accountData);
+        console.log(this.accountData.username);
+      }
+    },
     },
     mounted() {
-      // Inizializzazione componenti, come nel useEffect di React
+      this.fetchManagedUsername();
+      this.fetchUserData();
+      
     },
     computed:{
       maxLength() {
-        const remainingDailyChars = this.dailyCharLimit - this.userData.caratteriGiornalieriUsati;
-        const remainingWeeklyChars = this.weeklyCharLimit - this.userData.caratteriSettimanaliUsati;
-        const remainingMonthlyChars = this.monthlyCharLimit - this.userData.caratteriMensiliUsati;
-
-        return Math.min(remainingDailyChars, remainingWeeklyChars, remainingMonthlyChars);
-  }
+        const remainingDailyChars = this.dailyChars - this.startDailyCharsUsed;
+        return remainingDailyChars;
+      }
     }
   };
   

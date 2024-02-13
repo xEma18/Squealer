@@ -97,9 +97,10 @@ export default {
     };
   },
   async mounted() {
-    //const savedData = sessionStorage.getItem("accountData");
-    //const accountData = JSON.parse(savedData);
-    //const username = accountData.username;
+    const savedData = sessionStorage.getItem("accountData");
+    const accountData = JSON.parse(savedData);
+    const username = accountData.username;
+    console.log(username);
     try {
       const response = await fetch('http://localhost:3001/squeals');
       this.squeals = await response.json();

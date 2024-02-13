@@ -200,8 +200,6 @@ const Feed = () => {
           _id: squeal._id,
           username: username,
         });
-
-        console.log(response.data.category);
         //api che controlla che se la categoria del post dopo l'aggiunta o rimozion del like è controversial, fa api che mi aggiunge lo squeal al canale §CONTROVERSIAL
         if(response.data.category === "Controversial"){
           addSquealToControversialChannel(squeal._id);
@@ -235,8 +233,6 @@ const Feed = () => {
           _id: squeal._id,
           username: username,
         });
-
-        console.log(response.data.category);
         if(response.data.category === "Controversial"){
           addSquealToControversialChannel(squeal._id);
         }
