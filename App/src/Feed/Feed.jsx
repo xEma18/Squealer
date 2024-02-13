@@ -39,6 +39,7 @@ const Feed = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [popupOpen, setPopupOpen] = useState(false);
   const [isSMMuser, setIsSMMuser] = useState(false);
+  const [isMod, setIsMod] = useState(false);
 
   useEffect(() => {
     // // Effettua una richiesta GET al server per ottenere i gli squeals filtrati per username (ricevo solo gli squeals con "username" tra i destinatari)
@@ -87,12 +88,28 @@ const Feed = () => {
           body: JSON.stringify({ username: username }),
         });
         const data = await res.json();
-        console.log(data);
         setIsSMMuser(data.isSMM);
       } catch (e) {
         console.error("Errore nel caricamento degli squeals", e.message);
       }
     }
+
+    async function checkMod() {
+      try {
+        const res = await fetch("http://localhost:3001/isMod", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username: username }),
+        });
+        const data = await res.json();
+        setIsMod(data.isMod);
+      } catch (e) {
+        console.error("Errore nel caricamento degli squeals", e.message);
+      }
+    }
+    checkMod();
     checkSMM();
     getSqueals();
   }, [username]); // Il secondo parametro vuoto [] indicherebbe che useEffect verrà eseguito solo una volta alla creazione del componente, ho messo "username", così useffect viene eseguito ogni volta che cambia username (quindi ogni volta chen accedo al feed con un account diverso)
@@ -104,6 +121,11 @@ const Feed = () => {
 
   const handleNavigateToSMM = function () {
     navigate("/SMM/");
+    window.location.reload();
+  }
+  const handleNavigateToMOD = function () {
+    navigate("/Moderator_Dashboard/");
+    window.location.reload();
   }
   const handleNoDelete = function () {
     setPopupOpen(false);
@@ -334,6 +356,8 @@ const Feed = () => {
             onLogOut={handleLogOut}
             onNavigateToSMM={handleNavigateToSMM}
             isSMMuser={isSMMuser}
+            isMod={isMod}
+            onNavigateToMOD={handleNavigateToMOD}
           />
 
           <Header setSidebarOpen={setSidebarOpen} />
@@ -389,9 +413,10 @@ function SideBar({
   onDeleteAccount,
   onLogOut,
   onNavigateToSMM,
-  isSMMuser
+  isSMMuser,
+  isMod,
+  onNavigateToMOD
 }) {
-  console.log(isSMMuser);
   return (
     <div className={`sidebar ${sidebarOpen ? "open" : ""}`}>
       <ul className="top-list">
@@ -412,6 +437,9 @@ function SideBar({
         </li>
         {isSMMuser? <li onClick={onNavigateToSMM}>
           <i className="fa-solid fa-address-book"></i> SMM Dashboard
+        </li> : null }
+        {isMod? <li onClick={onNavigateToMOD}>
+          <i className="fa-solid fa-address-book"></i> Mod Dashboard
         </li> : null }
       </ul>
       <ul className="bottom-list">
@@ -478,7 +506,6 @@ function Squeal({
     async function getUserType(){
       try{
         const res = await axios.get(`http://localhost:3001/getUserTypeByUsername/${squeal.mittente}`);
-        console.log(res.data);
         isStandard.current = res.data === "Standard" ? true : false;
       }catch(error){
         console.error(`Errore durante il caricamento del tipo: ${error.message}`);
