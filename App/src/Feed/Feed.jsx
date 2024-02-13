@@ -38,6 +38,7 @@ const Feed = () => {
   const [registeredImpressions, setRegisteredImpressions] = useState(new Set());
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [popupOpen, setPopupOpen] = useState(false);
+  const [isSMMuser, setIsSMMuser] = useState(false);
 
   useEffect(() => {
     // // Effettua una richiesta GET al server per ottenere i gli squeals filtrati per username (ricevo solo gli squeals con "username" tra i destinatari)
@@ -75,6 +76,24 @@ const Feed = () => {
         console.error("Errore nel caricamento degli squeals", e.message);
       }
     }
+    //api che invia la richiesta per sapere se l'utente è SMM
+    async function checkSMM() {
+      try {
+        const res = await fetch("http://localhost:3001/isSMM", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username: username }),
+        });
+        const data = await res.json();
+        console.log(data);
+        setIsSMMuser(data.isSMM);
+      } catch (e) {
+        console.error("Errore nel caricamento degli squeals", e.message);
+      }
+    }
+    checkSMM();
     getSqueals();
   }, [username]); // Il secondo parametro vuoto [] indicherebbe che useEffect verrà eseguito solo una volta alla creazione del componente, ho messo "username", così useffect viene eseguito ogni volta che cambia username (quindi ogni volta chen accedo al feed con un account diverso)
 
@@ -83,6 +102,9 @@ const Feed = () => {
     setSidebarOpen(false);
   };
 
+  const handleNavigateToSMM = function () {
+    navigate("/SMM/");
+  }
   const handleNoDelete = function () {
     setPopupOpen(false);
   };
@@ -310,6 +332,8 @@ const Feed = () => {
             onNewChannelButton={handleNewChannelButton}
             onDeleteAccount={handleDeleteAccount}
             onLogOut={handleLogOut}
+            onNavigateToSMM={handleNavigateToSMM}
+            isSMMuser={isSMMuser}
           />
 
           <Header setSidebarOpen={setSidebarOpen} />
@@ -364,7 +388,10 @@ function SideBar({
   onNewChannelButton,
   onDeleteAccount,
   onLogOut,
+  onNavigateToSMM,
+  isSMMuser
 }) {
+  console.log(isSMMuser);
   return (
     <div className={`sidebar ${sidebarOpen ? "open" : ""}`}>
       <ul className="top-list">
@@ -383,6 +410,9 @@ function SideBar({
         <li onClick={onNewChannelButton}>
           <i className="fa-solid fa-plus"></i> New channel
         </li>
+        {isSMMuser? <li onClick={onNavigateToSMM}>
+          <i className="fa-solid fa-address-book"></i> SMM Dashboard
+        </li> : null }
       </ul>
       <ul className="bottom-list">
         <li onClick={onDeleteAccount}>
