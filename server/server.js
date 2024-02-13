@@ -275,40 +275,46 @@ app.post("/squealsToUser", async (req, res) => {
   const { username } = req.body;
 
   try {
-    const user = await UserModel.findOne({ username: username });
-    if (!user) {
-      return res.status(404).json({ message: "Utente non trovato" });
+    let squeals = [];
+
+    // Se l'utente non è un guest, recupera gli squeals diretti all'utente, gli squeals pubblici e quelli dai canali a cui è iscritto
+    if (!username.startsWith('@guest')) {
+      const user = await UserModel.findOne({ username: username });
+      if (!user) {
+        return res.status(404).json({ message: "Utente non trovato" });
+      }
+
+      // Recupera gli squeals diretti all'utente e gli squeals pubblici
+      squeals = await SquealModel.find({
+        $or: [{ destinatari: username }, { destinatari: '@everyone' }]
+      });
+
+      // Recupera gli squeals dai canali a cui l'utente è iscritto
+      const channelsSqueals = await Promise.all(user.subscriptions.map(async (channelName) => {
+        const channel = await ChannelModel.findOne({ name: channelName });
+        if (channel && channel.listofSqueals.length > 0) {
+          return await SquealModel.find({
+            '_id': { $in: channel.listofSqueals }
+          });
+        }
+        return [];
+      }));
+
+      // Combina gli squeals diretti all'utente con quelli dei canali
+      channelsSqueals.forEach(channelSqueals => {
+        squeals = squeals.concat(channelSqueals);
+      });
+    } else {
+      // Per gli utenti guest, recupera solo gli squeals pubblici
+      squeals = await SquealModel.find({ destinatari: '@everyone' });
     }
 
-    // Recupera gli squeals diretti all'utente e gli squeals pubblici
-    let squeals = await SquealModel.find({
-      $or: [{ destinatari: username }, { destinatari: '@everyone' }]
-    });
-
-    // Recupera gli squeals dai canali a cui l'utente è iscritto
-    const channelsSqueals = await Promise.all(user.subscriptions.map(async (channelName) => {
-      const channel = await ChannelModel.findOne({ name: channelName });
-      if (channel && channel.listofSqueals.length > 0) {
-        return await SquealModel.find({
-          '_id': { $in: channel.listofSqueals }
-        });
-      }
-      return [];
-    }));
-
-    // Combina gli squeals diretti all'utente con quelli dei canali
-    channelsSqueals.forEach(channelSqueals => {
-      squeals = squeals.concat(channelSqueals);
-    });
-
-    // Rimuovi eventuali duplicati (opzionale, dipende dalla logica applicativa)
+    // Rimuovi eventuali duplicati e ordina gli squeals per data
     squeals = squeals.filter((squeal, index, self) =>
       index === self.findIndex((t) => (
         t._id.toString() === squeal._id.toString()
       ))
-    );
-
-    squeals.sort((a, b) => new Date(b.date) - new Date(a.date));
+    ).sort((a, b) => new Date(b.date) - new Date(a.date));
 
     res.json(squeals);
   } catch (error) {
@@ -316,6 +322,7 @@ app.post("/squealsToUser", async (req, res) => {
     res.status(500).json({ message: "Errore interno del server" });
   }
 });
+
 
 
 app.post("/getUserImageAndCharLeft", async (req, res) => {

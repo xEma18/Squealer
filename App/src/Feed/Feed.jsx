@@ -120,6 +120,11 @@ const Feed = () => {
   }, [username]); // Il secondo parametro vuoto [] indicherebbe che useEffect verrà eseguito solo una volta alla creazione del componente, ho messo "username", così useffect viene eseguito ogni volta che cambia username (quindi ogni volta chen accedo al feed con un account diverso)
 
   const handleDeleteAccount = function () {
+    if (isGuest) {
+      sessionStorage.removeItem("accountData");
+      navigate("/App/");
+      return;
+    }
     setPopupOpen(true);
     setSidebarOpen(false);
   };
@@ -150,7 +155,9 @@ const Feed = () => {
   };
 
   const handleOpenComments = function(squealId){
-    navigate(`/App/Feed/comments?squeal_id=${squealId}&back=Feed`);
+    if(!isGuest){
+      navigate(`/App/Feed/comments?squeal_id=${squealId}&back=Feed`);
+    }
   }
 
   const handleEmoticonGood = async (squeal) => {
@@ -312,24 +319,30 @@ const Feed = () => {
   };
 
   const handleProfileSettingsButton = () => {
-    navigate(`/App/UserSettings?username=${accountData.username}`)
+    if(!isGuest){
+      navigate(`/App/UserSettings?username=${accountData.username}`);
+    }
   }
 
   const handleSmmButton = () => {
-    navigate("/App/ManageSMM");
+    if (!isGuest){
+      navigate("/App/ManageSMM");
+    }
   };
 
   const handleSearchButton = () => {
-    navigate("/App/Feed/Search");
+    if (!isGuest){
+      navigate("/App/Feed/Search");
+    }
   };
 
   const handleNewChannelButton = () => {
-    navigate("/App/Feed/createChannel");
+    if (!isGuest){
+      navigate("/App/Feed/createChannel");
+    }
   };
 
   const handleWriteSquealButton = () => {
-    //se l'utente è guest, non può scrivere uno squeal, mentre se non è guest, va a navigate a WriteSqueal
-    const isGuest = /^@guest_\d+$/.test(username);
     if (!isGuest) {
       navigate("/App/Feed/WriteSqueal");
     }
