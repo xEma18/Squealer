@@ -9,7 +9,7 @@ const routes = [
     component: homePage
   },
   {
-    path: '/writeSqueal',
+    path: '/SMM/writeSqueal',
     name: 'writeSqueal',
     component: writeSqueal
   }

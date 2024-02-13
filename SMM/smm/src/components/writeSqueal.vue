@@ -38,13 +38,26 @@
             </label>
           </div>
           <div class="control">
-            <span class="icon"><i class="fas fa-video"></i></span>
+            <label class="label">
+              <input id="fileInput" type="file" accept="video/*" @change="handleImageChange" hidden>
+              <span class="icon"><i class="fas fa-video"></i></span>
+            </label>
           </div>
           <div class="control">
-            <span class="icon" @click="handleLocationClick"><i class="fas fa-location-dot"></i></span>
+            <span class="icon" @click="handleLocationClick"><i class="fas fa-map-marker-alt"></i></span>
+
+          </div>
+          <div class="control">
+            <span class="icon" @click="handleRandomNews"><i class="fas fa-newspaper"></i></span>
+          </div>
+          <div class="control">
+            <span class="icon" @click="handleRandomImage"><i class="fas fa-images"></i></span>
           </div>
         </div>
-  
+        
+        
+        
+
         <div v-if="publicMode" class="characterCounterContainer">
           <character-count :daily-chars-used="dailyCharsUsed"
                             :weekly-chars-used="weeklyCharsUsed"
@@ -72,8 +85,20 @@
         <div class="content">
           <h2 class="subtitle">Who is it for?</h2>
           <p>Add your recipients, each one separated by a space.</p>
-          <textarea class="textarea" id="recipients-list" placeholder="@foo §foo §BAR @everyone" v-model="recipientsText" @input="handleRecipientsChange"></textarea>
+          <textarea class="textarea" id="recipients-list" placeholder="@foo §foo @everyone" v-model="recipientsText" @input="handleRecipientsChange"></textarea>
         </div>
+
+        <div class="automaticMessages">
+          <div id="temporizzato" class="level-item button is-white is-rounded" :style="{ color: 'black', border: `2px solid ${isTemporizzato ? 'green' : 'red'}` }" @click="toggleTemporizzato">Send Timed Message</div>
+            <div v-if="isTemporizzato" id="repetition-parameters">
+              <p>Send</p>
+              <input class="input-temp" type="number" v-model="numeroInvii" placeholder="" />
+              <p class="middleP"> times</p> <p> every </p>
+              <input class="input-temp" type="number" v-model="intervalloInvio" placeholder="" />
+              <p>min</p>
+            </div>
+          </div>
+
       </div>
     </section>
   </template>
@@ -108,11 +133,15 @@
         dailyCharLimit: 200,
         weeklyCharLimit: 2800,
         monthlyCharLimit: 11200,
+        isTemporizzato: false,
+        numeroInvii: 1,
+        intervalloInvio: 1,
+
       };
     },
     methods: {
       navigateToFeed() {
-        this.$router.push('/');
+        this.$router.push('/SMM/');
       },
       handlePostSqueal() {
         // Gestione invio post: devo aspettare di avere dalla homepage i dati utente
@@ -138,6 +167,15 @@
       },
       handleLocationClick() {
         // Gestione click sulla localizzazione
+      },
+      handleRandomNews() {
+        // Gestione click su notizia casuale
+      },
+      handleRandomImage() {
+        // Gestione click su immagine casuale
+      },
+      toggleTemporizzato() {
+        this.isTemporizzato = !this.isTemporizzato;
       },
       handleRecipientsChange() {
         this.recipients = this.recipientsText.split(' ').filter(r => r !== '');
@@ -253,6 +291,34 @@
 p {
   color: #4a4a4a; 
 }
+#repetition-parameters {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 2.5rem;
+  justify-content: center;
+}
+
+.input-temp {
+  border: 1px solid #949797;
+  border-radius: 9999px;
+  padding: 0.3rem 1rem;
+  font-size: 1rem;
+  color: #333;
+  outline: none;
+  width: 10%;
+  height: 10%;
+  margin-top: 2.5%;
+}
+
+#repetition-parameters p {
+  margin-top: 3%;
+}
+
+.middleP {
+  margin-right: 5%;
+}
+
 
 /* Stili specifici per desktop */
 @media screen and (min-width: 1024px) {

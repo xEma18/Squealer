@@ -50,6 +50,8 @@ const WriteSqueal = () => {
   const returnIfRecipientIsEmpty = () => {
     if (recipients.length === 0) {
       alert("Please specify at least one recipient before writing.");
+      setImage("");
+
       return true;
     }
   };
@@ -88,7 +90,10 @@ const WriteSqueal = () => {
   };
 
   const handleImageChange = async (e) => {
-    if(returnIfRecipientIsEmpty()) return;
+    if(returnIfRecipientIsEmpty()){
+      e.target.value = '';
+      return;
+    }
     if (userData.caratteriGiornalieri - userData.caratteriGiornalieriUsati >=125) {
       setShowMap(false);
       const file = e.target.files[0]; //prendo il primo file selezionato (siccome potrei selezionare più file)
@@ -122,6 +127,8 @@ const WriteSqueal = () => {
       alert("125 characters needed to upload an image");
     }
   };
+
+  
 
   const handleRecipientsChange = (e) => {
     const inputText = e.target.value;
@@ -319,13 +326,35 @@ const WriteSqueal = () => {
 
 const renderContent = () => {
         if (image) {
+
+          const isBase64 = (data) => {
+            return data.startsWith('data:');
+          };
+          
+          const isBase64Image = (data) => {
+            return data.startsWith('data:image/');
+          };
+          
+          const isBase64Video = (data) => {
+            return data.startsWith('data:video/');
+          };
+        
+          const renderMedia = (data) => {
+            if (isBase64(data)) {
+              // If it's a base64-encoded data
+              if (isBase64Image(data)) {
+                return <img src={data} alt="Media content" style={{ maxWidth: '80%', maxHeight: '400px' }} />;
+              } else if (isBase64Video(data)) {
+                return <video controls src={data} style={{ maxWidth: '80%', maxHeight: '400px' }} />;
+              }
+            } 
+            else {
+                return <img src={data} alt="Media content" style={{ maxWidth: '80%', maxHeight: '400px' }} />;
+            }
+        };
             
             return (
-                <img 
-                    src={image} 
-                    alt="Uploaded" 
-                    style={{ maxWidth: '80%', maxHeight: '165px' }} 
-                />
+                renderMedia(image)
             );
         } else if (showMap) {
             return (
@@ -436,8 +465,17 @@ const handleNumeroInviiChange = (e) => {
                         accept="image/*"
                         onChange={handleImageChange}
                         style={{ display: 'none' }}
-            />
-                    <i className="fa-solid fa-video"></i>
+                    />
+
+                    <label htmlFor="videoInput"><i className="fa-solid fa-video"></i></label>
+                    <input
+                      id="videoInput"
+                      type="file"
+                      accept="video/*"
+                      onChange={handleImageChange}
+                      style={{ display: 'none' }}
+                    />
+
                     <i className="fa-solid fa-location-dot" onClick={handleLocationClick}></i>
                     <div className="randomNewsAndImage" onClick={handleRandomNews}>Random News</div>
                     <div className="randomNewsAndImage" onClick={handleRandomImage}>Random Image</div>

@@ -160,6 +160,34 @@ const Feed = () => {
     }
   }
 
+  const addSquealToControversialChannel = async (squealId) => {
+    try {
+      const res = await fetch("http://localhost:3001/addSquealToControversialChannel", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ squealId: squealId }),
+      });
+    } catch (e) {
+      console.error("Errore nel caricamento degli squeals", e.message);
+    }
+  }
+
+  const removeSquealFromControversialChannel = async (squealId) => {
+    try {
+      const res = await fetch("http://localhost:3001/removeSquealFromControversialChannel", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ squealId: squealId }),
+      });
+    } catch (e) {
+      console.error("Errore nel caricamento degli squeals", e.message);
+    }
+  }
+
   const handleEmoticonGood = async (squeal) => {
     if (!isGuest) {
       //se l'utente non è guest, può mettere like/dislike
@@ -173,6 +201,14 @@ const Feed = () => {
           username: username,
         });
 
+        console.log(response.data.category);
+        //api che controlla che se la categoria del post dopo l'aggiunta o rimozion del like è controversial, fa api che mi aggiunge lo squeal al canale §CONTROVERSIAL
+        if(response.data.category === "Controversial"){
+          addSquealToControversialChannel(squeal._id);
+        }
+        else{
+          removeSquealFromControversialChannel(squeal._id);
+        }
         // Aggiorna lo stato locale con i dati aggiornati del squeal
         const updatedSqueals = squeals.map((s) => {
           if (s._id === squeal._id) {
@@ -199,6 +235,14 @@ const Feed = () => {
           _id: squeal._id,
           username: username,
         });
+
+        console.log(response.data.category);
+        if(response.data.category === "Controversial"){
+          addSquealToControversialChannel(squeal._id);
+        }
+        else{
+          removeSquealFromControversialChannel(squeal._id);
+        }
         // Aggiorna lo stato locale con i dati aggiornati del squeal
         const updatedSqueals = squeals.map((s) => {
           if (s._id === squeal._id) {
@@ -531,6 +575,32 @@ function Squeal({
     getUserType();
   }, [squeal.mittente]);
 
+  const isBase64 = (data) => {
+    return data.startsWith('data:');
+  };
+  
+  const isBase64Image = (data) => {
+    return data.startsWith('data:image/');
+  };
+  
+  const isBase64Video = (data) => {
+    return data.startsWith('data:video/');
+  };
+
+  const renderMedia = (data) => {
+    if (isBase64(data)) {
+      // If it's a base64-encoded data
+      if (isBase64Image(data)) {
+        return <img src={data} alt="Media content" style={{ maxWidth: '100%', maxHeight: '400px' }} />;
+      } else if (isBase64Video(data)) {
+        return <video controls src={data} style={{ maxWidth: '100%', maxHeight: '400px' }} />;
+      }
+    } 
+    else {
+        return <img src={data} alt="Media content" style={{ maxWidth: '100%', maxHeight: '400px' }} />;
+    }
+  };
+
   return (
     <div
       className="user-post"
@@ -555,7 +625,7 @@ function Squeal({
         </div>
         <div className="post-content">
           {renderTextWithLinks(squeal.text)}
-          {squeal.bodyImage && <img src={squeal.bodyImage} alt="bodyImage" />}
+          {squeal.bodyImage && renderMedia(squeal.bodyImage)}
           {squeal.mapLocation && (
             <div
               id={`map-${squeal._id}`}
