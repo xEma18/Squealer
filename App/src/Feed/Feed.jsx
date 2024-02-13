@@ -159,30 +159,30 @@ const Feed = () => {
     }
   };
 
-  const handleImpression = async (squealId) => {
-    if (registeredImpressions.has(squealId)) {
-      return; // Se l'impression è già stata registrata, non fare nulla
-    }
-    try {
-      const response = await axios.post(`http://localhost:3001/addImpression`, {
-        _id: squealId,
-        username: username,
-      });
-      // Aggiorna lo stato locale con i dati aggiornati del squeal
-      const updatedSqueals = squeals.map((s) => {
-        if (s._id === squealId) {
-          return response.data; // response.data dovrebbe contenere il squeal aggiornato
-        }
-        return s;
-      });
-      setSqueals(updatedSqueals);
-      setRegisteredImpressions((prevSet) => new Set([...prevSet, squealId])); // Aggiorna l'elenco delle impressioni registrate
-    } catch (error) {
-      console.error("Errore nel registrare l'impression:", error);
-    }
-  };
-
   useEffect(() => {
+    const handleImpression = async (squealId) => {
+      if (registeredImpressions.has(squealId)) {
+        return; // Se l'impression è già stata registrata, non fare nulla
+      }
+      try {
+        const response = await axios.post(`http://localhost:3001/addImpression`, {
+          _id: squealId,
+          username: username,
+        });
+        // Aggiorna lo stato locale con i dati aggiornati del squeal
+        const updatedSqueals = squeals.map((s) => {
+          if (s._id === squealId) {
+            return response.data; // response.data dovrebbe contenere il squeal aggiornato
+          }
+          return s;
+        });
+        setSqueals(updatedSqueals);
+        setRegisteredImpressions((prevSet) => new Set([...prevSet, squealId])); // Aggiorna l'elenco delle impressioni registrate
+      } catch (error) {
+        console.error("Errore nel registrare l'impression:", error);
+      }
+    };
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
@@ -204,7 +204,7 @@ const Feed = () => {
         }
       });
     };
-  }, [squeals]); // Dipendenze: aggiorna l'observer quando la lista di squeals cambia
+  }, [squeals, registeredImpressions, username]); // Dipendenze: aggiorna l'observer quando la lista di squeals cambia
 
   //inizializza le eventuali mappe presenti negli squeals (inserendo già latitudine, longitudine e zoom)
   useEffect(() => {
@@ -264,6 +264,10 @@ const Feed = () => {
     });
   };
 
+  const handleProfileSettingsButton = () => {
+    navigate(`/App/UserSettings?username=${accountData.username}`)
+  }
+
   const handleSmmButton = () => {
     navigate("/App/ManageSMM");
   };
@@ -301,6 +305,7 @@ const Feed = () => {
           <SideBar
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
+            onProfileSettingsButton={handleProfileSettingsButton}
             onSmmButton={handleSmmButton}
             onNewChannelButton={handleNewChannelButton}
             onDeleteAccount={handleDeleteAccount}
@@ -354,6 +359,7 @@ function PopUp({ handleYes, handleNo }) {
 function SideBar({
   sidebarOpen,
   setSidebarOpen,
+  onProfileSettingsButton,
   onSmmButton,
   onNewChannelButton,
   onDeleteAccount,
@@ -368,7 +374,7 @@ function SideBar({
             onClick={() => setSidebarOpen(false)}
           ></i>
         </li>
-        <li>
+        <li onClick={onProfileSettingsButton}>
           <i className="fa-solid fa-user"></i> Profile
         </li>
         <li onClick={onSmmButton}>
@@ -434,6 +440,23 @@ function Squeal({
   renderTextWithLinks,
   username,
 }) {
+
+  const isStandard = useRef(true);
+
+  // Dato uno squeal, verifica se il mittente è standard o meno
+  useEffect(function(){
+    async function getUserType(){
+      try{
+        const res = await axios.get(`http://localhost:3001/getUserTypeByUsername/${squeal.mittente}`);
+        console.log(res.data);
+        isStandard.current = res.data === "Standard" ? true : false;
+      }catch(error){
+        console.error(`Errore durante il caricamento del tipo: ${error.message}`);
+      }
+    }
+    getUserType();
+  }, [squeal.mittente]);
+
   return (
     <div
       className="user-post"
@@ -447,7 +470,7 @@ function Squeal({
       <div className="post-body">
         <div className="post-namedate">
           <span className="post-username">{squeal.mittente} </span>
-          <i className="fa-solid fa-feather"></i>
+          {!isStandard.current && <i className="fa-solid fa-feather"></i>}
           <span className="post-date">
             {" "}
             {new Date(squeal.date).toLocaleDateString("en-US", {

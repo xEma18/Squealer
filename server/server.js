@@ -974,7 +974,7 @@ app.post("/search", async (req, res) => {
 app.get("/getUserByUsername/:username", async (req, res) => {
   try {
     const username = req.params.username;
-    console.log("parametro username:", username);
+    // console.log("parametro username:", username);
     const user = await UserModel.findByUsername(username);
 
     if (!user) {
@@ -999,6 +999,23 @@ app.get("/getPublicSquealsBySender/:username", async (req, res) => {
     res.status(500).json({ error: "Errore interno del server" });
   }
 });
+
+// API per ottenere tipo utente dallo username
+app.get("/getUserTypeByUsername/:username", async (req, res) => {
+  try{
+    const username = req.params.username;
+
+    if(username.split("")[0] === "§") return res.status(200).json("Standard"); // Se è un canale restituisce a prescindere "standard"
+
+    const user = await UserModel.findByUsername(username);
+
+    if(!user) return res.status(404).json({error: "Utente non trovato"});
+
+    res.status(200).json(user.tipoUtente);
+  }catch(error){
+    res.status(500).json({error: "Errore interno del server"})
+  }
+})  
 
 app.get('/squealsByChannelName/:channelName', async (req, res) => {
   const { channelName } = req.params;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import InitialPage from "./InitialPageComponent.jsx";
 import SignUp1 from "./SignUp/SignUp1.jsx";
@@ -13,6 +13,7 @@ import Search from "./Feed/Search/Search.jsx";
 import UserProfile from "./Feed/Search/UserProfile.jsx";
 import ChannelProfile from "./Feed/Search/ChannelProfile.jsx";
 import Keyword from "./Feed/Search/Keyword.jsx";
+import UserSettings from "./UserSettings/UserSettings.jsx"
 import SmmList from "./SmmList/SmmList.jsx";
 import CreateChannel from "./CreateChannel/CreateChannel.jsx";
 
@@ -79,6 +80,7 @@ const App = () => {
         <Route path="/App/user/:username" element={<UserProfile />} />
         <Route path="/App/channel/:channelName" element={<ChannelProfile />} />
         <Route path="/App/keyword/:keyword" element={<Keyword />} />
+        <Route path="/App/UserSettings" element={<UserSettings />}/>
         <Route path="/App/ManageSMM" element={<SmmList />} />
         <Route path="/App/Feed/createChannel" element={<CreateChannel/>} />
         

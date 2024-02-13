@@ -1,32 +1,58 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../Feed/feed_style.css";
 import "../style.css";
+import { useSearchParams } from "react-router-dom";
+import axios from "axios";
 
-export default function UserProfile() {
+export default function UserSettings() {
   const [isEditing, setIsEditing] = useState(false);
-  const squealsList = [
-    {
-      id: 1,
-      profilePicture:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      userName: "Camzz",
-      isPro: true,
-      squealDate: "Dec 13",
-      squealContent:
-        "https://images.unsplash.com/photo-1604275689235-fdc521556c16?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      isImage: true,
-      squealComments: "69",
-      squealLikes: "121",
-      squealDislikes: "21",
-      squealImpressions: "3222",
-    },
-  ];
+  const [squealsList, setSquealsList] = useState([]);
+  const [queryParams] = useSearchParams();
+
+  useEffect(function(){
+    async function fetchSqueals(){
+      const username = queryParams.get("username");
+      try{
+        const res = await axios.get(`http://localhost:3001/getPublicSquealsBySender/${username}`);
+        setSquealsList(res.data);
+      }catch(error){
+        console.error(`Errore nel caricamento degli squeal: ${error.message}`)
+      }
+    }
+
+    fetchSqueals();
+  }, [queryParams]);
+  // const squealsList = [
+  //   {
+  //     id: 1,
+  //     profilePicture:
+  //       "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  //     userName: "Camzz",
+  //     isPro: true,
+  //     squealDate: "Dec 13",
+  //     squealContent:
+  //       "https://images.unsplash.com/photo-1604275689235-fdc521556c16?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  //     isImage: true,
+  //     squealComments: "69",
+  //     squealLikes: "121",
+  //     squealDislikes: "21",
+  //     squealImpressions: "3222",
+  //   },
+  // ];
 
   function handleShowEdit() {
     setIsEditing((cur) => !cur);
   }
 
-  function handleSubmitPassword(newPassword) {
+  async function handleSubmitPassword(newPassword) {
+    if(!newPassword) return;
+
+    try{
+        // da mettere
+    }catch(error){
+      console.error(`Errore nell'aggiornamento della password: ${error.message}`)
+    }
+
     // Qui si dovrebbe validare la password inserita e aggiornare il profilo utente di conseguenza.
     setIsEditing(false);
   }
@@ -182,7 +208,7 @@ function Squeals({ squealsList }) {
         <span>Squeals</span>
       </div>
       {squealsList.map((squeal) => (
-        <Squeal key={squeal.id} squeal={squeal} />
+        <Squeal key={squeal._id} squeal={squeal} />
       ))}
     </div>
   );
@@ -190,47 +216,47 @@ function Squeals({ squealsList }) {
 
 function Squeal({ squeal }) {
   return (
-    <div className="user-post" id={squeal.id}>
+    <div className="user-post" id={squeal._id}>
       <div className="profile-pic">
-        <img src={squeal.profilePicture} alt="Profile Picture" />
+        <img src={squeal.profilePic} alt="Profile Picture" />
       </div>
       <div className="post-body">
         <div className="post-namedate">
           <span className="post-username">
             <h>@</h>
-            {squeal.userName}
+            {squeal.mittente}
           </span>
           {squeal.isPro && <i className="fa-solid fa-feather"></i>}
-          <span className="post-date"> | {squeal.squealDate}</span>
+          <span className="post-date"> | {squeal.date}</span>
         </div>
         <div className="post-content">
-          {squeal.isImage ? (
-            <img src={squeal.squealContent} alt="Squeal content" />
+          {squeal.bodyImage ? (
+            <img src={squeal.bodyImage} alt="Squeal content" />
           ) : (
-            squeal.squealContent
+            squeal.text
           )}
         </div>
         <div className="post-reactions">
           <div className="post-comments">
             <i className="fa-regular fa-comment"></i>
             <span className="post-comments-number">
-              {squeal.squealComments}
+              {squeal.commentsNum}
             </span>
           </div>
           <div className="post-likes">
             <i className="fa-regular fa-thumbs-up"></i>
-            <span className="post-likes-number">{squeal.squealLikes}</span>
+            <span className="post-likes-number">{squeal.emoticonNum.good}</span>
           </div>
           <div className="post-dislikes">
             <i className="fa-regular fa-thumbs-down"></i>
             <span className="post-dislikes-number">
-              {squeal.squealDislikes}
+              {squeal.emoticonNum.bad}
             </span>
           </div>
           <div className="post-impressions">
             <i className="fa-regular fa-eye"></i>
             <span className="post-impressions-number">
-              {squeal.squealImpressions}
+              {squeal.impression}
             </span>
           </div>
         </div>
