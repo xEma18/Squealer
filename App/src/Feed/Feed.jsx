@@ -40,6 +40,8 @@ const Feed = () => {
   const [popupOpen, setPopupOpen] = useState(false);
   const [isSMMuser, setIsSMMuser] = useState(false);
   const [isMod, setIsMod] = useState(false);
+  const [isGuest, setIsGuest] = useState(/^@guest_\d+$/.test(username));
+
 
   useEffect(() => {
     // // Effettua una richiesta GET al server per ottenere i gli squeals filtrati per username (ricevo solo gli squeals con "username" tra i destinatari)
@@ -95,6 +97,7 @@ const Feed = () => {
     }
 
     async function checkMod() {
+
       try {
         const res = await fetch("http://localhost:3001/isMod", {
           method: "POST",
@@ -109,8 +112,10 @@ const Feed = () => {
         console.error("Errore nel caricamento degli squeals", e.message);
       }
     }
-    checkMod();
-    checkSMM();
+    if(!isGuest){
+      checkMod();
+      checkSMM();
+    }
     getSqueals();
   }, [username]); // Il secondo parametro vuoto [] indicherebbe che useEffect verrà eseguito solo una volta alla creazione del componente, ho messo "username", così useffect viene eseguito ogni volta che cambia username (quindi ogni volta chen accedo al feed con un account diverso)
 
@@ -149,8 +154,6 @@ const Feed = () => {
   }
 
   const handleEmoticonGood = async (squeal) => {
-    // Uso un'espressione regolare per verificare se l'username è nel formato "guest_x". Se "username" soddisfa il pattern, allora isGuest sarà true
-    const isGuest = /^@guest_\d+$/.test(username);
     if (!isGuest) {
       //se l'utente non è guest, può mettere like/dislike
       //controllo se l'utente ha già dato un emoticon good a questo squeal e seleziono l'endpoint da chiamare

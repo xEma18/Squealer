@@ -149,6 +149,14 @@ const WriteSqueal = () => {
       alert("You used too much characters")
       return;
     }
+
+    const hasOfficialChannel = recipients.some(recipient => recipient.startsWith("§") && recipient.substring(1).toUpperCase() === recipient.substring(1));
+
+    if (hasOfficialChannel) {
+      alert("Cannot send squeal to an official channel (written in uppercase).");
+      return; // Interrompe l'esecuzione se trovato un canale ufficiale
+    }
+
     const newSqueal = {
       mittente: username,
       destinatari: recipients,
