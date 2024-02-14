@@ -144,6 +144,7 @@ const Feed = () => {
   const handleYesDelete = async function () {
     setPopupOpen(false);
     try {
+      
       const response = await axios.post(`http://localhost:3001/deleteAccount`, {
         username: username,
       });

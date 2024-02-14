@@ -1226,9 +1226,13 @@ app.post("/deleteAccount", async (req, res) => {
       }
 
       ["verygood", "good", "bad", "verybad"].forEach((emotion) => {
-        const index = squeal.emoticonGivenBy[emotion].indexOf(username); //calcolo l'index dell'utente nell'array delle reazioni (se non presente, indexOf restituisce -1)
+        // Assicurati che squeal.emoticonGivenBy[emotion] sia un array prima di proseguire
+        if (!squeal.emoticonGivenBy[emotion]) {
+          squeal.emoticonGivenBy[emotion] = []; // Inizializza con un array vuoto se non esiste
+        }
+        const index = squeal.emoticonGivenBy[emotion].indexOf(username);
         if (index !== -1) {
-          squeal.emoticonGivenBy[emotion].splice(index, 1); //splice rimuove un numero di elementi a partire dall'index specificato )in questoc aso rimuove 1 elemento a partire da index
+          squeal.emoticonGivenBy[emotion].splice(index, 1); // Rimuove l'utente dall'array delle reazioni
           squeal.emoticonNum[emotion] -= 1;
         }
       });
