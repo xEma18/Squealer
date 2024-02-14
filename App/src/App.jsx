@@ -40,6 +40,10 @@ const App = () => {
     caratteriGiornalieriUsati: 0,
     caratteriSettimanaliUsati: 0,
     caratteriMensiliUsati: 0,
+    subscriptions: [],
+    manager: "",
+    vipManaged: "",
+    
   });
 
   // Funzione per aggiornare i dati della registrazione (mantiene i dati già scritti e scrive in nuovi dati che passo come parametro)

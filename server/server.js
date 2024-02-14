@@ -67,17 +67,28 @@ app.get("/Moderator_Dashboard/*", async function (req, res) {
 
 
 const uri =
-  "mongodb+srv://emanuele:emanuele@cluster0.dbp6yx6.mongodb.net/?retryWrites=true&w=majority";
+  "mongodb+srv://emanuele:emanuele@cluster0.dbp6yx6.mongodb.net/?retryWrites=true&w=majority"; 
+const MONGO_USER = "site222333"
+const MONGO_PASSWORD = "Haisue4j"
+const MONGO_SITE = "mongo_site222333"
+"Mongodb username: site222333 - Mongodb password: Haisue4j"
 
+const uri2 = `mongodb://${MONGO_USER ? MONGO_USER + ":" : ""}${MONGO_PASSWORD ? MONGO_PASSWORD + "@": ""}${MONGO_SITE}/db?writeConcern=majority&directConnection=true&authSource=admin`
+
+const prod = false; //da casa false da scuola true
+const uri3 = prod ? uri2 : "mongodb://127.0.0.1:27017/Squealer"
+console.log(uri3);
 app.use(cors()); //enable to use cors
 //allows to convert in json format files I transfer from frontend to server
 app.use(express.json({ limit: "20mb" })); // Imposta il limite a 10 MB
 app.use(express.urlencoded({ extended: true, limit: "20mb" })); // Imposta il limite a 10 MB
 
-mongoose.connect("mongodb://127.0.0.1:27017/Squealer", {
+mongoose.connect(uri3, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-});
+})
+.then(() => console.log('Connessione al database riuscita!'))
+.catch(err => console.error('Errore di connessione al database:', err));
 
 // Funzioni di azzeramento
 async function resetDailyCounters() {
@@ -275,40 +286,46 @@ app.post("/squealsToUser", async (req, res) => {
   const { username } = req.body;
 
   try {
-    const user = await UserModel.findOne({ username: username });
-    if (!user) {
-      return res.status(404).json({ message: "Utente non trovato" });
+    let squeals = [];
+
+    // Se l'utente non è un guest, recupera gli squeals diretti all'utente, gli squeals pubblici e quelli dai canali a cui è iscritto
+    if (!username.startsWith('@guest')) {
+      const user = await UserModel.findOne({ username: username });
+      if (!user) {
+        return res.status(404).json({ message: "Utente non trovato" });
+      }
+
+      // Recupera gli squeals diretti all'utente e gli squeals pubblici
+      squeals = await SquealModel.find({
+        $or: [{ destinatari: username }, { destinatari: '@everyone' }]
+      });
+
+      // Recupera gli squeals dai canali a cui l'utente è iscritto
+      const channelsSqueals = await Promise.all(user.subscriptions.map(async (channelName) => {
+        const channel = await ChannelModel.findOne({ name: channelName });
+        if (channel && channel.listofSqueals.length > 0) {
+          return await SquealModel.find({
+            '_id': { $in: channel.listofSqueals }
+          });
+        }
+        return [];
+      }));
+
+      // Combina gli squeals diretti all'utente con quelli dei canali
+      channelsSqueals.forEach(channelSqueals => {
+        squeals = squeals.concat(channelSqueals);
+      });
+    } else {
+      // Per gli utenti guest, recupera solo gli squeals pubblici
+      squeals = await SquealModel.find({ destinatari: '@everyone' });
     }
 
-    // Recupera gli squeals diretti all'utente e gli squeals pubblici
-    let squeals = await SquealModel.find({
-      $or: [{ destinatari: username }, { destinatari: '@everyone' }]
-    });
-
-    // Recupera gli squeals dai canali a cui l'utente è iscritto
-    const channelsSqueals = await Promise.all(user.subscriptions.map(async (channelName) => {
-      const channel = await ChannelModel.findOne({ name: channelName });
-      if (channel && channel.listofSqueals.length > 0) {
-        return await SquealModel.find({
-          '_id': { $in: channel.listofSqueals }
-        });
-      }
-      return [];
-    }));
-
-    // Combina gli squeals diretti all'utente con quelli dei canali
-    channelsSqueals.forEach(channelSqueals => {
-      squeals = squeals.concat(channelSqueals);
-    });
-
-    // Rimuovi eventuali duplicati (opzionale, dipende dalla logica applicativa)
+    // Rimuovi eventuali duplicati e ordina gli squeals per data
     squeals = squeals.filter((squeal, index, self) =>
       index === self.findIndex((t) => (
         t._id.toString() === squeal._id.toString()
       ))
-    );
-
-    squeals.sort((a, b) => new Date(b.date) - new Date(a.date));
+    ).sort((a, b) => new Date(b.date) - new Date(a.date));
 
     res.json(squeals);
   } catch (error) {
@@ -316,6 +333,7 @@ app.post("/squealsToUser", async (req, res) => {
     res.status(500).json({ message: "Errore interno del server" });
   }
 });
+
 
 
 app.post("/getUserImageAndCharLeft", async (req, res) => {
@@ -434,6 +452,9 @@ app.post("/addEmoticonGood", async (req, res) => {
       else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
         squeal.category = "Unpopular";
       }
+      else {
+        squeal.category = "Public";
+      }
     }
 
     await squeal.save();
@@ -459,11 +480,14 @@ app.post("/removeEmoticonGood", async (req, res) => {
         squeal.emoticonNum.bad > 0.25 * squeal.impression
       ) {
         squeal.category = "Controversial";
-      } else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
-        squeal.category = "Unpopular";
+      } else if (squeal.emoticonNum.good > 0.25 * squeal.impression) {
+        squeal.category = "Popular";
       }
       else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
         squeal.category = "Unpopular";
+      }
+      else {
+        squeal.category = "Public";
       }
     }
 
@@ -490,11 +514,14 @@ app.post("/addEmoticonBad", async (req, res) => {
         squeal.emoticonNum.bad > 0.25 * squeal.impression
       ) {
         squeal.category = "Controversial";
-      } else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
-        squeal.category = "Unpopular";
+      } else if (squeal.emoticonNum.good > 0.25 * squeal.impression) {
+        squeal.category = "Popular";
       }
       else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
         squeal.category = "Unpopular";
+      }
+      else {
+        squeal.category = "Public";
       }
     }
 
@@ -521,11 +548,14 @@ app.post("/removeEmoticonBad", async (req, res) => {
         squeal.emoticonNum.bad > 0.25 * squeal.impression
       ) {
         squeal.category = "Controversial";
-      } else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
-        squeal.category = "Unpopular";
+      } else if (squeal.emoticonNum.good > 0.25 * squeal.impression) {
+        squeal.category = "Popular";
       }
       else if (squeal.emoticonNum.bad > 0.25 * squeal.impression) {
         squeal.category = "Unpopular";
+      }
+      else {
+        squeal.category = "Public";
       }
     }
 
@@ -1400,6 +1430,46 @@ app.post('/isMod', async (req, res) => {
   } catch (error) {
       console.error('Errore durante la verifica dello status Mod dell\'utente:', error);
       res.status(500).json({ message: 'Errore interno del server', isMod: false });
+  }
+});
+
+app.post('/addSquealToControversialChannel', async (req, res) => {
+  const { squealId } = req.body;
+  try {
+      const controversialChannel = await ChannelModel.findOne({ name: '§CONTROVERSIAL' });
+      if (!controversialChannel) {
+          return res.status(404).json({ message: 'Canale controverso non trovato' });
+      }
+      if (!controversialChannel.listofSqueals.includes(squealId)) {
+          controversialChannel.listofSqueals.push(squealId);
+          await controversialChannel.save();
+          res.status(200).json({ message: 'Squeal aggiunto al canale controverso con successo' });
+      } else {
+          res.status(400).json({ message: 'Squeal già presente nel canale controverso' });
+      }
+  } catch (error) {
+      console.error('Errore durante l\'aggiunta dello squeal al canale controverso:', error);
+      res.status(500).json({ message: 'Errore interno del server' });
+  }
+});
+
+app.post('/removeSquealFromControversialChannel', async (req, res) => {
+  const { squealId } = req.body;
+  try {
+      const controversialChannel = await ChannelModel.findOne({ name: '§CONTROVERSIAL' });
+      if (!controversialChannel) {
+          return res.status(404).json({ message: 'Canale controverso non trovato' });
+      }
+      if (controversialChannel.listofSqueals.includes(squealId)) {
+          controversialChannel.listofSqueals = controversialChannel.listofSqueals.filter(id => id !== squealId);
+          await controversialChannel.save();
+          res.status(200).json({ message: 'Squeal rimosso dal canale controverso con successo' });
+      } else {
+          res.status(200).json({ message: 'Squeal non presente nel canale controverso' });
+      }
+  } catch (error) {
+      console.error('Errore durante la rimozione dello squeal dal canale controverso:', error);
+      res.status(500).json({ message: 'Errore interno del server' });
   }
 });
 

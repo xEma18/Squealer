@@ -13,7 +13,7 @@
             <a href="#" class="navbar-item has-text-grey-lighter is-size-7-mobile">
               VIP's Squealers
             </a>
-            <a class="navbar-item has-text-grey-lighter is-size-7-mobile">
+            <a class="navbar-item has-text-grey-lighter is-size-7-mobile" href="#" @click="navigateToWriteSqueal">
               Write a Squeal
             </a>
           </div>
@@ -97,9 +97,10 @@ export default {
     };
   },
   async mounted() {
-    //const savedData = sessionStorage.getItem("accountData");
-    //const accountData = JSON.parse(savedData);
-    //const username = accountData.username;
+    const savedData = sessionStorage.getItem("accountData");
+    const accountData = JSON.parse(savedData);
+    const username = accountData.username;
+    console.log(username);
     try {
       const response = await fetch('http://localhost:3001/squeals');
       this.squeals = await response.json();
@@ -171,7 +172,10 @@ export default {
       });
       // Aggiorna l'array per assicurare la reattività
       this.squeals = [...this.squeals];
-    }
+    },
+    navigateToWriteSqueal() {
+    this.$router.push('/SMM/writeSqueal');
+  },
   }
 };
 </script>

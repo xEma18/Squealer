@@ -40,6 +40,8 @@ const Feed = () => {
   const [popupOpen, setPopupOpen] = useState(false);
   const [isSMMuser, setIsSMMuser] = useState(false);
   const [isMod, setIsMod] = useState(false);
+  const [isGuest, setIsGuest] = useState(/^@guest_\d+$/.test(username));
+
 
   useEffect(() => {
     // // Effettua una richiesta GET al server per ottenere i gli squeals filtrati per username (ricevo solo gli squeals con "username" tra i destinatari)
@@ -95,6 +97,7 @@ const Feed = () => {
     }
 
     async function checkMod() {
+
       try {
         const res = await fetch("http://localhost:3001/isMod", {
           method: "POST",
@@ -109,12 +112,19 @@ const Feed = () => {
         console.error("Errore nel caricamento degli squeals", e.message);
       }
     }
-    checkMod();
-    checkSMM();
+    if(!isGuest){
+      checkMod();
+      checkSMM();
+    }
     getSqueals();
   }, [username]); // Il secondo parametro vuoto [] indicherebbe che useEffect verrà eseguito solo una volta alla creazione del componente, ho messo "username", così useffect viene eseguito ogni volta che cambia username (quindi ogni volta chen accedo al feed con un account diverso)
 
   const handleDeleteAccount = function () {
+    if (isGuest) {
+      sessionStorage.removeItem("accountData");
+      navigate("/App/");
+      return;
+    }
     setPopupOpen(true);
     setSidebarOpen(false);
   };
@@ -145,12 +155,40 @@ const Feed = () => {
   };
 
   const handleOpenComments = function(squealId){
-    navigate(`/App/Feed/comments?squeal_id=${squealId}&back=Feed`);
+    if(!isGuest){
+      navigate(`/App/Feed/comments?squeal_id=${squealId}&back=Feed`);
+    }
+  }
+
+  const addSquealToControversialChannel = async (squealId) => {
+    try {
+      const res = await fetch("http://localhost:3001/addSquealToControversialChannel", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ squealId: squealId }),
+      });
+    } catch (e) {
+      console.error("Errore nel caricamento degli squeals", e.message);
+    }
+  }
+
+  const removeSquealFromControversialChannel = async (squealId) => {
+    try {
+      const res = await fetch("http://localhost:3001/removeSquealFromControversialChannel", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ squealId: squealId }),
+      });
+    } catch (e) {
+      console.error("Errore nel caricamento degli squeals", e.message);
+    }
   }
 
   const handleEmoticonGood = async (squeal) => {
-    // Uso un'espressione regolare per verificare se l'username è nel formato "guest_x". Se "username" soddisfa il pattern, allora isGuest sarà true
-    const isGuest = /^@guest_\d+$/.test(username);
     if (!isGuest) {
       //se l'utente non è guest, può mettere like/dislike
       //controllo se l'utente ha già dato un emoticon good a questo squeal e seleziono l'endpoint da chiamare
@@ -162,7 +200,13 @@ const Feed = () => {
           _id: squeal._id,
           username: username,
         });
-
+        //api che controlla che se la categoria del post dopo l'aggiunta o rimozion del like è controversial, fa api che mi aggiunge lo squeal al canale §CONTROVERSIAL
+        if(response.data.category === "Controversial"){
+          addSquealToControversialChannel(squeal._id);
+        }
+        else{
+          removeSquealFromControversialChannel(squeal._id);
+        }
         // Aggiorna lo stato locale con i dati aggiornati del squeal
         const updatedSqueals = squeals.map((s) => {
           if (s._id === squeal._id) {
@@ -189,6 +233,12 @@ const Feed = () => {
           _id: squeal._id,
           username: username,
         });
+        if(response.data.category === "Controversial"){
+          addSquealToControversialChannel(squeal._id);
+        }
+        else{
+          removeSquealFromControversialChannel(squeal._id);
+        }
         // Aggiorna lo stato locale con i dati aggiornati del squeal
         const updatedSqueals = squeals.map((s) => {
           if (s._id === squeal._id) {
@@ -309,24 +359,30 @@ const Feed = () => {
   };
 
   const handleProfileSettingsButton = () => {
-    navigate(`/App/UserSettings?username=${accountData.username}`)
+    if(!isGuest){
+      navigate(`/App/UserSettings?username=${accountData.username}`);
+    }
   }
 
   const handleSmmButton = () => {
-    navigate("/App/ManageSMM");
+    if (!isGuest){
+      navigate("/App/ManageSMM");
+    }
   };
 
   const handleSearchButton = () => {
-    navigate("/App/Feed/Search");
+    if (!isGuest){
+      navigate("/App/Feed/Search");
+    }
   };
 
   const handleNewChannelButton = () => {
-    navigate("/App/Feed/createChannel");
+    if (!isGuest){
+      navigate("/App/Feed/createChannel");
+    }
   };
 
   const handleWriteSquealButton = () => {
-    //se l'utente è guest, non può scrivere uno squeal, mentre se non è guest, va a navigate a WriteSqueal
-    const isGuest = /^@guest_\d+$/.test(username);
     if (!isGuest) {
       navigate("/App/Feed/WriteSqueal");
     }
@@ -515,6 +571,32 @@ function Squeal({
     getUserType();
   }, [squeal.mittente]);
 
+  const isBase64 = (data) => {
+    return data.startsWith('data:');
+  };
+  
+  const isBase64Image = (data) => {
+    return data.startsWith('data:image/');
+  };
+  
+  const isBase64Video = (data) => {
+    return data.startsWith('data:video/');
+  };
+
+  const renderMedia = (data) => {
+    if (isBase64(data)) {
+      // If it's a base64-encoded data
+      if (isBase64Image(data)) {
+        return <img src={data} alt="Media content" style={{ maxWidth: '100%', maxHeight: '400px' }} />;
+      } else if (isBase64Video(data)) {
+        return <video controls src={data} style={{ maxWidth: '100%', maxHeight: '400px' }} />;
+      }
+    } 
+    else {
+        return <img src={data} alt="Media content" style={{ maxWidth: '100%', maxHeight: '400px' }} />;
+    }
+  };
+
   return (
     <div
       className="user-post"
@@ -539,7 +621,7 @@ function Squeal({
         </div>
         <div className="post-content">
           {renderTextWithLinks(squeal.text)}
-          {squeal.bodyImage && <img src={squeal.bodyImage} alt="bodyImage" />}
+          {squeal.bodyImage && renderMedia(squeal.bodyImage)}
           {squeal.mapLocation && (
             <div
               id={`map-${squeal._id}`}

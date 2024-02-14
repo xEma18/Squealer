@@ -118,6 +118,32 @@ const UserProfile = () => {
         </div>
     );
 
+    const isBase64 = (data) => {
+        return data.startsWith('data:');
+      };
+      
+      const isBase64Image = (data) => {
+        return data.startsWith('data:image/');
+      };
+      
+      const isBase64Video = (data) => {
+        return data.startsWith('data:video/');
+      };
+    
+      const renderMedia = (data) => {
+        if (isBase64(data)) {
+          // If it's a base64-encoded data
+          if (isBase64Image(data)) {
+            return <img src={data} alt="Media content" style={{ maxWidth: '100%', maxHeight: '400px' }} />;
+          } else if (isBase64Video(data)) {
+            return <video controls src={data} style={{ maxWidth: '100%', maxHeight: '400px' }} />;
+          }
+        } 
+        else {
+            return <img src={data} alt="Media content" style={{ maxWidth: '100%', maxHeight: '400px' }} />;
+        }
+    };
+
     const UserSqueals = () => (
         <div className="item-squeals">
             <div className="squeals-header"><span>Squeals</span></div>
@@ -134,9 +160,7 @@ const UserProfile = () => {
                             </div>
                             <div className="post-content">
                                 {squeal.text}
-                                {squeal.bodyImage && (
-                                    <img src={squeal.bodyImage} alt="" />
-                                )}
+                                {squeal.bodyImage && renderMedia(squeal.bodyImage)}
                                 {squeal.mapLocation && (
                                     <div id={`map-${squeal._id}`} style={{ height: '200px', width: '100%' }}></div>
                                 )}
