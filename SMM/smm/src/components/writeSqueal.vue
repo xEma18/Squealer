@@ -327,7 +327,13 @@
 
           map.on('click', (e) => {
             const { lat, lng } = e.latlng;
-            L.marker([lat, lng]).addTo(map);
+            const customIcon = L.icon({
+            iconUrl: 'https://freesvg.org/img/Map-Pin.png', 
+            iconSize: [38, 38], 
+            iconAnchor: [19, 38], 
+            popupAnchor: [-3, -76] 
+          });
+            L.marker([lat, lng], {icon: customIcon}).addTo(map);
             this.mapInfo.lat = lat;
             this.mapInfo.lng = lng;
           });
@@ -339,6 +345,10 @@
       },
       async fetchRandomNews() {
         if(this.returnIfRecipientIsEmpty()) return;
+        this.image= '';
+        this.video= '';
+        this.showMap= false;
+        
         try {
           const response = await axios.get('http://localhost:3001/randomNews');
           this.randomNews = response.data; 
