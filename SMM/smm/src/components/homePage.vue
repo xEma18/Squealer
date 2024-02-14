@@ -10,7 +10,7 @@
 
           <!-- Elementi fissi per essere mostrati nella navbar mobile e non nel burger-->
           <div class="navbar-custom">
-            <a href="https://site222333.tw.cs.unibo.it/App/" class="navbar-item has-text-grey-lighter is-size-7-mobile">
+            <a @click="navigateToFeed" class="navbar-item has-text-grey-lighter is-size-7-mobile">
               Back to App
             </a>
             <a class="navbar-item has-text-grey-lighter is-size-7-mobile" href="#" @click="navigateToWriteSqueal">
@@ -236,6 +236,14 @@ export default {
 
     navigateToWriteSqueal() {
     this.$router.push('/SMM/writeSqueal');
+  },
+  navigateToFeed() {
+    this.$router.push('/App/Feed/');
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
+    
+
   },
   createMaps(){
     this.squeals.forEach((squealItem, index) => {

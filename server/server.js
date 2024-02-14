@@ -11,6 +11,9 @@ const path = require("path")
 
 const app = express();
 
+app.get("/", (req, res) => {
+  res.redirect("/App/");
+});
 
 app.use(
   "/SMM",

@@ -241,7 +241,7 @@ const WriteSqueal = () => {
     });
 
 
-    navigate("/App/Feed");
+    navigate("/App/Feed/");
   };
 
   const updateCharsLeft = async (times) => {
