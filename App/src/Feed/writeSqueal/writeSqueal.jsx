@@ -26,7 +26,7 @@ const WriteSqueal = () => {
   const [noDailyCharsLeft, setNoDailyCharsLeft] = useState(false);
   const [noWeeklyCharsLeft, setNoWeeklyCharsLeft] = useState(false);
   const [noMonthlyCharsLeft, setNoMonthlyCharsLeft] = useState(false);
-  const [intervalloInvio, setIntervalloInvio] = useState(0); // In minuti
+  const [intervalloInvio, setIntervalloInvio] = useState(1); 
   const [numeroInvii, setNumeroInvii] = useState(1);
   const [isTemporizzato, setIsTemporizzato] = useState(false); // Stato per il pulsante Temporizzato
 
@@ -154,6 +154,13 @@ const WriteSqueal = () => {
     }
     if(text.length * numeroInvii + userData.caratteriGiornalieriUsati > userData.caratteriGiornalieri){
       alert("You used too much characters")
+      return;
+    }
+
+    const hasChannel = recipients.some(recipient => recipient.startsWith("§"));
+
+    if(isTemporizzato && hasChannel){
+      alert("Cannot send temporized squeal to a channel. No Spam!");
       return;
     }
 

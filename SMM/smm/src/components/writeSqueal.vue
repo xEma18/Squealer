@@ -14,7 +14,7 @@
   
         <div class="columns squeal-about-it">
           <div class="column is-2">
-            <figure class="image is-64x64">
+            <figure class="figure image is-64x64">
               <img :src=vipProfilePic alt="Profile Picture" class="is-rounded">
             </figure>
           </div>
@@ -29,8 +29,12 @@
                 Your browser does not support the video tag.
               </video>
             </div>
-            <div v-else-if="showMap" ref="mapRef" class="map-container"></div>
-            
+            <div v-else-if="showMap" ref="mapContainer" class="map-container" id="map-container" style="height: 400px;"></div>
+            <div v-else-if="showRandomNews && randomNews" class="random-news-container">
+              <h3 class="title">{{ randomNews.title }}</h3>
+              <p>{{ randomNews.description }}</p>
+              <a :href="randomNews.url" target="_blank">Leggi di più</a>
+            </div>
             <div v-else class="textarea-container">
               <textarea class="textarea" placeholder="Squeal about it!" v-model="text" @input="updateCharacterCount" :maxlength="maxLength"></textarea>
             </div>
@@ -55,10 +59,10 @@
 
           </div>
           <div class="control">
-            <span class="icon" @click="handleRandomNews"><i class="fas fa-newspaper"></i></span>
+            <span class="icon" @click="fetchRandomNews"><i class="fas fa-newspaper"></i></span>
           </div>
           <div class="control">
-            <span class="icon" @click="handleRandomImage"><i class="fas fa-images"></i></span>
+            <span class="icon" @click="fetchRandomImage"><i class="fas fa-images"></i></span>
           </div>
         </div>
         
@@ -114,6 +118,8 @@
   <script>
   import CharacterCount from './charactersCounter.vue';
   import axios from 'axios';
+  import L from 'leaflet';
+  import 'leaflet/dist/leaflet.css';
 
   export default {
     components: {
@@ -139,8 +145,10 @@
         video: '',
         recipientsText: '', 
         recipients: [], 
-        showMap: false, // Mostra mappa
-        mapInfo: { lat: null, lng: null, zoom: 13 }, // Informazioni mappa
+        showMap: false, 
+        mapInfo: { lat: null, lng: null, zoom: 13 }, 
+        randomNews: null, 
+        showRandomNews: false, 
         publicMode: false, 
         
         isTemporizzato: false,
@@ -151,11 +159,17 @@
         noMonthlyCharsLeft: false,
       };
     },
+    watch:{
+      numeroInvii(newVal, oldVal) {
+      this.updateCharacterCount();
+    },
+  },
     methods: {
       returnIfRecipientIsEmpty() {
         if (this.recipients.length === 0) {
           alert("Please specify at least one recipient before writing.");
-          this.image = ""; // Usa `this.image` per accedere alla proprietà reattiva
+          this.image = ""; 
+          this.video = "";
           return true;
         }
       },
@@ -163,18 +177,100 @@
       navigateToFeed() {
         this.$router.push('/SMM/');
       },
-      handlePostSqueal() {
-        // Gestione invio post: devo aspettare di avere dalla homepage i dati utente
+      async updateCharLeft() {
+        try {
+          const requestBody = {
+            username: this.accountData.vipManaged,
+            caratteriGiornalieriUsati: this.dailyCharsUsed,
+            caratteriSettimanaliUsati: this.weeklyCharsUsed,
+            caratteriMensiliUsati: this.monthlyCharsUsed,
+          };
+
+          const response = await axios.post('http://localhost:3001/updateCharsLeft', requestBody);
+
+        } catch (error) {
+          console.error("Errore durante l'aggiornamento dei caratteri rimanenti:", error);
+          alert("Errore durante l'aggiornamento dei caratteri rimanenti.");
+        }
+      },
+      async handlePostSqueal() {
+        if(this.returnIfRecipientIsEmpty()) return;
+
+
+        if (this.publicMode && this.dailyCharsUsed > this.dailyChars) {
+          alert("You used too much characters");
+          return;
+        }
+
+        const hasOfficialChannel = this.recipients.some(recipient => recipient.startsWith("§") && recipient.substring(1).toUpperCase() === recipient.substring(1));
+        if (hasOfficialChannel) {
+          alert("Cannot send squeal to an official channel (written in uppercase).");
+          return;
+        }
+
+        const newSqueal = {
+          mittente: this.accountData.vipManaged,
+          destinatari: this.recipients,
+          text: this.image === "" ? this.text : "",
+          emoticonNum: { verygood: 0, good: 0, bad: 0, verybad: 0 },
+          impression: 0,
+          commentsNum: 0,
+          emoticonGivenBy: { verygood: [], good: [], bad: [], verybad: [] },
+          impressionsGivenBy: {},
+          bodyImage: this.image||this.video||"",
+          date: new Date(),
+          profilePic: this.vipProfilePic,
+          mapLocation: this.showMap ? this.mapInfo : null,
+          category: this.publicMode ? "Public" : "Private",
+        };
+
+        if (this.isTemporizzato) {
+          const requestBody = {
+            squeal: newSqueal,
+            intervalloInvio: this.intervalloInvio,
+            numeroInvii: this.numeroInvii,
+          };
+
+          axios.post(`http://localhost:3001/scheduleSqueal`, requestBody).catch(error => {
+            console.error("Errore durante la programmazione dello squeal:", error);
+          });
+        } else {
+          try {
+            const response = await axios.post(`http://localhost:3001/postSqueal`, newSqueal);
+            newSqueal._id = response.data._id;
+          } catch (error) {
+            console.error("Errore durante il salvataggio del post:", error);
+          }
+        }
+        if(this.publicMode) this.updateCharLeft();
+        
+        const channelNames = this.recipients.filter(recipient => recipient.startsWith("§"));
+        channelNames.forEach(async (channelName) => {
+          try {
+            await axios.post(`http://localhost:3001/addSquealToChannel`, {
+              squealId: newSqueal._id,
+              channelName: channelName,
+            });
+          } catch (error) {
+            console.error(`Error updating channel ${channelName}:`, error);
+          }
+        });
+
+        this.$router.push('/SMM/');
+
       },
       updateCharacterCount() {
         const textLength = this.text.length;
-        
-        // Aggiorna i contatori dei caratteri
-        this.dailyCharsUsed = this.startDailyCharsUsed + textLength * this.numeroInvii;
-        this.weeklyCharsUsed = this.startWeeklyCharsUsed + textLength * this.numeroInvii;
-        this.monthlyCharsUsed = this.startMonthlyCharsUsed + textLength * this.numeroInvii;
+
+        if (this.publicMode) {
+          const charCount = this.image || this.video || this.showMap ? 125 : textLength;
+          this.dailyCharsUsed = this.startDailyCharsUsed + charCount * this.numeroInvii;
+          this.weeklyCharsUsed = this.startWeeklyCharsUsed + charCount * this.numeroInvii;
+          this.monthlyCharsUsed = this.startMonthlyCharsUsed + charCount * this.numeroInvii;
+        }
       },
       handleImageChange(e) {
+        if(this.returnIfRecipientIsEmpty()) return;
         const file = e.target.files[0];
         if (file) {
           const reader = new FileReader();
@@ -192,6 +288,7 @@
         }
       },
       handleVideoChange(e) {
+        if(this.returnIfRecipientIsEmpty()) return;
         const file = e.target.files[0];
         if (file) {
           const reader = new FileReader();
@@ -210,13 +307,74 @@
         
       },
       handleLocationClick() {
-        // Gestione click sulla localizzazione
+        if(this.returnIfRecipientIsEmpty()) return;
+        this.showMap = true; // Mostra il componente della mappa
+        this.$nextTick(() => {
+        this.initializeMap();
+        if(this.publicMode){
+          this.dailyCharsUsed = this.startDailyCharsUsed + 125 * this.numeroInvii;
+          this.weeklyCharsUsed = this.startWeeklyCharsUsed + 125 * this.numeroInvii;
+          this.monthlyCharsUsed = this.startMonthlyCharsUsed + 125 * this.numeroInvii;
+        }
+        });
       },
-      handleRandomNews() {
-        // Gestione click su notizia casuale
+      initializeMap() {
+        if (!this.mapRef) { // Verifica se la mappa è già stata inizializzata
+          const map = L.map('map-container').setView([this.mapInfo.lat || 45.4642, this.mapInfo.lng || 9.1900], this.mapInfo.zoom);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+          }).addTo(map);
+
+          map.on('click', (e) => {
+            const { lat, lng } = e.latlng;
+            L.marker([lat, lng]).addTo(map);
+            this.mapInfo.lat = lat;
+            this.mapInfo.lng = lng;
+          });
+
+          this.mapRef = map;
+        } else {
+          this.mapRef.setView([this.mapInfo.lat, this.mapInfo.lng], this.mapInfo.zoom);
+        }
       },
-      handleRandomImage() {
-        // Gestione click su immagine casuale
+      async fetchRandomNews() {
+        if(this.returnIfRecipientIsEmpty()) return;
+        try {
+          const response = await axios.get('http://localhost:3001/randomNews');
+          this.randomNews = response.data; 
+          this.showRandomNews = true; 
+        } catch (error) {
+          console.error('Errore durante il recupero delle notizie casuali:', error);
+          alert('Errore nel recupero delle notizie casuali. Si prega di riprovare.');
+        }
+        this.text = this.randomNews.title + ' ' + this.randomNews.description + ' ' + this.randomNews.url;
+
+        const titleLength = this.randomNews.title ? this.randomNews.title.length : 0;
+        const descriptionLength = this.randomNews.description ? this.randomNews.description.length : 0;
+        const urlLength = this.randomNews.url ? this.randomNews.url.length : 0;
+        const charactersUsed = (titleLength + descriptionLength + urlLength) * this.numeroInvii;
+        if(this.publicMode){
+          this.dailyCharsUsed = this.startDailyCharsUsed + charactersUsed;
+          this.weeklyCharsUsed = this.startWeeklyCharsUsed + charactersUsed;
+          this.monthlyCharsUsed = this.startMonthlyCharsUsed + charactersUsed;
+        }
+      },
+      async fetchRandomImage() {
+        if(this.returnIfRecipientIsEmpty()) return;
+        try {
+          const response = await axios.get('http://localhost:3001/randomImage');
+          this.image = response.data.imageUrl; 
+          this.video = ''; 
+          this.showMap = false; 
+        } catch (error) {
+          console.error('Errore durante il recupero di un\'immagine casuale:', error);
+          alert('Errore nel recupero dell\'immagine casuale. Si prega di riprovare.');
+        }
+        if(this.publicMode){
+          this.dailyCharsUsed = this.startDailyCharsUsed + 125 * this.numeroInvii;
+          this.weeklyCharsUsed = this.startWeeklyCharsUsed + 125 * this.numeroInvii;
+          this.monthlyCharsUsed = this.startMonthlyCharsUsed + 125 * this.numeroInvii;
+        }
       },
       toggleTemporizzato() {
         this.isTemporizzato = !this.isTemporizzato;
@@ -229,7 +387,7 @@
       },
       async fetchUserData() {
       try {
-        if (this.accountData && this.accountData.username) {
+        if (this.accountData) {
           const response = await axios.post(`http://localhost:3001/getUserImageAndCharLeft`, { username: this.accountData.vipManaged });
           this.userData = response.data;
           this.vipProfilePic = response.data.image;
@@ -251,8 +409,6 @@
       const savedData = sessionStorage.getItem("accountData");
       if (savedData) {
         this.accountData = JSON.parse(savedData);
-        console.log(this.accountData);
-        console.log(this.accountData.username);
       }
     },
     },
@@ -291,6 +447,19 @@
   margin-top: 4%;
 }
 
+.figure.image.is-64x64 {
+  display: inline-block;
+  width: 64px; /* Imposta una larghezza fissa */
+  height: 64px; /* Imposta un'altezza fissa */
+  border-radius: 50%; /* Rende la figura circolare */
+  overflow: hidden; /* Nasconde le parti dell'immagine che fuoriescono */
+}
+
+.figure.image.is-64x64 img {
+  width: 100%; /* Assicura che l'immagine copra l'intera larghezza del contenitore */
+  height: 100%; /* Assicura che l'immagine copra l'intera altezza del contenitore */
+  object-fit: cover; /* Mantiene le proporzioni dell'immagine, ritagliando se necessario */
+}
 .characterCounterContainer {
   margin-top: 3%;
   margin-bottom: 3%;
@@ -298,7 +467,9 @@
 
 .image-container img, .map-container {
   max-width: 80%;
-  max-height: 165px;
+  max-height: 400px;
+  display: block; /* Assicura che l'immagine sia centrata orizzontalmente */
+  object-fit: contain; /* Assicura che l'immagine sia ridimensionata mantenendo le proporzioni senza tagliarla */
   margin: 0 auto;
 }
 
@@ -331,7 +502,7 @@
   color: #ffffff; /* Bianco per il testo al hover */
 }
 
-.textarea, .image-container img, .map-container {
+.textarea, .map-container {
   box-shadow: 0 2px 5px rgba(91, 60, 29, 0.2); 
   border: 1px solid #9a9a9a; 
 }
@@ -340,7 +511,7 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.textarea, .image-container img, .map-container {
+.textarea, img  {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
 }
