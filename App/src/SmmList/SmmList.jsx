@@ -5,8 +5,8 @@ import axios from "axios";
 export default function SmmList() {
   const accountData = JSON.parse(sessionStorage.getItem("accountData"));
   const username = accountData.username;
-  const [user, setUser] = useState(null);
-  const [currentManager, setCurrentManger] = useState(null);
+  const [user, setUser] = useState({});
+  const [currentManager, setCurrentManger] = useState({});
   const [managers, setManagers] = useState([]);
   const navigate = useNavigate();
 
@@ -39,21 +39,21 @@ export default function SmmList() {
 
       fetchAvailableManagers();
     },
-    []
+    [user]
   );
 
   // Faccio il fetch del manager attuale dell'utente, se esiste
   useEffect(function(){
     async function fetchCurrentManager(){
       try{
-        const res = await axios.get(`/getUserByUsername/${user.manager}`);
+        const res = await axios.get(`http://localhost:3001/getUserByUsername/${user.manager}`);
         setCurrentManger(res.data);
       }catch(error){
         console.error(`Errore durante il caricamento dell'utente: ${error.message}`);
       }
     }
 
-    if(!user.manager) return;
+    if(!user.manager) return setCurrentManger({});
 
     fetchCurrentManager();
   }, [user])
@@ -61,28 +61,25 @@ export default function SmmList() {
   
 
   async function handleRemoveManager() {
-    setManagers((managers) => [...managers, currentManager]);
-    setCurrentManger(null);
-    
     try{
-      // aggiorna il database per togliere il manager da questo utente
+      await axios.post("http://localhost:3001/removeCurrentVIP", {username: currentManager.username});
+      const res = await axios.post("http://localhost:3001/removeCurrentManager", {username});
+
+      setUser(res.data);
     }catch(error){
       console.error(`Errore nella rimozione del manager ${error.message}`)
     }
   }
 
-  async function handleSelectManager(selectedManager) {
-    setManagers((managers) =>
-      managers.filter((manager) => manager.id !== selectedManager.id)
-    );
-
-    if (currentManager !== null)
-      setManagers((managers) => [...managers, currentManager]);
-
-    setCurrentManger(selectedManager);
-
+  async function handleSelectManager(managerUsername) {
     try{
-      // aggiorna il database per aggiungere il manager a questo utente
+      await axios.post("http://localhost:3001/removeCurrentManager", {username});
+      await axios.post("http://localhost:3001/removeCurrentVIP", {username: currentManager.username});
+
+      const res3 = await axios.post("http://localhost:3001/linkManagerAndVIP", {vipUsername: username, managerUsername});
+
+      setUser(res3.data.vipUser);
+      setCurrentManger(res3.data.managerUser);
     }catch(error){
       console.error(`Errore nella selezione del manager ${error.message}`)
     }
@@ -91,14 +88,14 @@ export default function SmmList() {
   return (
     <>
       {/* <!-- Tasto per tornare al feed --> */}
-      <div className="go-back" onClick={() => navigate("/Feed")}>
+      <div className="go-back" onClick={() => navigate("/App/Feed")}>
         <span>
           <i className="fa-solid fa-arrow-left"></i> Feed
         </span>
       </div>
 
       {/* <!-- SEZIONE 1: Contiene la presentazione, diviso in header e description --> */}
-      {currentManager && (
+      {currentManager._id && (
         <CurrentManager
           currentManager={currentManager}
           onRemoveManager={handleRemoveManager}
@@ -123,14 +120,14 @@ function CurrentManager({ currentManager, onRemoveManager }) {
         {/* <!-- Prima parte: smm-header, fatto riutilizzando la classe item-header, in comune con user-profile e profile-settings- --> */}
         <div className="item-header smm-header">
           <div className="img-container">
-            <img src={currentManager.profilePicture} alt="Profile picture" />
+            <img src={currentManager.image} alt="Profile picture" />
           </div>
           <span role="button" id="toggle-btn" onClick={onRemoveManager}>
             Remove <i className="fa-solid fa-plus"></i>
           </span>
           <div className="username">
             <h>@</h>
-            {currentManager.userName} <i className="fa-solid fa-feather"></i>
+            {currentManager?.username.split("@")[1]} <i className="fa-solid fa-feather"></i>
           </div>
         </div>
         {/* <!-- Seconda parte: smm-description. Contiene solo la descrizione dell'smm--> */}
@@ -149,7 +146,7 @@ function AvailableManagers({ managers, onSelectManager }) {
       {managers.map((manager) => (
         <Manager
           manager={manager}
-          key={manager.id}
+          key={manager._id}
           onSelectManager={onSelectManager}
         />
       ))}
@@ -159,10 +156,10 @@ function AvailableManagers({ managers, onSelectManager }) {
 
 function Manager({ manager, onSelectManager }) {
   return (
-    <div className="smm-item" onClick={() => onSelectManager(manager)}>
+    <div className="smm-item" onClick={() => onSelectManager(manager.username)}>
       <div className="item">
         <div className="item-pic">
-          <img src={manager.profilePic} alt="Profile picture" />
+          <img src={manager.image} alt="Profile picture" />
         </div>
         <div className="item-body">
           <div className="item-namedate">

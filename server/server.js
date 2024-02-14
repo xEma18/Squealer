@@ -431,6 +431,61 @@ app.get("/getAvailableManagers", async (req, res) => {
   }
 })
 
+// API per rimuovere il manager dal vip
+app.post("/removeCurrentManager", async (req, res) => {
+  const {username} = req.body;
+  try {
+    const user = await UserModel.findByUsername(username);
+
+    if(!user) return res.status(404).json({error: "Utente non trovato"});
+
+    user.manager = "";
+    await user.save();
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({error: "Errore interno del server"});
+  }
+})
+
+// API per rimuovere il vip dal manager
+app.post("/removeCurrentVIP", async (req, res) => {
+  const {username} = req.body;
+  try {
+    const user = await UserModel.findByUsername(username);
+
+    if(!user) return res.status(200).json({message: "Manager not found but not a problem."});
+
+    user.vipManaged = "";
+    await user.save();
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({error: "Errore interno del server"});
+  }
+})
+
+// API per unire il manager al VIP
+app.post("/linkManagerAndVIP", async (req, res) => {
+  const {vipUsername, managerUsername} = req.body;
+  try {
+    const vipUser = await UserModel.findByUsername(vipUsername);
+    const managerUser = await UserModel.findByUsername(managerUsername);
+
+    if(!vipUser || !managerUser) return res.status(404).json({error: "One or both users not found"});
+
+    vipUser.manager = managerUser.username;
+    managerUser.vipManaged = vipUser.username;
+
+    await vipUser.save();
+    await managerUser.save();
+
+    res.status(200).json({vipUser, managerUser});
+  } catch (error) {
+    res.status(500).json({error: "Errore interno al server"});
+  }
+})
+
 app.post("/addEmoticonGood", async (req, res) => {
   try {
     const squeal = await SquealModel.findById(req.body._id);
@@ -1055,7 +1110,7 @@ app.get("/getUserByUsername/:username", async (req, res) => {
       return res.status(404).json({ error: "Utente non trovato" });
     }
     res.status(200).json(user);
-    console.log(user);
+    // console.log(user);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Errore interno del server" });
