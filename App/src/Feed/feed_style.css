@@ -260,6 +260,10 @@ e a destra l'icona dell'user */
   overflow-y: scroll;
 }
 
+.comments-list .item:last-child{
+  margin-bottom: 5rem;
+}
+
 .go-back {
   padding: 1.3rem 1.6rem;
   font-size: 1.3rem;

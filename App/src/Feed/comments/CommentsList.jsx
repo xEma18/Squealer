@@ -8,7 +8,6 @@ export default function CommentsList() {
   const [queryParams] = useSearchParams();
   const [comment, setComment] = useState("");
   const [squealComments, setSquealComments] = useState([]);
-  const isStandard = useRef(true);
   const accountData = JSON.parse(sessionStorage.getItem("accountData"));
 
   // Appena carica la pagina, faccio un fetch dei commenti salvati nel database
@@ -29,19 +28,6 @@ export default function CommentsList() {
 
     fetchComments();
   }, [queryParams])
-
-  // Dato uno squeal, verifica se il mittente è standard o meno  
-  useEffect(function(){
-    async function getUserType(){
-      try{
-        const res = await axios.get(`http://localhost:3001/getUserTypeByUsername/${accountData.username}`);
-        isStandard.current = res.data === "Standard" ? true : false;
-      }catch(error){
-        console.error(`Errore durante il caricamento del tipo: ${error.message}`);
-      }
-    }
-    getUserType();
-  }, [accountData.username]);
 
   async function handleAddComment(e){
     e.preventDefault();
@@ -86,7 +72,7 @@ export default function CommentsList() {
 
       <div className="comments-list">
         {squealComments.map((comment) => (
-          <Comment comment={comment} isStandard={isStandard} key={comment._id} />
+          <Comment comment={comment} key={comment._id} />
         ))}
       </div>
       <TypeBar comment={comment} setComment={setComment} onAddComment={handleAddComment}/>
@@ -94,7 +80,22 @@ export default function CommentsList() {
   );
 }
 
-function Comment({ comment, isStandard}) {
+function Comment({ comment }) {
+  // Dato uno squeal, verifica se il mittente è standard o meno  
+  const [isStandard, setIsStandard] = useState(true);
+
+  useEffect(function(){
+    async function getUserType(){
+      try{
+        const res = await axios.get(`http://localhost:3001/getUserTypeByUsername/${comment.mittente}`);
+        setIsStandard(res.data === "Standard" ? true : false);
+      }catch(error){
+        console.error(`Errore durante il caricamento del tipo: ${error.message}`);
+      }
+    }
+    getUserType();
+  }, [comment]);
+
   return (
     // prettierignore
     <div className="item">
@@ -106,7 +107,7 @@ function Comment({ comment, isStandard}) {
           <span className="item-username">
             <h>@</h>
             {comment.mittente.split("@").at(1)}
-          </span> {!isStandard.current && <i className="fa-solid fa-feather"></i>}
+          </span> {!isStandard && <i className="fa-solid fa-feather"></i>}
           <span className="item-date"> | {new Date(comment.date).toDateString()}</span>
         </div>
         <div className="item-content">{comment.text}</div>
