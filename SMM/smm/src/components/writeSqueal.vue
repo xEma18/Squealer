@@ -19,7 +19,6 @@
             </figure>
           </div>
           <div class="column is-10">
-            <!-- Contenuto dell'anteprima di pubblicazione post (testo, immagine o mappa) -->
             <div v-if="image" class="image-container">
               <img :src="image" alt="Uploaded">
             </div>
@@ -275,9 +274,9 @@
         if (file) {
           const reader = new FileReader();
           reader.onload = (e) => {
-            this.image = e.target.result; // Imposta l'immagine come base64
-            this.video = ''; // Resetta il video
-            this.text = ''; // Pulisce il testo
+            this.image = e.target.result;
+            this.video = ''; 
+            this.text = ''; 
           };
           reader.readAsDataURL(file);
         }
@@ -293,9 +292,9 @@
         if (file) {
           const reader = new FileReader();
           reader.onload = (e) => {
-            this.video = e.target.result; // Imposta il video come base64
-            this.image = ''; // Resetta l'immagine
-            this.text = ''; // Pulisce il testo
+            this.video = e.target.result;
+            this.image = '';
+            this.text = '';
           };
           reader.readAsDataURL(file);
         }
@@ -308,7 +307,7 @@
       },
       handleLocationClick() {
         if(this.returnIfRecipientIsEmpty()) return;
-        this.showMap = true; // Mostra il componente della mappa
+        this.showMap = true;
         this.$nextTick(() => {
         this.initializeMap();
         if(this.publicMode){
@@ -459,16 +458,16 @@
 
 .figure.image.is-64x64 {
   display: inline-block;
-  width: 64px; /* Imposta una larghezza fissa */
-  height: 64px; /* Imposta un'altezza fissa */
-  border-radius: 50%; /* Rende la figura circolare */
-  overflow: hidden; /* Nasconde le parti dell'immagine che fuoriescono */
+  width: 64px; 
+  height: 64px;
+  border-radius: 50%;
+  overflow: hidden;
 }
 
 .figure.image.is-64x64 img {
-  width: 100%; /* Assicura che l'immagine copra l'intera larghezza del contenitore */
-  height: 100%; /* Assicura che l'immagine copra l'intera altezza del contenitore */
-  object-fit: cover; /* Mantiene le proporzioni dell'immagine, ritagliando se necessario */
+  width: 100%;
+  height: 100%; 
+  object-fit: cover; 
 }
 .characterCounterContainer {
   margin-top: 3%;
@@ -478,8 +477,8 @@
 .image-container img, .map-container {
   max-width: 80%;
   max-height: 400px;
-  display: block; /* Assicura che l'immagine sia centrata orizzontalmente */
-  object-fit: contain; /* Assicura che l'immagine sia ridimensionata mantenendo le proporzioni senza tagliarla */
+  display: block; 
+  object-fit: contain; 
   margin: 0 auto;
 }
 
@@ -502,14 +501,14 @@
 
 .level-item.button.is-white, .button.is-warning {
   transition: all 0.3s ease;
-  background-color: #DBB77C; /* Tumbleweed */
-  color: #5B3C1D; /* Metallic Bronze */
-  border-color: #DBB77C; /* Tumbleweed */
+  background-color: #DBB77C; 
+  color: #5B3C1D; 
+  border-color: #DBB77C; 
 }
 
 .level-item.button.is-white:hover {
-  background-color: #c19a6b; /* Tumbleweed più scuro */
-  color: #ffffff; /* Bianco per il testo al hover */
+  background-color: #c19a6b; 
+  color: #ffffff; 
 }
 
 .textarea, .map-container {
@@ -571,7 +570,6 @@ p {
 }
 
 
-/* Stili specifici per desktop */
 @media screen and (min-width: 1024px) {
   .section {
     padding-top: 1%;
