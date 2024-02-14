@@ -78,7 +78,7 @@ const MONGO_SITE = "mongo_site222333"
 
 const uri2 = `mongodb://${MONGO_USER ? MONGO_USER + ":" : ""}${MONGO_PASSWORD ? MONGO_PASSWORD + "@": ""}${MONGO_SITE}/db?writeConcern=majority&directConnection=true&authSource=admin`
 
-const prod = true; //da casa false da scuola true
+const prod = false; //da casa false da scuola true
 const uri3 = prod ? uri2 : "mongodb://127.0.0.1:27017/Squealer"
 console.log(uri3);
 app.use(cors()); //enable to use cors
@@ -266,23 +266,24 @@ console.log("riga 258");
 app.get("/generateGuestNumber", async (req, res) => {
   try {
     const counterName = "guestCounter";
-    const counter = await CounterModel.findOne({ name: counterName });
+    let counter = await CounterModel.findOne({ name: counterName });
 
-    if (counter) {
-      currentValue = counter.count;
-      // Se il contatore esiste, lo incremento
-      counter.count += 1;
+    if (!counter) {
+      counter = new CounterModel({ name: counterName, count: 1 });
       await counter.save();
-      res.status(200).json({ guestNumber: currentValue });
-    } else {
-      // Il contatore esiste per forza, ma per sicurezza gestisco anche il caso in cui non esista
-      res.status(404).json({ error: "Contatore non trovato" });
     }
+
+    const currentValue = counter.count;
+    counter.count += 1;
+    await counter.save();
+    res.status(200).json({ guestNumber: currentValue });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Errore interno del server" });
   }
 });
+
+
 
 // API per ottenere la lista degli squeal
 app.get("/squeals", async (req, res) => {
