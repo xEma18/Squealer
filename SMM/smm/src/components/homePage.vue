@@ -190,7 +190,7 @@ export default {
       try {
         if (this.managerData) {
           console.log(this.managerData.vipManaged);
-          const response = await axios.post(`http://localhost:3001/getUserImageAndCharLeft`, { username: this.managerData.vipManaged });
+          const response = await axios.post(`/getUserImageAndCharLeft`, { username: this.managerData.vipManaged });
           this.vipData = response.data;
           this.dailyChars= response.data.caratteriGiornalieri;
           this.weeklyChars= response.data.caratteriSettimanali;
