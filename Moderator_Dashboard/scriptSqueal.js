@@ -92,9 +92,11 @@ function updateSqueal(squeal) {
             <div class="d-flex align-items-center mb-3">
               <h6 class="card-subtitle" id="destinatari">${squealConSpazi[i].destinatari}</h6>
             </div>
-            <p id="squealText-${i}">${squeal[i].bodyImage ? `<img src="${squeal[i].bodyImage}" alt="Squeal Image">` : textToShow}</p>
-            ${squeal[i].mapLocation ? `<div id="geolocation-${i}" style="width:100%; height:200px;"></div>` : ''}
-          </div>
+            <div id="squealText-${i}" style="width:100%;">
+            ${squeal[i].bodyImage ? `<p><img src="${squeal[i].bodyImage}" style="width:100%; height:130px; alt="Squeal Image"></p>` : `<p>${textToShow}</p>`}
+            ${squeal[i].mapLocation ? `<div id="geolocation-${i}" style="width:100%; height:130px;"></div>` : ''}
+            </div>
+        </div>
           <div>
           <p id="squealCategory-${i}">${squeal[i].category}</p>
           </div>
@@ -199,8 +201,10 @@ async function ModifyButton(cardId, cardNumber) {
     
 
     // Seleziono il testo della card che sto modificando e lo mostro per intero 
-    let textAll = document.querySelector(`#squealText-${cardNumber}`);
-    textAll.innerText = `${squeal[cardNumber].text}`
+    if(!squeal[cardNumber].bodyImage && !squeal[cardNumber].mapLocation){
+        let textAll = document.querySelector(`#squealText-${cardNumber}`);
+        textAll.innerText = `${squeal[cardNumber].text}`
+    }
 
     // Capisco che card è stata selezionata
     const card = document.getElementById(cardId);
