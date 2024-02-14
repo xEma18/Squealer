@@ -186,7 +186,7 @@
             caratteriMensiliUsati: this.monthlyCharsUsed,
           };
 
-          const response = await axios.post('http://localhost:3001/updateCharsLeft', requestBody);
+          const response = await axios.post('/updateCharsLeft', requestBody);
 
         } catch (error) {
           console.error("Errore durante l'aggiornamento dei caratteri rimanenti:", error);
@@ -231,12 +231,12 @@
             numeroInvii: this.numeroInvii,
           };
 
-          axios.post(`http://localhost:3001/scheduleSqueal`, requestBody).catch(error => {
+          axios.post(`/scheduleSqueal`, requestBody).catch(error => {
             console.error("Errore durante la programmazione dello squeal:", error);
           });
         } else {
           try {
-            const response = await axios.post(`http://localhost:3001/postSqueal`, newSqueal);
+            const response = await axios.post(`/postSqueal`, newSqueal);
             newSqueal._id = response.data._id;
           } catch (error) {
             console.error("Errore durante il salvataggio del post:", error);
@@ -247,7 +247,7 @@
         const channelNames = this.recipients.filter(recipient => recipient.startsWith("§"));
         channelNames.forEach(async (channelName) => {
           try {
-            await axios.post(`http://localhost:3001/addSquealToChannel`, {
+            await axios.post(`/addSquealToChannel`, {
               squealId: newSqueal._id,
               channelName: channelName,
             });
@@ -350,7 +350,7 @@
         this.showMap= false;
         
         try {
-          const response = await axios.get('http://localhost:3001/randomNews');
+          const response = await axios.get('/randomNews');
           this.randomNews = response.data; 
           this.showRandomNews = true; 
         } catch (error) {
@@ -372,7 +372,7 @@
       async fetchRandomImage() {
         if(this.returnIfRecipientIsEmpty()) return;
         try {
-          const response = await axios.get('http://localhost:3001/randomImage');
+          const response = await axios.get('/randomImage');
           this.image = response.data.imageUrl; 
           this.video = ''; 
           this.showMap = false; 
@@ -398,7 +398,7 @@
       async fetchUserData() {
       try {
         if (this.accountData) {
-          const response = await axios.post(`http://localhost:3001/getUserImageAndCharLeft`, { username: this.accountData.vipManaged });
+          const response = await axios.post(`/getUserImageAndCharLeft`, { username: this.accountData.vipManaged });
           this.userData = response.data;
           this.vipProfilePic = response.data.image;
           this.dailyChars= response.data.caratteriGiornalieri;

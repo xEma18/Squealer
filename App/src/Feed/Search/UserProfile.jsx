@@ -18,7 +18,7 @@ const UserProfile = () => {
 
     const fetchUserData = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/getUserByUsername/${username}`);
+            const response = await axios.get(`/getUserByUsername/${username}`);
             setUserData(response.data);
         } catch (error) {
             console.error('Errore durante il recupero dei dati utente:', error);
@@ -27,7 +27,7 @@ const UserProfile = () => {
 
     const fetchUserSqueals = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/getPublicSquealsBySender/${username}`);
+            const response = await axios.get(`/getPublicSquealsBySender/${username}`);
             setUserSqueals(response.data);
         } catch (error) {
             console.error('Errore durante il recupero degli squeals dell\'utente:', error);
@@ -36,7 +36,7 @@ const UserProfile = () => {
 
     const fetchUserActivity = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/getUserActivity/${username}`);
+            const response = await axios.get(`/getUserActivity/${username}`);
             setUserActivity(response.data);
         } catch (error) {
             console.error('Errore durante il recupero dei dati utente:', error);

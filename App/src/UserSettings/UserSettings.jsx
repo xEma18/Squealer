@@ -60,7 +60,7 @@ export default function UserSettings() {
   useEffect(function(){
     async function fetchSqueals(){
       try{
-        const res = await axios.get(`http://localhost:3001/getPublicSquealsBySender/${username}`);
+        const res = await axios.get(`/getPublicSquealsBySender/${username}`);
         setSquealsList(res.data);
       }catch(error){
         console.error(`Errore nel caricamento degli squeal: ${error.message}`)
@@ -74,7 +74,7 @@ export default function UserSettings() {
   useEffect(function(){
     async function getUserType(){
       try{
-        const res = await axios.get(`http://localhost:3001/getUserTypeByUsername/${username}`);
+        const res = await axios.get(`/getUserTypeByUsername/${username}`);
         isStandard.current = res.data === "Standard" ? true : false;
       }catch(error){
         console.error(`Errore durante il caricamento del tipo: ${error.message}`);
@@ -121,7 +121,7 @@ export default function UserSettings() {
         ? "/removeEmoticonGood"
         : "/addEmoticonGood";
       try {
-        const response = await axios.post(`http://localhost:3001${endpoint}`, {
+        const response = await axios.post(`${endpoint}`, {
           _id: squeal._id,
           username: username,
         });
@@ -145,7 +145,7 @@ export default function UserSettings() {
         ? "/removeEmoticonBad"
         : "/addEmoticonBad";
       try {
-        const response = await axios.post(`http://localhost:3001${endpoint}`, {
+        const response = await axios.post(`${endpoint}`, {
           _id: squeal._id,
           username: username,
         });
@@ -249,7 +249,7 @@ function Presentation({ user, setUser, isStandard, isEditing, setIsEditing, onSu
     if(!newPassword) return;
 
     try {
-      const res = await axios.post(`http://localhost:3001/modifyPassword`, {username: user.username, newPassword});
+      const res = await axios.post(`/modifyPassword`, {username: user.username, newPassword});
       setUser(res.data);
     } catch (error) {
       console.error(`Errore durante la modifica della password: ${error.message}`);

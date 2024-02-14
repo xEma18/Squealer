@@ -18,7 +18,7 @@ export default function CommentsList() {
 
       try{
         // Logica per fetchare commenti dal database
-        const res = await axios.get(`http://localhost:3001/squealComments/${squealId}`);
+        const res = await axios.get(`/squealComments/${squealId}`);
 
         setSquealComments(res.data);
       }catch(error){
@@ -37,7 +37,7 @@ export default function CommentsList() {
     if(!comment) return;
 
     try{
-      const res = await axios.post("http://localhost:3001/profilePicByUsername", {username: accountData.username});
+      const res = await axios.post("/profilePicByUsername", {username: accountData.username});
 
       const newComment = {
         _id: crypto.randomUUID(),
@@ -49,7 +49,7 @@ export default function CommentsList() {
   
       setSquealComments(current => [...current, newComment]);
 
-      await axios.post(`http://localhost:3001/squealComments`, {squealId, comment: newComment});
+      await axios.post(`/squealComments`, {squealId, comment: newComment});
     }catch(error){
       console.error(`Errore durante la pubblicazione del commento ${error.message}`);
     }
@@ -87,7 +87,7 @@ function Comment({ comment }) {
   useEffect(function(){
     async function getUserType(){
       try{
-        const res = await axios.get(`http://localhost:3001/getUserTypeByUsername/${comment.mittente}`);
+        const res = await axios.get(`/getUserTypeByUsername/${comment.mittente}`);
         setIsStandard(res.data === "Standard" ? true : false);
       }catch(error){
         console.error(`Errore durante il caricamento del tipo: ${error.message}`);

@@ -45,7 +45,7 @@ const Feed = () => {
 
   useEffect(() => {
     // // Effettua una richiesta GET al server per ottenere i gli squeals filtrati per username (ricevo solo gli squeals con "username" tra i destinatari)
-    // fetch("http://localhost:3001/squealsToUser", {
+    // fetch("/squealsToUser", {
     //   method: "POST", //Da capire se get o post
     //   headers: {
     //     "Content-Type": "application/json",
@@ -64,7 +64,7 @@ const Feed = () => {
 
     async function getSqueals() {
       try {
-        const res = await fetch("http://localhost:3001/squealsToUser", {
+        const res = await fetch("/squealsToUser", {
           method: "POST", //Da capire se get o post
           headers: {
             "Content-Type": "application/json",
@@ -82,7 +82,7 @@ const Feed = () => {
     //api che invia la richiesta per sapere se l'utente è SMM
     async function checkSMM() {
       try {
-        const res = await fetch("http://localhost:3001/isSMM", {
+        const res = await fetch("/isSMM", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -99,7 +99,7 @@ const Feed = () => {
     async function checkMod() {
 
       try {
-        const res = await fetch("http://localhost:3001/isMod", {
+        const res = await fetch("/isMod", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -145,7 +145,7 @@ const Feed = () => {
     setPopupOpen(false);
     try {
       
-      const response = await axios.post(`http://localhost:3001/deleteAccount`, {
+      const response = await axios.post(`/deleteAccount`, {
         username: username,
       });
     } catch (error) {
@@ -163,7 +163,7 @@ const Feed = () => {
 
   const addSquealToControversialChannel = async (squealId) => {
     try {
-      const res = await fetch("http://localhost:3001/addSquealToControversialChannel", {
+      const res = await fetch("/addSquealToControversialChannel", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -177,7 +177,7 @@ const Feed = () => {
 
   const removeSquealFromControversialChannel = async (squealId) => {
     try {
-      const res = await fetch("http://localhost:3001/removeSquealFromControversialChannel", {
+      const res = await fetch("/removeSquealFromControversialChannel", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -197,7 +197,7 @@ const Feed = () => {
         ? "/removeEmoticonGood"
         : "/addEmoticonGood";
       try {
-        const response = await axios.post(`http://localhost:3001${endpoint}`, {
+        const response = await axios.post(`${endpoint}`, {
           _id: squeal._id,
           username: username,
         });
@@ -230,7 +230,7 @@ const Feed = () => {
         ? "/removeEmoticonBad"
         : "/addEmoticonBad";
       try {
-        const response = await axios.post(`http://localhost:3001${endpoint}`, {
+        const response = await axios.post(`${endpoint}`, {
           _id: squeal._id,
           username: username,
         });
@@ -260,7 +260,7 @@ const Feed = () => {
         return; // Se l'impression è già stata registrata, non fare nulla
       }
       try {
-        const response = await axios.post(`http://localhost:3001/addImpression`, {
+        const response = await axios.post(`/addImpression`, {
           _id: squealId,
           username: username,
         });
@@ -565,7 +565,7 @@ function Squeal({
   useEffect(function(){
     async function getUserType(){
       try{
-        const res = await axios.get(`http://localhost:3001/getUserTypeByUsername/${squeal.mittente}`);
+        const res = await axios.get(`/getUserTypeByUsername/${squeal.mittente}`);
         isStandard.current = res.data === "Standard" ? true : false;
       }catch(error){
         console.error(`Errore durante il caricamento del tipo: ${error.message}`);

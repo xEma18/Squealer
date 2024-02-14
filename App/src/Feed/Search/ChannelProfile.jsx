@@ -22,10 +22,10 @@ const ChannelProfile = () => {
 
     const fetchUserData = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/getChannelByChannelName/${channelName}`);
+            const response = await axios.get(`/getChannelByChannelName/${channelName}`);
             setUserData(response.data);
 
-            const followResponse = await axios.post(`http://localhost:3001/isUserFollowingChannel`, {
+            const followResponse = await axios.post(`/isUserFollowingChannel`, {
             username,
             channelName
         });
@@ -37,7 +37,7 @@ const ChannelProfile = () => {
 
     const followChannel = async () => {
         try {
-            const response = await axios.post(`http://localhost:3001/followChannel`, { username: username, channelName: channelName });
+            const response = await axios.post(`/followChannel`, { username: username, channelName: channelName });
             setIsFollowing(true);
         } catch (error) {
             console.error('Errore durante il follow del canale:', error);
@@ -46,7 +46,7 @@ const ChannelProfile = () => {
 
     const unfollowChannel = async () => {
         try {
-            const response = await axios.post(`http://localhost:3001/unfollowChannel`, { username: username, channelName: channelName });
+            const response = await axios.post(`/unfollowChannel`, { username: username, channelName: channelName });
             setIsFollowing(false);
         } catch (error) {
             console.error('Errore durante l\'unfollow del canale:', error);
@@ -56,7 +56,7 @@ const ChannelProfile = () => {
     const fetchUserPublicSqueals = async () => {
         try {
             // Assumendo che esista un endpoint `/squealsByChannelName` che accetta il nome del canale e ritorna gli squeal associati
-            const response = await axios.get(`http://localhost:3001/squealsByChannelName/${channelName}`);
+            const response = await axios.get(`/squealsByChannelName/${channelName}`);
             setUserSqueals(response.data);
         } catch (error) {
             console.error('Errore durante il recupero degli squeals del canale:', error);
@@ -66,7 +66,7 @@ const ChannelProfile = () => {
 
     const fetchChannelActivity = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/getChannelActivity/${channelName}`);
+            const response = await axios.get(`/getChannelActivity/${channelName}`);
             console.log(response.data);
             setUserActivity(response.data);
         } catch (error) {

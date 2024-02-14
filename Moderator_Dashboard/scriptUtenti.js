@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const response = await fetch('/users');
         users = await response.json();
-
+        
         // Aggiorna le card con i dati degli utenti
         updateCards(users);
     } catch (error) {

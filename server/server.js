@@ -11,11 +11,13 @@ const path = require("path")
 
 const app = express();
 
+
 app.use(
   "/SMM",
   //checkRole(["SMM", "Mod"]),
   express.static(path.join(__dirname,"..", "SMM","smm", "dist"))
 );
+
 
 app.get("/SMM/*", async function (req, res) {
   res.sendFile(
@@ -29,6 +31,7 @@ app.get("/SMM/*", async function (req, res) {
       )
   );
 });
+
 
 app.use(
   "/App",
@@ -48,6 +51,7 @@ app.get("/App/*", async function (req, res) {
   );
 });
 
+
 app.use(
   "/Moderator_Dashboard",
   //checkRole(["SMM", "Mod"]),
@@ -66,8 +70,7 @@ app.get("/Moderator_Dashboard/*", async function (req, res) {
 });
 
 
-const uri =
-  "mongodb+srv://emanuele:emanuele@cluster0.dbp6yx6.mongodb.net/?retryWrites=true&w=majority"; 
+const uri = "mongodb+srv://emanuele:emanuele@cluster0.dbp6yx6.mongodb.net/?retryWrites=true&w=majority"; 
 const MONGO_USER = "site222333"
 const MONGO_PASSWORD = "Haisue4j"
 const MONGO_SITE = "mongo_site222333"
@@ -75,13 +78,18 @@ const MONGO_SITE = "mongo_site222333"
 
 const uri2 = `mongodb://${MONGO_USER ? MONGO_USER + ":" : ""}${MONGO_PASSWORD ? MONGO_PASSWORD + "@": ""}${MONGO_SITE}/db?writeConcern=majority&directConnection=true&authSource=admin`
 
-const prod = false; //da casa false da scuola true
+const prod = true; //da casa false da scuola true
 const uri3 = prod ? uri2 : "mongodb://127.0.0.1:27017/Squealer"
 console.log(uri3);
 app.use(cors()); //enable to use cors
+
+
 //allows to convert in json format files I transfer from frontend to server
-app.use(express.json({ limit: "20mb" })); // Imposta il limite a 10 MB
-app.use(express.urlencoded({ extended: true, limit: "20mb" })); // Imposta il limite a 10 MB
+app.use(express.json({ limit: "50mb" })); // Imposta il limite a 10 MB
+app.use(express.urlencoded({ extended: true, limit: "50mb" })); // Imposta il limite a 10 MB
+
+
+console.log("riga 89");
 
 mongoose.connect(uri3, {
   useNewUrlParser: true,
@@ -89,6 +97,7 @@ mongoose.connect(uri3, {
 })
 .then(() => console.log('Connessione al database riuscita!'))
 .catch(err => console.error('Errore di connessione al database:', err));
+
 
 // Funzioni di azzeramento
 async function resetDailyCounters() {
@@ -240,14 +249,19 @@ app.post('/checkIfChannelNameIsAlreadyTaken', async (req, res) => {
 
 // API per ottenere la lista degli utenti
 app.get("/users", async (req, res) => {
+  console.log("entro negli users")
   try {
+    console.log("entro nel try")
     const users = await UserModel.find();
+    console.log(users)
     res.status(200).json(users);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Errore durante il recupero degli utenti" });
   }
 });
+
+console.log("riga 258");
 
 app.get("/generateGuestNumber", async (req, res) => {
   try {
@@ -335,7 +349,7 @@ app.post("/squealsToUser", async (req, res) => {
 });
 
 
-
+console.log("riga 346");
 app.post("/getUserImageAndCharLeft", async (req, res) => {
   try {
     const username = req.body.username;
@@ -709,7 +723,7 @@ app.post("/editUser", async (req, res) => {
     });
   }
 });
-
+console.log("riga 720");
 // API per aggiungere un nuovo squeal
 app.post("/newSqueal", async (req, res) => {
   try {
@@ -902,7 +916,7 @@ app.post("/editChannelDescription", async (req, res) => {
     });
   }
 });
-
+console.log("riga 913");
 // API per aggiungere uno squeal nella lista squeal canale (Manuel)
 app.post("/editChannelSqueal", async (req, res) => {
   try {
@@ -1099,7 +1113,7 @@ app.post("/search", async (req, res) => {
   }
 });
 
-//Api per ottenere, dato username, tutti i dati dell'utente (username è come query) const response = await axios.get(`http://localhost:3001/getUserByUsername/${username}`);
+//Api per ottenere, dato username, tutti i dati dell'utente (username è come query) const response = await axios.get(`/getUserByUsername/${username}`);
 app.get("/getUserByUsername/:username", async (req, res) => {
   try {
     const username = req.params.username;
@@ -1160,7 +1174,7 @@ app.get('/squealsByChannelName/:channelName', async (req, res) => {
       res.status(500).json({ message: 'Errore interno del server' });
   }
 });
-
+console.log("riga 1171");
 
 //api per ottenere numero di squeal pubblicati da un utente, somma totale numero di likes e dislikes dei suoi post
 app.get("/getUserActivity/:username", async (req, res) => {
@@ -1325,7 +1339,7 @@ app.post('/scheduleSqueal', async (req, res) => {
   // Verifica se è necessario programmare ulteriori invii
   if (numeroInvii > 1) {
     let inviiEffettuati = 1; // Inizia da 1 poiché il primo invio è già stato effettuato
-    const cronExpression = `*/${intervalloInvio} * * * *`;
+    const cronExpression = `*/${intervalloInvio} * * * *;`
     let taskCompletata = false;
 
     const task = cron.schedule(cronExpression, async () => {
@@ -1388,7 +1402,33 @@ app.get('/randomNews', async (req, res) => {
   }
 });
 
+app.get('/randomImage', async (req, res) => {
+  const accessKey = 'mwL0X9KXKbhFSNH60n-KvzoQY7PhTdXyfYmIXX8vbqc';
+  try {
+    const response = await fetch(`https://api.unsplash.com/photos/random?client_id=${accessKey}`);
+    const data = await response.json();
+    res.json({ imageUrl: data.urls.regular });
+  } catch (error) {
+    console.error('Errore durante il recupero di un\'immagine casuale:', error);
+    res.status(500).json({ error: 'Errore interno del server' });
+  }
+});
 
+app.get('/randomNews', async (req, res) => {
+  const apiKey = 'c214f8be1062421dae64b6de673ca966';
+  const url = `https://newsapi.org/v2/top-headlines?country=us&apiKey=${apiKey}`;
+
+  try {
+      const response = await fetch(url);
+      const data = await response.json();
+      const articles = data.articles;
+      const randomArticle = articles[Math.floor(Math.random() * articles.length)];
+      res.json(randomArticle);
+  } catch (error) {
+      console.error('Errore durante il recupero delle news:', error);
+      res.status(500).json({ error: 'Errore interno del server' });
+  }
+});
 
 app.post('/followChannel', async (req, res) => {
   const { username, channelName } = req.body;
@@ -1548,8 +1588,8 @@ app.post('/removeSquealFromControversialChannel', async (req, res) => {
   }
 });
 
+console.log("riga fine server.js");
 
-
-app.listen(3001, ()=>{
+app.listen(8000, ()=>{
     console.log("Server is running")
 })

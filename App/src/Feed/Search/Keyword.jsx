@@ -13,7 +13,7 @@ const Keyword = () => {
 
     const fetchKeywordSqueals = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/getPublicSquealsByKeyword/${keyword}`);
+            const response = await axios.get(`/getPublicSquealsByKeyword/${keyword}`);
             setKeywordSqueals(response.data);
         } catch (error) {
             console.error('Errore durante il recupero degli squeals per la keyword:', error);

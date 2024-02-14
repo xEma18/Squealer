@@ -10,7 +10,7 @@ const InitialPageComponent = () => {
   const handleGuestAccess = async () => {
     try {
       // Esegui una richiesta al server per ottenere il numero unico del guest
-      const response = await axios.get('http://localhost:3001/generateGuestNumber');
+      const response = await axios.get('/generateGuestNumber');
       const guestNumber = response.data.guestNumber; // Assumi che la risposta abbia una struttura del genere
   
       // Componi lo username del guest

@@ -29,7 +29,7 @@ export default function SmmList() {
     function () {
       async function fetchAvailableManagers() {
         try{
-          const res = await axios.get("http://localhost:3001/getAvailableManagers");
+          const res = await axios.get("/getAvailableManagers");
 
           setManagers(res.data);
         }catch(error){
@@ -46,7 +46,7 @@ export default function SmmList() {
   useEffect(function(){
     async function fetchCurrentManager(){
       try{
-        const res = await axios.get(`http://localhost:3001/getUserByUsername/${user.manager}`);
+        const res = await axios.get(`/getUserByUsername/${user.manager}`);
         setCurrentManger(res.data);
       }catch(error){
         console.error(`Errore durante il caricamento dell'utente: ${error.message}`);
@@ -62,8 +62,8 @@ export default function SmmList() {
 
   async function handleRemoveManager() {
     try{
-      await axios.post("http://localhost:3001/removeCurrentVIP", {username: currentManager.username});
-      const res = await axios.post("http://localhost:3001/removeCurrentManager", {username});
+      await axios.post("/removeCurrentVIP", {username: currentManager.username});
+      const res = await axios.post("/removeCurrentManager", {username});
 
       setUser(res.data);
     }catch(error){
@@ -73,10 +73,10 @@ export default function SmmList() {
 
   async function handleSelectManager(managerUsername) {
     try{
-      await axios.post("http://localhost:3001/removeCurrentManager", {username});
-      await axios.post("http://localhost:3001/removeCurrentVIP", {username: currentManager.username});
+      await axios.post("/removeCurrentManager", {username});
+      await axios.post("/removeCurrentVIP", {username: currentManager.username});
 
-      const res3 = await axios.post("http://localhost:3001/linkManagerAndVIP", {vipUsername: username, managerUsername});
+      const res3 = await axios.post("/linkManagerAndVIP", {vipUsername: username, managerUsername});
 
       setUser(res3.data.vipUser);
       setCurrentManger(res3.data.managerUser);

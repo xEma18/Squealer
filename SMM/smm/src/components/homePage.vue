@@ -137,7 +137,7 @@ export default {
     
 
     try {
-      const response = await fetch('http://localhost:3001/squeals');
+      const response = await fetch('/squeals');
       this.squeals = await response.json();
       // Filtro nell'array iterando con squeals se ogni componente dell'array this.squeals è uguale al manager che va reso poi dinamico 
       this.squeals = this.squeals.filter(squeals => squeals.mittente === this.managerData.vipManaged); //TODO
