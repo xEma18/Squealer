@@ -375,7 +375,7 @@ app.post("/modifyPassword", async (req, res) => {
   try {
     const user = await UserModel.findByUsername(req.body.username);
 
-    if(!user) res.status(404).json({error: "User not found"});
+    if(!user) return res.status(404).json({error: "User not found"});
 
     user.password = req.body.newPassword;
 
@@ -385,6 +385,33 @@ app.post("/modifyPassword", async (req, res) => {
     res.status(500).json({error: "Errore durante la modifica della password"})
   }
 });
+
+// API per prendere tutti gli user di un determinato tipo
+app.get("/getUsersByUserType/:type", async (req, res) => {
+  const {type} = req.params;
+  try {
+    const users = await UserModel.findByUserType(type);
+
+    if(!users) return res.status(404).json({error: "Utenti non trovati"});
+
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({error: "Errore durante il fetching"})
+  }
+})
+
+// API per prendere tutti i manager disponibili
+app.get("/getAvailableManagers", async (req, res) => {
+  try {
+    const allManagers = await UserModel.findByUserType("SMM");
+
+    const availableManagers = allManagers.filter(manager => !manager.vipManaged);
+
+    res.status(200).json(availableManagers);
+  } catch (error) {
+    res.status(500).json({error: "Errore durante il fetching"})
+  }
+})
 
 app.post("/addEmoticonGood", async (req, res) => {
   try {

@@ -246,8 +246,6 @@ function Presentation({ user, setUser, isStandard, isEditing, setIsEditing, onSu
   async function handleChangePassword(e){
     e.preventDefault();
 
-    // Bisognerebbe aggiungere tutta la parte di verifica della password...
-
     if(!newPassword) return;
 
     try {
@@ -292,6 +290,7 @@ function Presentation({ user, setUser, isStandard, isEditing, setIsEditing, onSu
                 type="text"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
+                pattern="(?=.*\d)(?=.*[!@#$%^&*]).{8,16}"
               />
             </form>
           </span>

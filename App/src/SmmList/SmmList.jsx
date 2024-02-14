@@ -1,64 +1,62 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-// Dovresti importare i file css (servono feed_style.css e style.css, ma penso convenga importarli direttamente in main.jsx)
-
-// Qui come al solito sto definendo un array di manager "finto", sarebbero da prendere dal database. Comunque come test funziona.
-const managersList = [
-  {
-    id: "001",
-    userName: "Michele",
-    profilePicture:
-      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    description: "Let's make you famous 🚀",
-  },
-  {
-    id: "002",
-    userName: "Manuel",
-    profilePicture:
-      "https://plus.unsplash.com/premium_photo-1661374927471-24a90ebd5737?q=80&w=2942&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    description: "On to the next one... ✈️",
-  },
-  {
-    id: "003",
-    userName: "Lorenzo",
-    profilePicture:
-      "https://images.unsplash.com/photo-1601233749202-95d04d5b3c00?q=80&w=2876&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    description: "Money baby 💰",
-  },
-];
+import axios from "axios";
 
 export default function SmmList() {
-  const navigate = useNavigate();
+  const accountData = JSON.parse(sessionStorage.getItem("accountData"));
+  const username = accountData.username;
+  const [user, setUser] = useState(null);
   const [currentManager, setCurrentManger] = useState(null);
-  const [managers, setManagers] = useState(managersList);
+  const [managers, setManagers] = useState([]);
+  const navigate = useNavigate();
 
-  // // //
-  // AGGIUNGERE LOGICA SELEZIONE SMM //
-  // // //
+  // Fetch dell'utente
+  useEffect(function(){
+    async function fetchUser(){
+      try{
+        const res = await axios.get(`/getUserByUsername/${username}`);
+        setUser(res.data);
+      }catch(error){
+        console.error(`Errore durante il caricamento dell'utente: ${error.message}`);
+      }
+    }
+
+    fetchUser();
+  }, [username])
+
+  // Faccio il fetch dei manager disponibili
   useEffect(
     function () {
       async function fetchAvailableManagers() {
         try{
-          //...
-          setManagers();
+          const res = await axios.get("http://localhost:3001/getAvailableManagers");
+
+          setManagers(res.data);
         }catch(error){
           console.error(`Errore nel caricamento dei manager ${error.message}`)
         } 
       }
+
       fetchAvailableManagers();
     },
     []
   );
 
-  useEffect(
-    function(){
-      async function fetchCurrentManager(){
-        setCurrentManger();
+  // Faccio il fetch del manager attuale dell'utente, se esiste
+  useEffect(function(){
+    async function fetchCurrentManager(){
+      try{
+        const res = await axios.get(`/getUserByUsername/${user.manager}`);
+        setCurrentManger(res.data);
+      }catch(error){
+        console.error(`Errore durante il caricamento dell'utente: ${error.message}`);
       }
-      fetchCurrentManager();
-    },
-    []  
-  )
+    }
+
+    if(!user.manager) return;
+
+    fetchCurrentManager();
+  }, [user])
 
   
 
@@ -164,13 +162,13 @@ function Manager({ manager, onSelectManager }) {
     <div className="smm-item" onClick={() => onSelectManager(manager)}>
       <div className="item">
         <div className="item-pic">
-          <img src={manager.profilePicture} alt="Profile picture" />
+          <img src={manager.profilePic} alt="Profile picture" />
         </div>
         <div className="item-body">
           <div className="item-namedate">
             <span className="item-username">
               <h>@</h>
-              {manager.userName}
+              {manager.username?.split("@")[1]}
             </span>
             <i className="fa-solid fa-feather"></i>
           </div>

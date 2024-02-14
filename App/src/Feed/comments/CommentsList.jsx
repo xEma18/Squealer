@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 
@@ -6,8 +6,9 @@ import axios from "axios";
 export default function CommentsList() {
   const navigate = useNavigate();
   const [queryParams] = useSearchParams();
-  const [comment, setComment] = useState(null);
+  const [comment, setComment] = useState("");
   const [squealComments, setSquealComments] = useState([]);
+  const isStandard = useRef(true);
   const accountData = JSON.parse(sessionStorage.getItem("accountData"));
 
   // Appena carica la pagina, faccio un fetch dei commenti salvati nel database
@@ -28,6 +29,19 @@ export default function CommentsList() {
 
     fetchComments();
   }, [queryParams])
+
+  // Dato uno squeal, verifica se il mittente è standard o meno  
+  useEffect(function(){
+    async function getUserType(){
+      try{
+        const res = await axios.get(`http://localhost:3001/getUserTypeByUsername/${accountData.username}`);
+        isStandard.current = res.data === "Standard" ? true : false;
+      }catch(error){
+        console.error(`Errore durante il caricamento del tipo: ${error.message}`);
+      }
+    }
+    getUserType();
+  }, [accountData.username]);
 
   async function handleAddComment(e){
     e.preventDefault();
@@ -72,7 +86,7 @@ export default function CommentsList() {
 
       <div className="comments-list">
         {squealComments.map((comment) => (
-          <Comment comment={comment} key={comment._id} />
+          <Comment comment={comment} isStandard={isStandard} key={comment._id} />
         ))}
       </div>
       <TypeBar comment={comment} setComment={setComment} onAddComment={handleAddComment}/>
@@ -80,7 +94,7 @@ export default function CommentsList() {
   );
 }
 
-function Comment({ comment }) {
+function Comment({ comment, isStandard}) {
   return (
     // prettierignore
     <div className="item">
@@ -92,8 +106,7 @@ function Comment({ comment }) {
           <span className="item-username">
             <h>@</h>
             {comment.mittente.split("@").at(1)}
-          </span>
-          <i className="fa-solid fa-feather"></i>
+          </span> {!isStandard.current && <i className="fa-solid fa-feather"></i>}
           <span className="item-date"> | {new Date(comment.date).toDateString()}</span>
         </div>
         <div className="item-content">{comment.text}</div>
@@ -106,6 +119,6 @@ function TypeBar({comment, setComment, onAddComment}){
   return (
     <form className="write-comment" onSubmit={onAddComment}>
         <input type="text" value={comment} onChange={e => setComment(e.target.value)}/>
-        <i className="fa-solid fa-paper-plane"></i>
+        <i role="button" className="fa-solid fa-paper-plane" onClick={onAddComment}></i>
     </form>)
 }

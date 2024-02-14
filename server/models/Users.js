@@ -36,6 +36,14 @@ UserSchema.statics.findByCredentials=async function(username, password){
     }
 };
 
+UserSchema.statics.findByUserType = async function(type){
+  const users = await this.find({tipoUtente: type});
+  
+  if(users) return users;
+
+  return;
+}
+
 UserSchema.statics.findByNameAndLastname = async function(name, lastname) {
     try {
       const user = await this.findOne({ name: new RegExp('^' + name + '$', 'i') }); //Espressione regolare per togliere case sensitive (findOne ritorna l'intero oggetto del databse quindi l'utente in sé)
