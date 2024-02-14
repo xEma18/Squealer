@@ -1207,6 +1207,8 @@ app.get("/getChannelActivity/:channelName", async (req, res) => {
 app.post("/deleteAccount", async (req, res) => {
   try {
     const username = req.body.username;
+    
+    const user = await UserModel.findByUsername(username);
 
     const userSqueals = await SquealModel.findSquealsByUsername(username);
     for (let squeal of userSqueals) {
@@ -1238,6 +1240,20 @@ app.post("/deleteAccount", async (req, res) => {
       });
 
       await squeal.save();
+    }
+
+    // Se l'utente era un SMM e aveva un VIP, lo slego dal VIP che controllava
+    if(user.tipoUtente === "SMM" && user.vipManaged){
+      const vipUser = await UserModel.findByUsername(user.vipManaged);
+      vipUser.manager = "";
+      await vipUser.save();
+    }
+
+    // Se l'utente era un VIP e aveva un SMM, lo slego dall'SMM 
+    if(user.tipoUtente === "VIP" && user.manager){
+      const smmUser = await UserModel.findByUsername(user.manager);
+      vipUser.vipManaged = "";
+      await vipUser.save();
     }
 
     await UserModel.deleteOne({ username });
