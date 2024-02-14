@@ -411,6 +411,7 @@ const Feed = () => {
             onDeleteAccount={handleDeleteAccount}
             onLogOut={handleLogOut}
             onNavigateToSMM={handleNavigateToSMM}
+            userType={accountData.tipoUtente}
             isSMMuser={isSMMuser}
             isMod={isMod}
             onNavigateToMOD={handleNavigateToMOD}
@@ -469,6 +470,7 @@ function SideBar({
   onDeleteAccount,
   onLogOut,
   onNavigateToSMM,
+  userType,
   isSMMuser,
   isMod,
   onNavigateToMOD
@@ -485,9 +487,9 @@ function SideBar({
         <li onClick={onProfileSettingsButton}>
           <i className="fa-solid fa-user"></i> Profile
         </li>
-        <li onClick={onSmmButton}>
+        {userType === "VIP" && <li onClick={onSmmButton}>
           <i className="fa-solid fa-address-book"></i> Manager
-        </li>
+        </li>}
         <li onClick={onNewChannelButton}>
           <i className="fa-solid fa-plus"></i> New channel
         </li>
