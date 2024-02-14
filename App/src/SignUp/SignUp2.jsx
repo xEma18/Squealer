@@ -24,7 +24,7 @@ const SignUp2 = ({ updateRegistrationData }) => {
   const handleNext=async ()=>{
     if(isPasswordShort===false && isPasswordLong===false && isPasswordWithNumber===true && isPasswordWithSpecialChar===true && username.startsWith('@')&& isEmailValid(email)){
       try {
-        const response = await fetch("http://localhost:3001/checkIfUserAndEmailAlreadyRegistered", {
+        const response = await fetch("/checkIfUserAndEmailAlreadyRegistered", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

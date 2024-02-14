@@ -35,7 +35,7 @@ const WriteSqueal = () => {
     const fetchUserData = async () => {
       try {
         const response = await axios.post(
-          `http://localhost:3001/getUserImageAndCharLeft`,
+          `/getUserImageAndCharLeft`,
           { username }
         );
         setUserData(response.data);
@@ -205,7 +205,7 @@ const WriteSqueal = () => {
       };
       //non uso try perchè non posso aspettare la risposta
       axios
-        .post(`http://localhost:3001/scheduleSqueal`, requestBody)
+        .post(`/scheduleSqueal`, requestBody)
         .catch((error) => {
           console.error(
             "Errore durante la programmazione dello squeal:",
@@ -216,7 +216,7 @@ const WriteSqueal = () => {
     } else {
       try {
         const response = await axios.post(
-          `http://localhost:3001/postSqueal`,
+          `/postSqueal`,
           newSqueal
         );
         updateCharsLeft(1);
@@ -231,7 +231,7 @@ const WriteSqueal = () => {
     channelNames.forEach(async (channelName) => {
       try {
         // Include sia squealId che channelName nel body della richiesta POST
-        await axios.post(`http://localhost:3001/addSquealToChannel`, {
+        await axios.post(`/addSquealToChannel`, {
           squealId: newSqueal._id,
           channelName: channelName // Invia il nome del canale, compreso il prefisso "§", nel body
         });
@@ -264,7 +264,7 @@ const WriteSqueal = () => {
       //api che aggiorna i caratteri rimanenti
       try {
         const response = await axios.post(
-          `http://localhost:3001/updateCharsLeft`,
+          `/updateCharsLeft`,
           {
             username: username,
             caratteriGiornalieriUsati: newDailyCharsUsed,
@@ -397,7 +397,7 @@ const handleNumeroInviiChange = (e) => {
         if (userData.caratteriGiornalieri - userData.caratteriGiornalieriUsati >=125) {
             setShowMap(false);
             try {
-              const response = await axios.get('http://localhost:3001/randomImage');
+              const response = await axios.get('/randomImage');
               setImage(response.data.imageUrl);
 
               
@@ -418,7 +418,7 @@ const handleNumeroInviiChange = (e) => {
         else{
           setShowMap(false);
             try {
-              const response = await axios.get('http://localhost:3001/randomImage');
+              const response = await axios.get('/randomImage');
               setImage(response.data.imageUrl);
 
               setText(''); // Rimuove il testo se presente
@@ -434,7 +434,7 @@ const handleNumeroInviiChange = (e) => {
         setImage(''); 
         setShowMap(false);
         try {
-            const response = await axios.get('http://localhost:3001/randomNews');
+            const response = await axios.get('/randomNews');
             const article = response.data;
             setText(`Titolo: ${article.title}\nDescrizione: ${article.description}\nURL: ${article.url}`);
         } catch (error) {

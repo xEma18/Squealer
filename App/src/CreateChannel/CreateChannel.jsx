@@ -68,7 +68,7 @@ const CreateChannel = () => {
     const createChannel = async () => {
         // Controllo che il nome del canale non sia già stato preso con un'api a /checkIfChannelNameIsAlreadyTaken inviando il nome del canale
         try{
-            const response = await axios.post('http://localhost:3001/checkIfChannelNameIsAlreadyTaken', {name: name});
+            const response = await axios.post('/checkIfChannelNameIsAlreadyTaken', {name: name});
             console.log(response);
             if(response.data === true){
                 setShowNameAlreadyTaken(true);
@@ -84,7 +84,7 @@ const CreateChannel = () => {
         }
         else{
             try {
-                const response = await axios.post('http://localhost:3001/addChannelWithProfilePic', {name: name, type:"Unofficial", description: description, profilePic: image, creator: username});
+                const response = await axios.post('/addChannelWithProfilePic', {name: name, type:"Unofficial", description: description, profilePic: image, creator: username});
                 console.log(response);
             } catch (error) {
                 console.error('Errore durante la creazione del canale:', error);

@@ -102,7 +102,7 @@ export default {
     const username = accountData.username;
     console.log(username);
     try {
-      const response = await fetch('http://localhost:3001/squeals');
+      const response = await fetch('/squeals');
       this.squeals = await response.json();
       console.log(this.squeals);
       // Filtro nell'array iterando con squeals se ogni componente dell'array this.squeals è uguale al manager che va reso poi dinamico 
@@ -112,7 +112,7 @@ export default {
     }
 
     try {
-      const response = await fetch('http://localhost:3001/getUserImageAndCharLeft', {
+      const response = await fetch('/getUserImageAndCharLeft', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

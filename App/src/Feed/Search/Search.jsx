@@ -67,7 +67,7 @@ const Search = () => {
     useEffect(() => {
         const fetchProfilePic = async () => {
             try {
-                const response = await axios.post(`http://localhost:3001/profilePicByUsername`, { username });
+                const response = await axios.post(`/profilePicByUsername`, { username });
                 setProfilePic(response.data.image);
             } catch (error) {
                 console.error('Errore durante il recupero dell\'immagine del profilo:', error);
@@ -80,7 +80,7 @@ const Search = () => {
         const fetchData = async () => {
             if (searchTerm) {
                 try {
-                    const response = await axios.post('http://localhost:3001/search', { searchTerm, username });
+                    const response = await axios.post('/search', { searchTerm, username });
                     setSearchResults(response.data);
                 } catch (error) {
                     console.error('Errore durante la ricerca:', error);
