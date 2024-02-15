@@ -1,14 +1,11 @@
 <template>
   <div id="body">
-    <!-- Navbar e altre sezioni della pagina -->
     <section id="navbar">
       <nav class="navbar is-fixed-top is-black" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
           <a class="navbar-item" href="#">
             <h3 class="title has-text-grey-lighter is-size-5-mobile">SMM DASHBOARD</h3>
           </a>
-
-          <!-- Elementi fissi per essere mostrati nella navbar mobile e non nel burger-->
           <div class="navbar-custom">
             <a @click="navigateToFeed" class="navbar-item has-text-grey-lighter is-size-7-mobile">
               Back to App
@@ -39,7 +36,6 @@
       </nav>
     </section>
 
-    <!-- Sezione Squeal -->
     <section id="squeal">
       <div class="filter-section">
         <h4>Filters:</h4>
@@ -56,7 +52,6 @@
       <h3 class="title is-3" style="margin:13px">VIP's Squeals:</h3>
       <div id="scrolling-wrapper-flexbox">
         <div v-for="(squealItem, index) in filteredSqueals" :key="index" class="card ms-1" :id="'card-' + index">
-          <!-- Qui inserisci i contenuti della card, esempio: -->
           <div class="card-content">
             <div class="content">
               <h3 class="title is-3">{{ squealItem.mittente }}</h3>
@@ -84,7 +79,6 @@
 
             </div>
           </div>
-          <!-- Pulsante Modifica all'interno della card -->
           <footer class="card-footer is-justify-content-center">
             <button class="button is-dark" @click="fetchComments(squealItem)">
               Show Comments ({{ squealItem.comments.length }})
@@ -116,7 +110,7 @@ export default {
     return {
       managerData: {},
       vipData: {},
-      squeals: [], // Array per memorizzare i dati degli squeal
+      squeals: [],
       isBurgerMenuActive: false,
       dailyChars: 0,
       weeklyChars: 0,
@@ -126,7 +120,7 @@ export default {
       monthlyCharsUsed: 0,
       comments: [],
 
-      selectedCategory: 'All', // Categoria selezionata per il filtraggio
+      selectedCategory: 'All', 
 
     };
   },
@@ -139,10 +133,8 @@ export default {
     try {
       const response = await fetch('/squeals');
       this.squeals = await response.json();
-      // Filtro nell'array iterando con squeals se ogni componente dell'array this.squeals è uguale al manager che va reso poi dinamico 
-      this.squeals = this.squeals.filter(squeals => squeals.mittente === this.managerData.vipManaged); //TODO
-      //ordina per data in modo decrescente
-      this.squeals.sort((a, b) => new Date(b.date) - new Date(a.date)); // come fa: new Date(b.date) - new Date(a.date) a ordinare in modo decrescente? risposta:
+      this.squeals = this.squeals.filter(squeals => squeals.mittente === this.managerData.vipManaged); 
+      this.squeals.sort((a, b) => new Date(b.date) - new Date(a.date)); 
       
     } catch (error) {
       console.error('Errore durante il recupero degli squeal:', error);
@@ -150,7 +142,6 @@ export default {
     this.createMaps();
   },
   computed: {
-    //funzione per filtrare gli squeal in base alla categoria selezionata
     filteredSqueals() {
       if (this.selectedCategory === 'All') {
         return this.squeals;
@@ -210,9 +201,6 @@ export default {
       }
     },
     modifyButton(cardIndex) {
-      // Logica per gestire la modifica della card
-      console.log('Modificando la card numero:', cardIndex);
-      // Qui puoi chiamare altre funzioni o logiche specifiche per la modifica
     },
     toggleBurgerMenu() {
       this.isBurgerMenuActive = !this.isBurgerMenuActive;
@@ -224,13 +212,11 @@ export default {
     ordinaPerReazioni() {
       console.log('Ordina per reazioni')
       this.squeals.sort((a, b) => {
-        // Assumendo che ogni squeal abbia 'emoticonNum' con 'good' e 'bad'
         const totalReactionsA = (a.emoticonNum.good || 0) + (a.emoticonNum.bad || 0);
         const totalReactionsB = (b.emoticonNum.good || 0) + (b.emoticonNum.bad || 0);
 
-        return totalReactionsB - totalReactionsA; // Ordina per numero totale di reazioni decrescente
+        return totalReactionsB - totalReactionsA;
       });
-      // Aggiorna l'array per assicurare la reattività
       this.squeals = [...this.squeals];
     },
 
@@ -257,7 +243,6 @@ export default {
     this.$nextTick(() => {
       setTimeout(() => {
         const mapId = 'map-' + index;
-        // Assicurati che l'elemento del DOM sia effettivamente presente
         if (document.getElementById(mapId)) {
           const map = L.map(mapId, {
             zoomControl: false,
@@ -276,7 +261,7 @@ export default {
         } else {
           console.error('Elemento mappa non trovato:', mapId);
         }
-      }, 1000); // Aggiusta il timeout se necessario, 1000 millisecondi (1 secondo) è solo un esempio
+      }, 1000);
     });
   }
 },
@@ -292,16 +277,16 @@ export default {
 }
 
 .profile-pic {
-  width: 50px; /* o la dimensione desiderata */
-  height: 50px; /* o la dimensione desiderata */
-  object-fit: cover; /* Mantiene le proporzioni dell'immagine */
-  border-radius: 50%; /* Rende l'immagine rotonda */
+  width: 50px; 
+  height: 50px;
+  object-fit: cover; 
+  border-radius: 50%;
 }
 
 .comments-container {
   width: 40%;
-  max-height: 30vh; /* 10% dell'altezza del viewport */
-  overflow-y: auto; /* Permette lo scroll se i contenuti superano l'altezza */
+  max-height: 30vh;
+  overflow-y: auto;
 }
 
 .comment {
@@ -360,12 +345,10 @@ export default {
 
 #scrolling-wrapper-flexbox {
   padding: 10px;
-  /* Aggiunge un padding intorno alle card */
 }
 
 .card {
   margin-bottom: 10px;
-  /* Aggiunge un margine inferiore a ciascuna card */
 }
 
 .emoji {
@@ -378,7 +361,7 @@ export default {
   display: flex;
   align-items: center;
   gap: 15px;
-  margin-bottom: 20px; /* Aggiunge spazio sotto i filtri */
+  margin-bottom: 20px;
 }
 
 .select-filter {
@@ -396,7 +379,7 @@ export default {
 }
 
 .button-order {
-  background-color: #4CAF50; /* Colore verde */
+  background-color: #4CAF50;
   border: none;
   color: white;
   padding: 10px 20px;
@@ -411,7 +394,7 @@ export default {
 }
 
 .button-order:hover {
-  background-color: #45a049; /* Colore verde più scuro */
+  background-color: #45a049;
   box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 </style>
