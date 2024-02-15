@@ -189,6 +189,34 @@ const Feed = () => {
     }
   }
 
+  const addSquealToChannel = async (channelName, squealId) => {
+    try {
+      const res = await fetch("/addSquealToChannel", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ channelName: channelName, squealId: squealId }),
+      });
+    } catch (e) {
+      console.error("Errore nel caricamento degli squeals nel canale", e.message);
+    }
+  }
+
+  const removeSquealFromChannel = async (channelName, squealId) => {
+    try {
+      const res = await fetch("/removeSquealFromChannel", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ channelName: channelName, squealId: squealId }),
+      });
+    } catch (e) {
+      console.error("Errore nel caricamento degli squeals", e.message);
+    }
+  }
+
   const handleEmoticonGood = async (squeal) => {
     if (!isGuest) {
       //se l'utente non è guest, può mettere like/dislike
@@ -203,10 +231,16 @@ const Feed = () => {
         });
         //api che controlla che se la categoria del post dopo l'aggiunta o rimozion del like è controversial, fa api che mi aggiunge lo squeal al canale §CONTROVERSIAL
         if(response.data.category === "Controversial"){
+          removeSquealFromChannel("§TRENDING",squeal._id);
           addSquealToControversialChannel(squeal._id);
+        }
+        else if(response.data.category === "Popular"){
+          removeSquealFromControversialChannel(squeal._id);
+          addSquealToChannel("§TRENDING",squeal._id);
         }
         else{
           removeSquealFromControversialChannel(squeal._id);
+          removeSquealFromChannel("§TRENDING",squeal._id);
         }
         // Aggiorna lo stato locale con i dati aggiornati del squeal
         const updatedSqueals = squeals.map((s) => {
@@ -235,10 +269,16 @@ const Feed = () => {
           username: username,
         });
         if(response.data.category === "Controversial"){
+          removeSquealFromChannel("§TRENDING",squeal._id);
           addSquealToControversialChannel(squeal._id);
+        }
+        else if(response.data.category === "Popular"){
+          removeSquealFromControversialChannel(squeal._id);
+          addSquealToChannel("§TRENDING",squeal._id);
         }
         else{
           removeSquealFromControversialChannel(squeal._id);
+          removeSquealFromChannel("§TRENDING",squeal._id);
         }
         // Aggiorna lo stato locale con i dati aggiornati del squeal
         const updatedSqueals = squeals.map((s) => {

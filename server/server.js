@@ -955,7 +955,6 @@ app.post("/editChannelSqueal", async (req, res) => {
 // API per rimuovere uno squeal dalla lista squeal canale
 app.post("/removeSquealFromChannel", async (req, res) => {
   try {
-    console.log("removeSquealFromChannel");
     const { channelName, squealId } = req.body;
 
     // Trova il canale specifico
@@ -1588,6 +1587,22 @@ app.post('/removeSquealFromControversialChannel', async (req, res) => {
       }
   } catch (error) {
       console.error('Errore durante la rimozione dello squeal dal canale controverso:', error);
+      res.status(500).json({ message: 'Errore interno del server' });
+  }
+});
+
+app.get('/randomSqueals', async (req, res) => {
+  //ritorna 10 squeal random tra quello che hanno destinatario "@everyone"
+  try {
+      const squeals = await SquealModel.find({ destinatari: '@everyone' });
+      const randomSqueals = [];
+      for (let i = 0; i < 10; i++) {
+          const randomIndex = Math.floor(Math.random() * squeals.length);
+          randomSqueals.push(squeals[randomIndex]);
+      }
+      res.json(randomSqueals);
+  } catch (error) {
+      console.error('Errore durante il recupero degli squeal random:', error);
       res.status(500).json({ message: 'Errore interno del server' });
   }
 });

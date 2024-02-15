@@ -54,6 +54,15 @@ const ChannelProfile = () => {
     };
 
     const fetchUserPublicSqueals = async () => {
+        if(channelName === "§RANDOM") {
+            try {
+                const response = await axios.get(`/randomSqueals`);
+                setUserSqueals(response.data);
+            } catch (error) {
+                console.error('Errore durante il recupero degli squeals del canale:', error);
+            }
+            return;
+        }
         try {
             // Assumendo che esista un endpoint `/squealsByChannelName` che accetta il nome del canale e ritorna gli squeal associati
             const response = await axios.get(`/squealsByChannelName/${channelName}`);
@@ -108,22 +117,22 @@ const ChannelProfile = () => {
                     <div className="img-container">
                         <img src={userData.profilePic} alt="Profile picture" />
                     </div>
-                    {isFollowing ? (
-                        <span role="button" onClick={unfollowChannel} className="follow-btn">Unfollow <i className="fa-solid fa-minus"></i></span>
+                    {channelName !== "§RANDOM" && (isFollowing ? (
+                    <span role="button" onClick={unfollowChannel} className="follow-btn">Unfollow <i className="fa-solid fa-minus"></i></span>
                     ) : (
                         <span role="button" onClick={followChannel} className="follow-btn">Follow <i className="fa-solid fa-plus"></i></span>
-                    )}
+                    ))}
                     <div className="username">
                         {userData.name}
                     </div>
                 </div>
                 <div className="item-description">
                     <p>{userData.description}</p>
-                    <div className="activity-info">
+                    {channelName!=="§RANDOM"?<div className="activity-info">
                         <div className="num-squeals"><strong>{userActivity.squeals}</strong> Squeals</div>
                         <div className="num-likes"><strong>{userActivity.likes}</strong> Likes</div>
                         <div className="num-dislikes"><strong>{userActivity.dislikes}</strong> Dislikes</div>
-                    </div>
+                    </div>:<div></div>}
                 </div>
             </div>
         );
