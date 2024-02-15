@@ -66,6 +66,10 @@ const CreateChannel = () => {
     };
 
     const createChannel = async () => {
+        if (name.startsWith("§") && name.substring(1) === name.substring(1).toUpperCase()) {
+            alert("Channel names starting with '§' followed by uppercase letters are not allowed.");
+            return; 
+        }
         // Controllo che il nome del canale non sia già stato preso con un'api a /checkIfChannelNameIsAlreadyTaken inviando il nome del canale
         try{
             const response = await axios.post('/checkIfChannelNameIsAlreadyTaken', {name: name});
