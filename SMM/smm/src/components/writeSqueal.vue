@@ -207,6 +207,12 @@
           return;
         }
 
+        const hasChannel = this.recipients.some(recipient => recipient.startsWith("§"));
+        if(this.isTemporizzato && hasChannel){
+          alert("Cannot send temporized squeal to a channel. No Spam!");
+          return;
+        }
+
         const newSqueal = {
           mittente: this.accountData.vipManaged,
           destinatari: this.recipients,
