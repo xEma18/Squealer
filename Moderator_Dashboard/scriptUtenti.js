@@ -19,7 +19,7 @@ function filtraUtenti(nome, tipo, popolarita) {
 
     cards.forEach(card => {
         const nomeUtente = card.querySelector(".card-title").innerText;
-        //Prendo l'elemento User Type: tipoutente creo un array del tipo ["User Type","tipoutente"] con [1] prendo il tipoutente e grazie a .trim() rimuovo lo spazio bianco iniziale
+        //Prendo l'elemento User Type: tipoutente(contenuto nell'h6) creo un array del tipo ["User Type","tipoutente"] con [1] prendo il tipoutente e grazie a .trim() rimuovo lo spazio bianco iniziale
         const tipoUtente = card.querySelector('h6:nth-child(3)').innerText.split(":")[1].trim();
         const popolaritaUtente = card.querySelector('h6:nth-child(4)').innerText.split(":")[1].trim();
 
@@ -105,7 +105,7 @@ const parentElement = document.getElementById("BtnBox");
 
 parentElement.addEventListener("click", function (event) {
     if (event.target.id == "modificaBtn") {
-        // Verifica se l'elemento di destinazione del clic è un pulsante con l'id "modificaBtn"
+        // Verifica se l'elemento di destinazione del clic è un pulsante con l'id "modificaBtn" (closest restituisce l'elemento genitore più vicino dell'elemento su cui è avvenuto il clic)
         const card = event.target.closest(".card"); // Trova la card padre dell'elemento cliccato
 
         if (card) {
@@ -130,7 +130,7 @@ async function ModifyButton(cardId, cardNumber) {
     try {
         const response = await fetch('/users');
         if (!response.ok) {
-            // ... (gestione degli errori)
+            throw new Error('Errore durante la richiesta HTTP');
         } else {
             const responseData = await response.json();
             // Aggiorna la lista degli utenti dopo la modifica
@@ -261,7 +261,7 @@ async function ModifyButton(cardId, cardNumber) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ //Da definire l'username 
+                body: JSON.stringify({ 
                     nome: nome,
                     cognome: cognome,
                     popolarita: nuovaPopolarita,
@@ -313,7 +313,7 @@ async function ModifyButton(cardId, cardNumber) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ //Da definire l'username 
+                body: JSON.stringify({ 
                     nome: nome,
                     cognome: cognome,
                     popolarita: nuovaPopolarita,
