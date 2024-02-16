@@ -140,7 +140,7 @@ a:active {
   /* padding: 0.4rem 2rem; */
 
   margin: 0.4rem 0;
-
+  margin-top:5%;
   color: #222;
 }
 
@@ -387,5 +387,7 @@ a:active {
   transform: translateY(-50%);
   cursor: pointer;
   width: 8%;
+  max-height: 56px;
+
   /* Stili aggiuntivi per rendere l'icona come desiderato */
 }
