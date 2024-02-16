@@ -33,12 +33,12 @@ function filtraSqueal(sender, receiver, date) {
         const receiverCard = card.querySelector('#destinatari').innerText.split(",");
 
         const dateCard = card.querySelector('#date').innerText;
-        console.log(dateCard)
-        console.log(date);
+        
         // Controllo se l'utente soddisfa i criteri di filtro
         const senderMatch = sender === "" || senderCard.toLowerCase().includes(sender.toLowerCase());
         let receiverMatch = "";
         let isMatched = false;
+
         //Controllo se esiste almeno un match con i destinatari 
         for (let i = 0; i < receiverCard.length; i++) {
             receiverMatch = receiver === "" || receiverCard[i].toLowerCase().includes(receiver.toLowerCase());
@@ -63,7 +63,7 @@ function updateSqueal(squeal) {
 
     const aggiungiSpazio = () => {
         return squeal.map(squealItem => {
-            const destinatari = squealItem.destinatari.join(", "); // Unisco i destinatari con una virgola
+            const destinatari = squealItem.destinatari.join(", "); // Unisco i destinatari con una virgola creando una stringa
             const MAX_LENGTH = 30; // Numero massimo di caratteri
             return squealItem;
         });
@@ -93,7 +93,7 @@ function updateSqueal(squeal) {
               <h6 class="card-subtitle" id="destinatari">${squealConSpazi[i].destinatari}</h6>
             </div>
             <div id="squealText-${i}" style="width:100%;">
-            ${squeal[i].bodyImage ? `<p><img src="${squeal[i].bodyImage}" style="width:100%; height:130px; alt="Squeal Image"></p>` : `<p>${textToShow}</p>`}
+            ${squeal[i].bodyImage ? `<p><img src="${squeal[i].bodyImage}" style="width:100%; max-height:130px; object-fit: scale-down;" alt="Squeal Image"></p>` : `<p>${textToShow}</p>`}
             ${squeal[i].mapLocation ? `<div id="geolocation-${i}" style="width:100%; height:130px;"></div>` : ''}
             </div>
         </div>
@@ -150,14 +150,22 @@ parentElement.addEventListener("click", function (event) {
     }
 });
 
-// Funzione per ottenere il numero della card dalla sua id
+// Funzione per ottenere il numero della card dal suo id
 function getCardNumber(cardId) {
     // L'id della card è nella forma "card-X", quindi possiamo estrarre il numero dalla fine dell'id
     const cardNumber = cardId.split('-')[1];
     return parseInt(cardNumber);
 }
 
-// Funzione per mostrare mappe, mapId è l'id devl div dove si mette la geolocazione
+function checkRecipient(recipient) {
+    if (recipient.startsWith('@')) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+// Funzione per mostrare mappe, mapId è l'id del div dove si mette la geolocazione
 function createGeoMap(geolocation, mapId = null) {
     //check if geolocation.latitude and geolocation.longituted are null
     if (geolocation.lat === null || geolocation.lng === null || mapId === null) {
@@ -244,7 +252,7 @@ async function ModifyButton(cardId, cardNumber) {
 
     const addButton = document.createElement('button');
     addButton.type = 'button';
-    addButton.classList.add('btn', 'add-button', 'fw-bold', 'text-success', 'p-0');
+    addButton.classList.add('btn', 'add-button', 'fw-bold', 'text-success', 'p-0','ms-3');
     addButton.innerText = '+';
 
     // Aggiungi un pulsante "-" dimamicamente 
@@ -294,7 +302,7 @@ async function ModifyButton(cardId, cardNumber) {
 
         remFlag = true;
 
-        //
+        // Se premo qualsiasi tasto della tastiera parte la funzione handleEscapeKey
         window.addEventListener('keydown', handleEscapeKey);
 
         // Creo la finestra di sovraimpressione
@@ -315,7 +323,7 @@ async function ModifyButton(cardId, cardNumber) {
             </div>
             <div class="row-3">
                 <label for="nuovoDestinatario">Receivers to remove:</label>
-                <input class="form-control" type="text" id="nuovoDestinatario">
+                <input class="form-control" type="text" id="nuovoDestinatario" pattern="^@.+" title="Input must start with '@'">
             </div>
             <div class="text-center">
                 <button class="mt-4 btn btn-danger"id="rimuoviDestinatario">Rimuovi</button>
@@ -341,23 +349,38 @@ async function ModifyButton(cardId, cardNumber) {
             // Chiamata API per ottenere la lista degli utenti
             try {
                 const response = await fetch('/users');
+                const userList = response.ok ? await response.json() : null;
+                const isUserValid = userList.some(user => user.username === nuovoDestinatario);
+
                 if (!response.ok) {
                     console.log("Errore nella risposta da parte del database")
                 } else {
-                    // Verifica se il nuovo destinatario è presente nella lista degli utenti
-                    if (destinatari.innerHTML.includes(nuovoDestinatario)) {
-                        arrayUsersToRemove.push(nuovoDestinatario);
-                        destinatariRimossiDiv.innerHTML += `${nuovoDestinatario}`;
-                        modifyR = true;
+                    if(isUserValid){
+                        if(squeal[cardNumber].destinatari.length > 1){
+
+                            // Verifica se il nuovo destinatario è presente nella lista degli utenti
+                                if (destinatari.innerHTML.includes(nuovoDestinatario)) {
+                                    arrayUsersToRemove.push(nuovoDestinatario);
+                                    destinatariRimossiDiv.innerHTML += `${nuovoDestinatario}`;
+                                    modifyR = true;
+                                }
+                                else {
+                                    alert("L'utente non è presente fra i destinatari...")
+                                }
+                            }
+                        else {
+                            alert("Non puoi rimuovere l'unico destinatario rimanente!")
+                        }
                     }
-                    else {
-                        alert("L'utente non è presente fra i destinatari")
+                    else{
+                        alert("Destinatario non presente nel database")
                     }
                 }
             } catch (error) {
                 console.error('Errore durante il recupero degli utenti:', error);
             }
 
+            // Faccio scomparire nel div destinatari quelli che voglio eliminare
             if (modifyR) {
                 let toRemove = nuovoDestinatario;
                 destinatariAll = destinatariAll.filter(destinatario => destinatario !== toRemove);
@@ -382,8 +405,10 @@ async function ModifyButton(cardId, cardNumber) {
                 }
                 // Azzero arrayUsersToRemove per ulteriori modifiche
                 arrayUsersToRemove.length = 0;
-                destinatari.parentElement.appendChild(remButton);
+
                 destinatari.parentElement.appendChild(addButton);
+                destinatari.parentElement.appendChild(remButton);
+                
                 document.body.removeChild(overlay);
                 window.removeEventListener('keydown', handleEscapeKey);
             }
@@ -403,8 +428,10 @@ async function ModifyButton(cardId, cardNumber) {
             console.log("readytoremve",readytoRemove);
             // Azzera arrayNuoviUtenti per ulteriori modifiche
             arrayUsersToRemove.length = 0;
-            destinatari.parentElement.appendChild(remButton);
+
             destinatari.parentElement.appendChild(addButton);
+            destinatari.parentElement.appendChild(remButton);
+
             document.body.removeChild(overlay);
             window.removeEventListener('keydown', handleEscapeKey);
         });
@@ -421,7 +448,7 @@ async function ModifyButton(cardId, cardNumber) {
         destinatari.parentElement.removeChild(remButton);
         addFlag = true;
 
-        //
+        // Se premo qualsiasi tasto della tastiera parte la funzione handleEscapeKey
         window.addEventListener('keydown', handleEscapeKey);
 
         // Crea la finestra di sovraimpressione
@@ -688,27 +715,3 @@ async function ModifyButton(cardId, cardNumber) {
     })
 
 }
-
-
-
-
-/*
-// Attach click event listeners to each emoticon
-document.getElementById('verygood').addEventListener('click', function () {
-    selectEmoticon('verygood');
-});
-
-document.getElementById('good').addEventListener('click', function () {
-    selectEmoticon('good');
-});
-
-document.getElementById('bad').addEventListener('click', function () {
-    selectEmoticon('bad');
-});
-
-document.getElementById('verybad').addEventListener('click', function () {
-    selectEmoticon('verybad');
-});
-*/
-
-

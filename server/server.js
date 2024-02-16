@@ -81,7 +81,7 @@ const MONGO_SITE = "mongo_site222333"
 
 const uri2 = `mongodb://${MONGO_USER ? MONGO_USER + ":" : ""}${MONGO_PASSWORD ? MONGO_PASSWORD + "@": ""}${MONGO_SITE}/db?writeConcern=majority&directConnection=true&authSource=admin`
 
-const prod = false; //da casa false da scuola true
+const prod = true; //da casa false da scuola true
 const uri3 = prod ? uri2 : "mongodb://127.0.0.1:27017/Squealer"
 console.log(uri3);
 app.use(cors()); //enable to use cors

@@ -542,6 +542,10 @@ document.getElementById("newChannelForm").addEventListener("submit", async funct
     const postNum = 0;
     const profilePic = "";
 
+    if (!name.startsWith('§')) {
+        alert('Il nome del canale deve iniziare con "§"');
+        return; 
+    }
 
     // Chiamata API per salvare il nuovo canale
     try {
@@ -554,7 +558,6 @@ document.getElementById("newChannelForm").addEventListener("submit", async funct
         });
 
         if (response.ok) {
-            // Aggiungi il nuovo canale all'interfaccia utente...
             document.getElementById("newChannelOverlay").style.display = "none";
         } else {
             throw new Error('Errore nella creazione del canale');
